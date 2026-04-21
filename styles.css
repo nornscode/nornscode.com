@@ -194,7 +194,7 @@ pre {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
   gap: 4rem;
-  align-items: center;
+  align-items: start;
 }
 
 .hero__eyebrow {
@@ -370,7 +370,7 @@ pre {
   font-size: 0.85rem;
   line-height: 1.65;
   color: var(--fg-dim);
-  min-height: 30rem;
+  height: 32rem;
   overflow: hidden;
   white-space: pre;
 }
@@ -818,7 +818,7 @@ pre {
     padding: 3.5rem 1.5rem 4.5rem;
   }
   .terminal__body {
-    min-height: 26rem;
+    height: 28rem;
   }
   .pillars {
     grid-template-columns: repeat(2, 1fr);
