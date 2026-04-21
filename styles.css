@@ -372,11 +372,12 @@ pre {
   color: var(--fg-dim);
   height: 32rem;
   overflow: hidden;
-  white-space: pre;
 }
 
 .term-line {
   display: block;
+  white-space: pre;
+  min-height: 1lh;
   opacity: 0;
   transform: translateY(2px);
   transition: opacity 160ms var(--ease), transform 160ms var(--ease);
@@ -818,7 +819,7 @@ pre {
     padding: 3.5rem 1.5rem 4.5rem;
   }
   .terminal__body {
-    height: 28rem;
+    height: 31rem;
   }
   .pillars {
     grid-template-columns: repeat(2, 1fr);

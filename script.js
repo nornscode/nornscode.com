@@ -61,9 +61,9 @@
     terminal.innerHTML = frames
       .map(
         (f) =>
-          `<span class="term-line is-visible">${f.html || "&nbsp;"}</span>`,
+          `<div class="term-line is-visible">${f.html || "&nbsp;"}</div>`,
       )
-      .join("\n");
+      .join("");
   }
 
   function clear() {
@@ -71,15 +71,13 @@
   }
 
   function addLine(frame) {
-    const line = document.createElement("span");
+    const line = document.createElement("div");
     line.className = "term-line";
     line.innerHTML = frame.html || "&nbsp;";
     if (frame.cursor) {
       line.insertAdjacentHTML("beforeend", '<span class="term-cursor"></span>');
     }
     terminal.appendChild(line);
-    // Append a newline text node so <pre> renders each line on its own row.
-    terminal.appendChild(document.createTextNode("\n"));
     // rAF → ensure the element is in the DOM before applying the transition.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => line.classList.add("is-visible"));
