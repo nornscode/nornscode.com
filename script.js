@@ -71,6 +71,10 @@
   }
 
   function addLine(frame) {
+    // Any cursor was attached to the previous "waiting" line. Once the next
+    // event fires, the wait is over — drop the cursor before rendering.
+    terminal.querySelectorAll(".term-cursor").forEach((c) => c.remove());
+
     const line = document.createElement("div");
     line.className = "term-line";
     line.innerHTML = frame.html || "&nbsp;";
