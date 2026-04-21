@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Norns — Durable execution for AI agents</title>
+    <meta
+      name="description"
+      content="Norns is an open-source durable runtime for AI agents. Runs survive crashes, retries are idempotent, and in-flight work resumes across deploys — without Norns ever touching your API keys or data."
+    />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b0d10" />
+
+    <meta property="og:title" content="Norns — Durable execution for AI agents" />
+    <meta
+      property="og:description"
+      content="Open-source durable runtime for AI agents. Survive crashes, idempotent retries, resume across deploys."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nornscode.com" />
+    <meta property="og:image" content="https://nornscode.com/assets/norns-logo.png" />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="icon" href="/assets/norns-logo.png" type="image/png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav" aria-label="Primary">
+      <a class="nav__brand" href="/" aria-label="Norns home">
+        <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
+        <span class="nav__wordmark">norns</span>
+      </a>
+      <nav class="nav__links" aria-label="Resources">
+        <a href="https://github.com/nornscode/norns#get-started">Docs</a>
+        <a href="https://github.com/amackera/norns-hello-agent">Example</a>
+        <a href="https://github.com/nornscode/norns" class="nav__github">
+          <svg
+            aria-hidden="true"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+          >
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0016 8c0-4.42-3.58-8-8-8z"
+            />
+          </svg>
+          GitHub
+        </a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="hero__content">
+          <div class="hero__eyebrow">
+            <span class="dot"></span>
+            open source · MIT · v0.x
+          </div>
+          <h1 class="hero__title">
+            Durable execution<br />
+            for AI agents.
+          </h1>
+          <p class="hero__lede">
+            Your agent is eight tool calls deep when the worker crashes. Without Norns,
+            you start over. With Norns, the next worker picks up at call nine —
+            no state lost, no duplicate side effects.
+          </p>
+
+          <div class="install">
+            <div class="install__label">Install</div>
+            <div class="install__row">
+              <code id="install-cmd" class="install__cmd"
+                ><span class="install__prompt">$</span> brew install amackera/tap/nornsctl</code
+              >
+              <button
+                type="button"
+                class="install__copy"
+                data-copy-target="#install-cmd"
+                data-copy-text="brew install amackera/tap/nornsctl"
+                aria-label="Copy install command"
+              >
+                <span class="install__copy-default" aria-hidden="true">Copy</span>
+                <span class="install__copy-done" aria-hidden="true">Copied</span>
+              </button>
+            </div>
+            <div class="install__secondary">
+              <a href="https://github.com/amackera/norns-hello-agent">
+                Walk through the hello example →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal" aria-hidden="true">
+          <div class="terminal__chrome">
+            <span class="terminal__dot" data-color="r"></span>
+            <span class="terminal__dot" data-color="y"></span>
+            <span class="terminal__dot" data-color="g"></span>
+            <span class="terminal__title">run_01hf · event log</span>
+          </div>
+          <pre class="terminal__body" id="terminal"><!-- Animated lines inserted by JS --></pre>
+        </div>
+      </section>
+
+      <section class="scenarios" aria-labelledby="scenarios-heading">
+        <div class="section-header">
+          <div class="section-header__eyebrow">Why it matters</div>
+          <h2 id="scenarios-heading" class="section-header__title">
+            The things that break agents in production.
+          </h2>
+        </div>
+
+        <div class="scenarios__grid">
+          <article class="scenario">
+            <header class="scenario__head">
+              <span class="scenario__num">01</span>
+              <h3 class="scenario__title">The worker crashes mid-run.</h3>
+            </header>
+            <div class="scenario__cols">
+              <div class="scenario__col" data-state="without">
+                <div class="scenario__label">Without Norns</div>
+                <p>The run dies with the process. You start from call one.</p>
+              </div>
+              <div class="scenario__col" data-state="with">
+                <div class="scenario__label">With Norns</div>
+                <p>
+                  The next worker connects and resumes from the last checkpoint. Call
+                  nine picks up where call eight left off.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article class="scenario">
+            <header class="scenario__head">
+              <span class="scenario__num">02</span>
+              <h3 class="scenario__title">A tool times out and retries.</h3>
+            </header>
+            <div class="scenario__cols">
+              <div class="scenario__col" data-state="without">
+                <div class="scenario__label">Without Norns</div>
+                <p>
+                  The payment tool retries naïvely. You charge the customer twice and
+                  explain it to support tomorrow.
+                </p>
+              </div>
+              <div class="scenario__col" data-state="with">
+                <div class="scenario__label">With Norns</div>
+                <p>
+                  Retries are keyed by run and step. The charge is recorded once; the
+                  retry returns the original result.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article class="scenario">
+            <header class="scenario__head">
+              <span class="scenario__num">03</span>
+              <h3 class="scenario__title">A deploy ships mid-flight.</h3>
+            </header>
+            <div class="scenario__cols">
+              <div class="scenario__col" data-state="without">
+                <div class="scenario__label">Without Norns</div>
+                <p>
+                  In-flight runs die with the old workers. Users see half-done tasks
+                  vanish.
+                </p>
+              </div>
+              <div class="scenario__col" data-state="with">
+                <div class="scenario__label">With Norns</div>
+                <p>
+                  Runs are persisted in the orchestrator. New workers pick them up on
+                  the next version and carry them home.
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <ul class="pillars" role="list">
+          <li><span>Checkpointed progress</span></li>
+          <li><span>Deterministic retries</span></li>
+          <li><span>Idempotent side effects</span></li>
+          <li><span>Inspectable event logs</span></li>
+        </ul>
+      </section>
+
+      <section class="quickstart" aria-labelledby="quickstart-heading">
+        <div class="section-header">
+          <div class="section-header__eyebrow">Quickstart</div>
+          <h2 id="quickstart-heading" class="section-header__title">
+            From zero to a running agent in five commands.
+          </h2>
+          <p class="section-header__lede">
+            Workers run in your own infrastructure. Norns never touches your API keys
+            or data — it coordinates runs, retries, checkpoints, and event timelines.
+          </p>
+        </div>
+
+        <div class="quickstart__steps">
+          <ol class="steps" role="list">
+            <li class="step">
+              <div class="step__marker">1</div>
+              <div class="step__body">
+                <h4>Install the CLI</h4>
+                <pre><code>brew install amackera/tap/nornsctl</code></pre>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step__marker">2</div>
+              <div class="step__body">
+                <h4>Start a local orchestrator</h4>
+                <pre><code>nornsctl dev</code></pre>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step__marker">3</div>
+              <div class="step__body">
+                <h4>Scaffold an agent project</h4>
+                <pre><code>nornsctl new my-agent
+cd my-agent</code></pre>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step__marker">4</div>
+              <div class="step__body">
+                <h4>Install deps and run the worker</h4>
+                <pre><code>uv sync
+uv run my-agent-worker</code></pre>
+              </div>
+            </li>
+            <li class="step">
+              <div class="step__marker">5</div>
+              <div class="step__body">
+                <h4>Send a message</h4>
+                <pre><code>result = client.send_message(
+    "support-bot",
+    "Where is my order?",
+    wait=True,
+)</code></pre>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="quickstart__cta">
+          <a class="btn btn--primary" href="https://github.com/nornscode/norns#get-started">
+            Read the full quickstart
+          </a>
+          <a class="btn btn--ghost" href="https://github.com/nornscode/norns">
+            Star on GitHub
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
+          <div>
+            <div class="footer__name">norns</div>
+            <div class="footer__tag">Durable execution for AI agents.</div>
+          </div>
+        </div>
+
+        <div class="footer__cols">
+          <div class="footer__col">
+            <div class="footer__heading">SDKs</div>
+            <ul role="list">
+              <li><a href="https://github.com/amackera/norns-sdk-python">Python</a></li>
+              <li><a href="https://github.com/amackera/norns-sdk-elixir">Elixir</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <div class="footer__heading">Tools</div>
+            <ul role="list">
+              <li><a href="https://github.com/amackera/nornsctl">nornsctl</a></li>
+              <li><a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">OpenAPI</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <div class="footer__heading">Examples</div>
+            <ul role="list">
+              <li><a href="https://github.com/amackera/norns-hello-agent">Hello agent</a></li>
+              <li><a href="https://github.com/amackera/norns-mimir-agent">Mimir (full app)</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <div class="footer__heading">Project</div>
+            <ul role="list">
+              <li><a href="https://github.com/nornscode/norns">Repository</a></li>
+              <li><a href="https://github.com/nornscode/norns/blob/main/LICENSE">MIT license</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>Released under the MIT license.</span>
+        <span>Named for the Norns — the weavers of fate in Norse myth.</span>
+      </div>
+    </footer>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>
