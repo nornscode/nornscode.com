@@ -1,0 +1,44 @@
+# Norns
+
+> Durable execution for AI agents. An open-source runtime that keeps agent runs alive across crashes, retries, and deploys, without ever touching your API keys or data.
+
+Norns is a durable orchestrator for AI agent runs. Workers execute LLM calls and tools in your own infrastructure; the orchestrator persists run state so in-flight work survives worker crashes, resumes after deploys, and retries never produce duplicate side effects.
+
+Core primitives: Agents (definition of a model, system prompt, tools, and mode), Runs (single execution instances), Event logs (append-only timelines of requests, results, failures, retries), Checkpoints (durable state snapshots used for resume and replay), and Workers (processes that execute LLM or tool tasks).
+
+Licensed MIT. Version v0.x — the runtime, SDKs, and CLI are in active development; APIs are stabilizing but not yet stable.
+
+## Project
+
+- [GitHub repository](https://github.com/nornscode/norns): Elixir orchestrator, CLI, and protocol source
+- [README](https://github.com/nornscode/norns#readme): Quickstart, concepts, and primary documentation
+- [OpenAPI spec](https://github.com/nornscode/norns/blob/main/openapi.yaml): HTTP API surface
+
+## SDKs
+
+- [Python SDK](https://github.com/amackera/norns-sdk-python): Official Python worker and client library
+- [Elixir SDK](https://github.com/amackera/norns-sdk-elixir): Official Elixir worker and client library
+
+## Tooling
+
+- [nornsctl](https://github.com/amackera/nornsctl): Command-line tool for running a local orchestrator and scaffolding agent projects
+
+## Examples
+
+- [Hello agent](https://github.com/amackera/norns-hello-agent): Minimal walkthrough agent
+- [Mimir](https://github.com/amackera/norns-mimir-agent): Full example application built on Norns
+
+## Install
+
+Install the CLI via Homebrew, then start a local orchestrator and scaffold an agent project:
+
+```
+brew install amackera/tap/nornsctl
+nornsctl dev
+nornsctl new my-agent && cd my-agent
+uv sync && uv run my-agent-worker
+```
+
+## Optional
+
+- [MIT License](https://github.com/nornscode/norns/blob/main/LICENSE)
