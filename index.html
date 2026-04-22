@@ -8,8 +8,25 @@
       name="description"
       content="Norns is an open-source durable runtime for AI agents. Runs survive crashes, retries are idempotent, and in-flight work resumes across deploys — without Norns ever touching your API keys or data."
     />
-    <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#0b0d10" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)" />
+
+    <script>
+      // Set theme before first paint to avoid flash-of-wrong-theme.
+      (function () {
+        try {
+          var saved = localStorage.getItem("norns-theme");
+          var prefersLight =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: light)").matches;
+          document.documentElement.dataset.theme =
+            saved || (prefersLight ? "light" : "dark");
+        } catch (_) {
+          document.documentElement.dataset.theme = "dark";
+        }
+      })();
+    </script>
 
     <meta property="og:title" content="Norns — Durable execution for AI agents" />
     <meta
@@ -49,6 +66,34 @@
           </svg>
           GitHub
         </a>
+        <button
+          type="button"
+          class="theme-toggle"
+          data-theme-toggle
+          aria-label="Toggle color theme"
+          title="Toggle theme"
+        >
+          <svg
+            class="theme-toggle__sun"
+            aria-hidden="true"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+          >
+            <circle cx="8" cy="8" r="3" />
+            <path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4" />
+          </svg>
+          <svg
+            class="theme-toggle__moon"
+            aria-hidden="true"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+          >
+            <path d="M6.8 1.8a6.4 6.4 0 108.6 8.6 5.3 5.3 0 01-8.6-8.6z" />
+          </svg>
+        </button>
       </nav>
     </header>
 
@@ -64,9 +109,8 @@
             for AI agents.
           </h1>
           <p class="hero__lede">
-            Your agent is eight tool calls deep when the worker crashes. Without Norns,
-            you start over. With Norns, the next worker picks up at call nine —
-            no state lost, no duplicate side effects.
+            Runs that survive crashes. Retries that don't double-charge. Agents
+            that finish what they start, even through a deploy.
           </p>
 
           <div class="install">
@@ -182,10 +226,69 @@
         </div>
 
         <ul class="pillars" role="list">
-          <li><span>Checkpointed progress</span></li>
-          <li><span>Deterministic retries</span></li>
-          <li><span>Idempotent side effects</span></li>
-          <li><span>Inspectable event logs</span></li>
+          <li>
+            <svg
+              class="pillar__icon"
+              aria-hidden="true"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M2 8h3M7 8h2M11 8h3" />
+              <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none" />
+            </svg>
+            <span>Checkpointed progress</span>
+          </li>
+          <li>
+            <svg
+              class="pillar__icon"
+              aria-hidden="true"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M13.2 8a5.2 5.2 0 1 1-1.6-3.7" />
+              <path d="M11 2.2v3h3" />
+            </svg>
+            <span>Deterministic retries</span>
+          </li>
+          <li>
+            <svg
+              class="pillar__icon"
+              aria-hidden="true"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="7" width="10" height="7" rx="1.4" />
+              <path d="M5.5 7V4.6a2.5 2.5 0 0 1 5 0V7" />
+            </svg>
+            <span>Idempotent side effects</span>
+          </li>
+          <li>
+            <svg
+              class="pillar__icon"
+              aria-hidden="true"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M3 4h10M3 8h10M3 12h7" />
+            </svg>
+            <span>Inspectable event logs</span>
+          </li>
         </ul>
       </section>
 
@@ -193,7 +296,7 @@
         <div class="section-header">
           <div class="section-header__eyebrow">Quickstart</div>
           <h2 id="quickstart-heading" class="section-header__title">
-            From zero to a running agent in five commands.
+            From zero to a running agent.
           </h2>
           <p class="section-header__lede">
             Workers run in your own infrastructure. Norns never touches your API keys
@@ -201,50 +304,23 @@
           </p>
         </div>
 
-        <div class="quickstart__steps">
-          <ol class="steps" role="list">
-            <li class="step">
-              <div class="step__marker">1</div>
-              <div class="step__body">
-                <h4>Install the CLI</h4>
-                <pre><code>brew install amackera/tap/nornsctl</code></pre>
-              </div>
-            </li>
-            <li class="step">
-              <div class="step__marker">2</div>
-              <div class="step__body">
-                <h4>Start a local orchestrator</h4>
-                <pre><code>nornsctl dev</code></pre>
-              </div>
-            </li>
-            <li class="step">
-              <div class="step__marker">3</div>
-              <div class="step__body">
-                <h4>Scaffold an agent project</h4>
-                <pre><code>nornsctl new my-agent
-cd my-agent</code></pre>
-              </div>
-            </li>
-            <li class="step">
-              <div class="step__marker">4</div>
-              <div class="step__body">
-                <h4>Install deps and run the worker</h4>
-                <pre><code>uv sync
-uv run my-agent-worker</code></pre>
-              </div>
-            </li>
-            <li class="step">
-              <div class="step__marker">5</div>
-              <div class="step__body">
-                <h4>Send a message</h4>
-                <pre><code>result = client.send_message(
+        <div class="quickstart__blocks">
+          <figure class="codeblock">
+            <figcaption class="codeblock__caption">Install and run</figcaption>
+            <pre class="codeblock__body"><code><span class="cb-prompt">$</span> brew install amackera/tap/nornsctl
+<span class="cb-prompt">$</span> nornsctl dev
+<span class="cb-prompt">$</span> nornsctl new my-agent && cd my-agent
+<span class="cb-prompt">$</span> uv sync && uv run my-agent-worker</code></pre>
+          </figure>
+
+          <figure class="codeblock">
+            <figcaption class="codeblock__caption">Send a message <span class="codeblock__lang">python</span></figcaption>
+            <pre class="codeblock__body"><code>result = client.send_message(
     "support-bot",
     "Where is my order?",
     wait=True,
 )</code></pre>
-              </div>
-            </li>
-          </ol>
+          </figure>
         </div>
 
         <div class="quickstart__cta">

@@ -5,6 +5,22 @@
     "(prefers-reduced-motion: reduce)",
   ).matches;
 
+  // ---------------------------- Theme toggle ----------------------------
+
+  const themeToggle = document.querySelector("[data-theme-toggle]");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem("norns-theme", next);
+      } catch (_) {
+        // storage unavailable — theme just won't persist
+      }
+    });
+  }
+
   // ---------------------------- Copy button ----------------------------
 
   const copyButtons = document.querySelectorAll("[data-copy-target]");
