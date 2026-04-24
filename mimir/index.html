@@ -52,13 +52,11 @@
     <link rel="stylesheet" href="/styles.css" />
 
     <style>
-      /* Slack chat mockup — Mimir-page only.
-         Reuses the site's tokens (--bg-elev, --border, --fg-*) so it tracks
-         theme. Stays in its own block so we don't touch the shared sheet. */
+      /* Mimir-page only. Reuses the site's tokens so it tracks theme. */
       .chat {
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        background: var(--bg-elev);
+        background: #fff;
         overflow: hidden;
         min-width: 0;
         box-shadow:
@@ -66,113 +64,10 @@
           0 20px 60px -20px rgba(0, 0, 0, 0.45);
       }
 
-      .chat__chrome {
-        display: flex;
-        align-items: center;
-        gap: 0.55rem;
-        padding: 0.7rem 1rem;
-        background: var(--bg-raised);
-        border-bottom: 1px solid var(--border);
-        font-size: 0.8rem;
-        color: var(--fg-muted);
-        letter-spacing: 0.02em;
-      }
-
-      .chat__hash {
-        color: var(--fg-faint);
-        margin-right: 0.1rem;
-      }
-
-      .chat__body {
-        padding: 1.1rem 1.25rem 1.4rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.1rem;
-      }
-
-      .msg {
-        display: grid;
-        grid-template-columns: 32px 1fr;
-        gap: 0.75rem;
-        align-items: start;
-      }
-
-      .msg__avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        display: grid;
-        place-items: center;
-        font-weight: 600;
-        font-size: 0.78rem;
-        color: var(--accent-contrast);
-        background: var(--accent);
-        letter-spacing: 0.02em;
-      }
-      .msg__avatar--user {
-        background: var(--bg-raised);
-        color: var(--fg-dim);
-        border: 1px solid var(--border);
-      }
-
-      .msg__head {
-        display: flex;
-        align-items: baseline;
-        gap: 0.5rem;
-        margin-bottom: 0.25rem;
-      }
-
-      .msg__name {
-        font-weight: 600;
-        color: var(--fg);
-        font-size: 0.92rem;
-      }
-
-      .msg__name--bot::after {
-        content: "APP";
-        margin-left: 0.5rem;
-        font-size: 0.6rem;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        padding: 0.08rem 0.35rem;
-        border-radius: 3px;
-        background: var(--bg-raised);
-        color: var(--fg-muted);
-        border: 1px solid var(--border);
-        vertical-align: 1px;
-      }
-
-      .msg__time {
-        font-size: 0.74rem;
-        color: var(--fg-faint);
-      }
-
-      .msg__body {
-        color: var(--fg-dim);
-        font-size: 0.92rem;
-        line-height: 1.55;
-      }
-
-      .msg__body code {
-        background: var(--bg-raised);
-        border: 1px solid var(--border);
-        padding: 0.05rem 0.35rem;
-        border-radius: 3px;
-        font-size: 0.85em;
-        color: var(--fg);
-      }
-
-      .msg__cite {
-        margin-top: 0.4rem;
-        font-size: 0.78rem;
-        color: var(--fg-faint);
-      }
-      .msg__cite a {
-        color: var(--fg-muted);
-        border-bottom-color: transparent;
-      }
-      .msg__cite a:hover {
-        color: var(--accent);
+      .chat__image {
+        display: block;
+        width: 100%;
+        height: auto;
       }
 
       .pillar-row {
@@ -298,69 +193,12 @@
           </div>
         </div>
 
-        <div class="chat" aria-hidden="true">
-          <div class="chat__chrome">
-            <span class="chat__hash">#</span>
-            product-questions
-          </div>
-          <div class="chat__body">
-            <div class="msg">
-              <div class="msg__avatar msg__avatar--user">JC</div>
-              <div>
-                <div class="msg__head">
-                  <span class="msg__name">jamie</span>
-                  <span class="msg__time">10:42 AM</span>
-                </div>
-                <div class="msg__body">
-                  <span style="color: var(--accent);">@Mimir</span> what changed in the auth flow last week?
-                </div>
-              </div>
-            </div>
-
-            <div class="msg">
-              <div class="msg__avatar">M</div>
-              <div>
-                <div class="msg__head">
-                  <span class="msg__name msg__name--bot">Mimir</span>
-                  <span class="msg__time">10:42 AM</span>
-                </div>
-                <div class="msg__body">
-                  PR <code>#412</code> moved session token storage from cookies to
-                  the Postgres <code>sessions</code> table. Compliance ask from
-                  legal — closes <code>SEC-88</code>.
-                  <div class="msg__cite">
-                    <a href="#">acme/product · pull/412</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="msg">
-              <div class="msg__avatar msg__avatar--user">JC</div>
-              <div>
-                <div class="msg__head">
-                  <span class="msg__name">jamie</span>
-                  <span class="msg__time">10:43 AM</span>
-                </div>
-                <div class="msg__body">
-                  remember we cut over on friday
-                </div>
-              </div>
-            </div>
-
-            <div class="msg">
-              <div class="msg__avatar">M</div>
-              <div>
-                <div class="msg__head">
-                  <span class="msg__name msg__name--bot">Mimir</span>
-                  <span class="msg__time">10:43 AM</span>
-                </div>
-                <div class="msg__body">
-                  Got it — stored as <code>auth_cutover_date</code>.
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="chat">
+          <img
+            class="chat__image"
+            src="/assets/mimir-slack.png"
+            alt="Slack thread: Anson asks @Mimir-Dev what's changed in the Norns runtime in the last week, and Mimir replies with a bulleted summary of documentation, telemetry, UI, and repository updates."
+          />
         </div>
       </section>
 
