@@ -696,6 +696,13 @@ pre {
 
 /* --------------------------- Quickstart --------------------------- */
 
+.reference {
+  max-width: var(--col-wide);
+  margin: 0 auto;
+  padding: 5rem 0;
+  border-top: 1px solid var(--border);
+}
+
 .quickstart {
   max-width: var(--col-wide);
   margin: 0 auto;
