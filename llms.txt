@@ -16,24 +16,24 @@ Licensed MIT. Version v0.x — the runtime, SDKs, and CLI are in active developm
 
 ## SDKs
 
-- [Python SDK](https://github.com/amackera/norns-sdk-python): Official Python worker and client library
-- [Elixir SDK](https://github.com/amackera/norns-sdk-elixir): Official Elixir worker and client library
+- [Python SDK](https://github.com/nornscode/norns-sdk-python): Official Python worker and client library
+- [Elixir SDK](https://github.com/nornscode/norns-sdk-elixir): Official Elixir worker and client library
 
 ## Tooling
 
-- [nornsctl](https://github.com/amackera/nornsctl): Command-line tool for running a local orchestrator and scaffolding agent projects
+- [nornsctl](https://github.com/nornscode/nornsctl): Command-line tool for running a local orchestrator and scaffolding agent projects
 
 ## Examples
 
-- [Hello agent](https://github.com/amackera/norns-hello-agent): Minimal walkthrough agent
-- [Mimir](https://github.com/amackera/norns-mimir-agent): Full example application built on Norns
+- [Hello agent](https://github.com/nornscode/norns-hello-agent): Minimal walkthrough agent
+- [Mimir](https://github.com/nornscode/norns-mimir-agent): Full example application built on Norns
 
 ## Install
 
 Install the CLI via Homebrew, then start a local orchestrator and scaffold an agent project:
 
 ```
-brew install amackera/tap/nornsctl
+brew install nornscode/tap/nornsctl
 nornsctl dev
 nornsctl new my-agent && cd my-agent
 uv sync && uv run my-agent-worker
