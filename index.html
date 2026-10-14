@@ -313,7 +313,7 @@
 
         <dl class="ledger">
           <div class="ledger__item">
-            <dt>Audit it.</dt>
+            <dt>Audit</dt>
             <dd>
               <code>nornsctl runs events 189 --json</code> is the whole run,
               step by step: what the model saw, what it decided, what the tool
@@ -321,29 +321,22 @@
             </dd>
           </div>
           <div class="ledger__item">
-            <dt>Evaluate it.</dt>
+            <dt>Evals</dt>
             <dd>
               Real production runs, not synthetic ones. Pull the logs over the
               API and run your evals against what actually happened.
             </dd>
           </div>
           <div class="ledger__item">
-            <dt>Fork it.</dt>
+            <dt>Forks and retries</dt>
             <dd>
               <code>POST /runs/:id/fork</code> from any step, with a different
-              model or system prompt if you like. Same history up to that
-              point; compare the two logs.
+              model or system prompt if you like, and compare the two logs. Or
+              send a failed run again from the top.
             </dd>
           </div>
           <div class="ledger__item">
-            <dt>Retry it.</dt>
-            <dd>
-              A failed run can be sent again from its original message, against
-              the fixed tool or the new prompt.
-            </dd>
-          </div>
-          <div class="ledger__item">
-            <dt>Price it.</dt>
+            <dt>Cost</dt>
             <dd>
               Every run knows its own token counts and cost, the sub-agents it
               launched included.
