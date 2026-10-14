@@ -336,8 +336,6 @@ pre {
 .install__label {
   font-family: var(--mono);
   font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--fg-muted);
   margin-bottom: 0.6rem;
 }
@@ -379,8 +377,6 @@ pre {
   background: var(--bg-raised);
   color: var(--fg-dim);
   font-size: 0.82rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   min-width: 5.5rem;
 }
 .install__copy:hover {
@@ -665,14 +661,6 @@ pre {
   padding: 0 1.5rem;
 }
 
-.section-header__eyebrow {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.9rem;
-}
 
 .section-header__title {
   font-size: clamp(1.6rem, 3vw, 2.1rem);
@@ -762,8 +750,6 @@ pre {
   font-family: var(--mono);
   display: inline-block;
   font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--fg-muted);
   margin-bottom: 0.7rem;
 }
@@ -820,15 +806,12 @@ pre {
   padding: 0.7rem 1rem;
   border-bottom: 1px solid var(--border);
   font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--fg-muted);
 }
 
 .codeblock__lang {
   font-family: var(--mono);
   font-size: 0.72rem;
-  letter-spacing: 0.08em;
   color: var(--fg-faint);
 }
 
@@ -949,8 +932,6 @@ pre {
 .footer__heading {
   font-family: var(--mono);
   font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
   color: var(--fg-dim);
   margin-bottom: 0.9rem;
 }
