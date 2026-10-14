@@ -157,10 +157,10 @@
           <h1 class="hero__title">Durability for agents.</h1>
           <p class="hero__lede">
             Agents are loops of LLM calls and tool calls, and sometimes they
-            run long enough for the process underneath them to die. Norns writes each
-            step down as it happens; the next worker reads the log and
-            continues from the last step, not the first. Your workers and your
-            keys stay on your side of the wire.
+            run long enough for the process underneath them to die. Norns keeps
+            a log of an agent's progress, allowing new workers to pick up where
+            crashed ones left off. Your workers and your keys stay on your side
+            of the wire.
           </p>
 
           <p class="hero__myth">
