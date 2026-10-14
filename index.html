@@ -228,18 +228,24 @@
           <article class="scenario">
             <header class="scenario__head">
               <span class="scenario__num">01</span>
-              <h3 class="scenario__title">The worker crashes mid-run.</h3>
+              <h3 class="scenario__title">You ship a tool with a bug.</h3>
             </header>
             <div class="scenario__cols">
               <div class="scenario__col" data-state="without">
                 <div class="scenario__label">Without Norns</div>
-                <p>The run dies with the process. You start from call one.</p>
+                <p>
+                  The tool throws, the worker falls over, and your orchestrator
+                  dutifully restarts it with an empty memory. The run is gone,
+                  and so are the eight model calls that came before it.
+                </p>
               </div>
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  The next worker connects and resumes from the last checkpoint. Call
-                  nine picks up where call eight left off.
+                  The run lives in the log, not in the process. The step is
+                  re-queued for the next worker that connects, and nothing before
+                  it runs again. Fix the tool, redeploy, and the run continues
+                  from that step. If it has already failed, fork it from there.
                 </p>
               </div>
             </div>
@@ -248,21 +254,24 @@
           <article class="scenario">
             <header class="scenario__head">
               <span class="scenario__num">02</span>
-              <h3 class="scenario__title">A tool times out and retries.</h3>
+              <h3 class="scenario__title">A payment is retried.</h3>
             </header>
             <div class="scenario__cols">
               <div class="scenario__col" data-state="without">
                 <div class="scenario__label">Without Norns</div>
                 <p>
-                  The payment tool retries naïvely. You charge the customer twice and
-                  explain it to support tomorrow.
+                  The call times out, the client retries, the tool runs again.
+                  You charge the customer twice and explain it to support
+                  tomorrow.
                 </p>
               </div>
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  Retries are keyed by run and step. The charge is recorded once; the
-                  retry returns the original result.
+                  Every tool call carries a key made from the run, the step, and
+                  the call. The retry reaches the worker with the same key it had
+                  the first time; the worker sees it has already done that one
+                  and hands back the first result. Charged once.
                 </p>
               </div>
             </div>
@@ -284,79 +293,69 @@
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  Runs are persisted in the orchestrator. New workers pick them up on
-                  the next version and carry them home.
+                  The run is in the orchestrator, not the worker. The new
+                  version's workers pick it up where the old ones left it.
+                  Deploy whenever you like.
                 </p>
               </div>
             </div>
           </article>
         </div>
 
-        <ul class="pillars" role="list">
-          <li>
-            <svg
-              class="pillar__icon"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M2 8h3M7 8h2M11 8h3" />
-              <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none" />
-            </svg>
-            <span>Checkpointed progress</span>
-          </li>
-          <li>
-            <svg
-              class="pillar__icon"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M13.2 8a5.2 5.2 0 1 1-1.6-3.7" />
-              <path d="M11 2.2v3h3" />
-            </svg>
-            <span>Deterministic retries</span>
-          </li>
-          <li>
-            <svg
-              class="pillar__icon"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect x="3" y="7" width="10" height="7" rx="1.4" />
-              <path d="M5.5 7V4.6a2.5 2.5 0 0 1 5 0V7" />
-            </svg>
-            <span>Idempotent side effects</span>
-          </li>
-          <li>
-            <svg
-              class="pillar__icon"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M3 4h10M3 8h10M3 12h7" />
-            </svg>
-            <span>Inspectable event logs</span>
-          </li>
-        </ul>
+      </section>
+
+      <section class="ledger-section" aria-labelledby="ledger-heading">
+        <div class="section-header">
+          <div class="section-header__eyebrow">The log</div>
+          <h2 id="ledger-heading" class="section-header__title">
+            Every run leaves a record of the work.
+          </h2>
+          <p class="section-header__lede">
+            Each prompt, response, tool call and result, with timestamps,
+            tokens and cost, appended as it happens. Surviving a crash is the
+            least of what it is for.
+          </p>
+        </div>
+
+        <dl class="ledger">
+          <div class="ledger__item">
+            <dt>Audit it.</dt>
+            <dd>
+              <code>nornsctl runs events 189 --json</code> is the whole run,
+              step by step: what the model saw, what it decided, what the tool
+              returned.
+            </dd>
+          </div>
+          <div class="ledger__item">
+            <dt>Evaluate it.</dt>
+            <dd>
+              Real production runs, not synthetic ones. Pull the logs over the
+              API and run your evals against what actually happened.
+            </dd>
+          </div>
+          <div class="ledger__item">
+            <dt>Fork it.</dt>
+            <dd>
+              <code>POST /runs/:id/fork</code> from any step, with a different
+              model or system prompt if you like. Same history up to that
+              point; compare the two logs.
+            </dd>
+          </div>
+          <div class="ledger__item">
+            <dt>Retry it.</dt>
+            <dd>
+              A failed run can be sent again from its original message, against
+              the fixed tool or the new prompt.
+            </dd>
+          </div>
+          <div class="ledger__item">
+            <dt>Price it.</dt>
+            <dd>
+              Every run knows its own token counts and cost, the sub-agents it
+              launched included.
+            </dd>
+          </div>
+        </dl>
       </section>
 
       <section class="reference" aria-labelledby="reference-heading">
