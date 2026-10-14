@@ -209,10 +209,9 @@
 <div class="term-line"><span class="tm-muted">7</span>  <span class="tm-dim">06:00:11</span>  <span class="tm-ok">run_completed</span></div>
           </div>
           <figcaption class="terminal__foot">
-            A real run, 2026-10-04 UTC: a probe message sent to Mimir while
-            its worker was offline. Core timed the first dispatch out at five
-            minutes, queued it again, and the run finished when a worker came
-            back. Nobody retried anything.
+            A real run from 2026-10-04: a test message sent to Mimir while
+            its worker was offline. Norns held it, and finished the run when
+            a worker came back.
           </figcaption>
         </figure>
       </section>
