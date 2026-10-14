@@ -242,10 +242,8 @@
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  The run lives in the log, not in the process. The step is
-                  re-queued for the next worker that connects, and nothing before
-                  it runs again. Fix the tool, redeploy, and the run continues
-                  from that step. If it has already failed, fork it from there.
+                  The run's progress is saved outside the worker. Fix the tool,
+                  redeploy, and the run picks up at that step.
                 </p>
               </div>
             </div>
@@ -268,10 +266,9 @@
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  Every tool call carries a key made from the run, the step, and
-                  the call. The retry reaches the worker with the same key it had
-                  the first time; the worker sees it has already done that one
-                  and hands back the first result. Charged once.
+                  The retry carries the same key as the first call. The worker
+                  recognizes it and returns the original result instead of
+                  charging again.
                 </p>
               </div>
             </div>
@@ -293,9 +290,7 @@
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  The run is in the orchestrator, not the worker. The new
-                  version's workers pick it up where the old ones left it.
-                  Deploy whenever you like.
+                  The new workers pick the run up where the old ones left it.
                 </p>
               </div>
             </div>
