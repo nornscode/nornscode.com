@@ -2,11 +2,11 @@
 
 > Durability for AI agents. An open-source runtime that keeps agent runs alive across crashes, retries, and deploys, without ever touching your API keys or data.
 
-From simple loops to complex workflows, Norns makes agents durable. Workers execute LLM calls and tools in your own infrastructure; the orchestrator persists run state so in-flight work survives worker crashes, resumes after deploys, and retries never produce duplicate side effects.
+Agents are loops of LLM calls and tool calls that run long enough for the process underneath them to die. Norns writes each step to an append-only log as it happens; workers execute LLM calls and tools in your own infrastructure, and when one dies the next reads the log and continues from the last step, not the first. Retries are keyed so side effects happen once.
 
 Core primitives: Agents (definition of a model, system prompt, tools, and mode), Runs (single execution instances), Event logs (append-only timelines of requests, results, failures, retries), Checkpoints (durable state snapshots used for resume and replay), and Workers (processes that execute LLM or tool tasks).
 
-Licensed MIT. Version v0.x — the runtime, SDKs, and CLI are in active development; APIs are stabilizing but not yet stable.
+Licensed MIT. Version v0.7. The reference application, Mimir (a Slack bot), has run on the hosted instance since April 2026.
 
 ## Project
 
