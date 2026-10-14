@@ -6,7 +6,7 @@
     <title>Norns — Durability for agents</title>
     <meta
       name="description"
-      content="Norns is a durable runtime for AI agents. From simple loops to complex workflows — checkpointed, idempotent, resumable across deploys, while your workers and keys stay in your infrastructure."
+      content="Norns is a durable runtime for AI agents. Every step of a run is written down as it happens, so when the process dies the next worker continues from the last step, not the first. Workers and keys stay in your infrastructure."
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
@@ -28,6 +28,13 @@
       })();
     </script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+    />
+
     <link rel="canonical" href="https://nornscode.com/" />
 
     <meta property="og:type" content="website" />
@@ -37,7 +44,7 @@
     <meta property="og:title" content="Norns — Durability for agents" />
     <meta
       property="og:description"
-      content="Durable runtime for AI agents. From simple loops to complex workflows — checkpointed, idempotent, resumable across deploys."
+      content="Durable runtime for AI agents. Every step is written down as it happens; when the process dies, the next worker continues from the last step, not the first."
     />
     <meta property="og:image" content="https://nornscode.com/assets/og.png" />
     <meta property="og:image:secure_url" content="https://nornscode.com/assets/og.png" />
@@ -53,7 +60,7 @@
     <meta name="twitter:title" content="Norns — Durability for agents" />
     <meta
       name="twitter:description"
-      content="Durable runtime for AI agents. From simple loops to complex workflows — checkpointed, idempotent, resumable across deploys."
+      content="Durable runtime for AI agents. Every step is written down as it happens; when the process dies, the next worker continues from the last step, not the first."
     />
     <meta name="twitter:image" content="https://nornscode.com/assets/og.png" />
     <meta
@@ -145,13 +152,19 @@
         <div class="hero__content">
           <div class="hero__eyebrow">
             <span class="dot"></span>
-            open source · MIT · v0.x
+            open source · MIT · v0.7
           </div>
           <h1 class="hero__title">Durability for agents.</h1>
           <p class="hero__lede">
-            From simple loops to complex workflows, Norns makes agents durable:
-            checkpointed, idempotent, resumable across deploys. Your workers
-            and keys stay in your infrastructure.
+            Agents are loops of LLM calls and tool calls, and sometimes they
+            run long enough for the process underneath them to die. Norns keeps
+            track of each agent's progress, allowing new workers to pick up where
+            crashed ones left off. Your code and your keys stay on your workers.
+          </p>
+
+          <p class="hero__myth">
+            Named for the three who sit beneath the world tree and spin every
+            thread of fate.
           </p>
 
           <div class="install">
@@ -179,22 +192,34 @@
           </div>
         </div>
 
-        <div class="terminal" aria-hidden="true">
+        <figure class="terminal">
           <div class="terminal__chrome">
-            <span class="terminal__dot" data-color="r"></span>
-            <span class="terminal__dot" data-color="y"></span>
-            <span class="terminal__dot" data-color="g"></span>
-            <span class="terminal__title">run_01hf · event log</span>
+            <span class="terminal__cmd"><span class="tm-prompt">$</span>nornsctl runs events 189</span>
+            <span class="terminal__title">cloud.nornscode.com</span>
           </div>
-          <div class="terminal__body" id="terminal"><!-- Animated lines inserted by JS --></div>
-        </div>
+          <div class="terminal__body is-static">
+<div class="term-line"><span class="tm-muted">1</span>  <span class="tm-dim">04:08:20</span>  <span class="tm-ok">run_started</span></div>
+<div class="term-line"><span class="tm-muted">2</span>  <span class="tm-dim">04:08:20</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6 · step 1</div>
+<div class="term-line"><span class="tm-muted">3</span>  <span class="tm-dim">04:13:20</span>  <span class="tm-warn">retry</span>          <span class="tm-err">timeout</span> · attempt 1 · transient</div>
+<div class="term-line">              <span class="tm-muted">"LLM task timed out — worker may have disconnected"</span></div>
+<div class="term-line"><span class="tm-muted">4</span>  <span class="tm-dim">04:13:21</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6 · step 1</div>
+<div class="term-line term-line--note">              — no worker for 1 h 47 min —</div>
+<div class="term-line"><span class="tm-muted">5</span>  <span class="tm-dim">06:00:07</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6 · step 1</div>
+<div class="term-line"><span class="tm-muted">6</span>  <span class="tm-dim">06:00:11</span>  <span class="tm-accent">llm_response</span>   1,980 in · 5 out</div>
+<div class="term-line"><span class="tm-muted">7</span>  <span class="tm-dim">06:00:11</span>  <span class="tm-ok">run_completed</span></div>
+          </div>
+          <figcaption class="terminal__foot">
+            A real run from 2026-10-04: a test message sent to Mimir while
+            its worker was offline. Norns held it, and finished the run when
+            a worker came back.
+          </figcaption>
+        </figure>
       </section>
 
       <section class="scenarios" aria-labelledby="scenarios-heading">
         <div class="section-header">
-          <div class="section-header__eyebrow">Why it matters</div>
           <h2 id="scenarios-heading" class="section-header__title">
-            The things that break agents in production.
+            The three ways a run dies in production.
           </h2>
         </div>
 
@@ -202,18 +227,22 @@
           <article class="scenario">
             <header class="scenario__head">
               <span class="scenario__num">01</span>
-              <h3 class="scenario__title">The worker crashes mid-run.</h3>
+              <h3 class="scenario__title">A buggy tool.</h3>
             </header>
             <div class="scenario__cols">
               <div class="scenario__col" data-state="without">
                 <div class="scenario__label">Without Norns</div>
-                <p>The run dies with the process. You start from call one.</p>
+                <p>
+                  The tool errors, the worker fails, and your orchestrator
+                  dutifully restarts it with an empty memory. The run is gone,
+                  and so are the eight model calls that came before it.
+                </p>
               </div>
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  The next worker connects and resumes from the last checkpoint. Call
-                  nine picks up where call eight left off.
+                  The run's progress is saved outside the worker. Fix the tool,
+                  redeploy, and the run picks up at that step.
                 </p>
               </div>
             </div>
@@ -222,21 +251,23 @@
           <article class="scenario">
             <header class="scenario__head">
               <span class="scenario__num">02</span>
-              <h3 class="scenario__title">A tool times out and retries.</h3>
+              <h3 class="scenario__title">Timeouts and network errors.</h3>
             </header>
             <div class="scenario__cols">
               <div class="scenario__col" data-state="without">
                 <div class="scenario__label">Without Norns</div>
                 <p>
-                  The payment tool retries naïvely. You charge the customer twice and
-                  explain it to support tomorrow.
+                  The call times out, the client retries, the tool runs again.
+                  You charge the customer twice and explain it to support
+                  tomorrow.
                 </p>
               </div>
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  Retries are keyed by run and step. The charge is recorded once; the
-                  retry returns the original result.
+                  The retry carries the same key as the first call. The worker
+                  recognizes it and returns the original result instead of
+                  charging again.
                 </p>
               </div>
             </div>
@@ -258,93 +289,73 @@
               <div class="scenario__col" data-state="with">
                 <div class="scenario__label">With Norns</div>
                 <p>
-                  Runs are persisted in the orchestrator. New workers pick them up on
-                  the next version and carry them home.
+                  The new workers pick the run up where the old ones left it.
                 </p>
               </div>
             </div>
           </article>
         </div>
 
-        <ul class="pillars" role="list">
-          <li>
-            <svg
-              class="pillar__icon"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M2 8h3M7 8h2M11 8h3" />
-              <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none" />
-            </svg>
-            <span>Checkpointed progress</span>
-          </li>
-          <li>
-            <svg
-              class="pillar__icon"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M13.2 8a5.2 5.2 0 1 1-1.6-3.7" />
-              <path d="M11 2.2v3h3" />
-            </svg>
-            <span>Deterministic retries</span>
-          </li>
-          <li>
-            <svg
-              class="pillar__icon"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect x="3" y="7" width="10" height="7" rx="1.4" />
-              <path d="M5.5 7V4.6a2.5 2.5 0 0 1 5 0V7" />
-            </svg>
-            <span>Idempotent side effects</span>
-          </li>
-          <li>
-            <svg
-              class="pillar__icon"
-              aria-hidden="true"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M3 4h10M3 8h10M3 12h7" />
-            </svg>
-            <span>Inspectable event logs</span>
-          </li>
-        </ul>
+      </section>
+
+      <section class="ledger-section" aria-labelledby="ledger-heading">
+        <div class="section-header">
+          <h2 id="ledger-heading" class="section-header__title">
+            Every run leaves a record of the work.
+          </h2>
+          <p class="section-header__lede">
+            Each prompt, response, tool call and result, with timestamps,
+            tokens and cost, appended as it happens.
+          </p>
+        </div>
+
+        <dl class="ledger">
+          <div class="ledger__item">
+            <dt>Audit</dt>
+            <dd>
+              <code>nornsctl runs events 189 --json</code> is the whole run,
+              step by step: what the model saw, what it decided, what the tool
+              returned.
+            </dd>
+          </div>
+          <div class="ledger__item">
+            <dt>Evals</dt>
+            <dd>
+              Real production runs, not synthetic ones. Pull the logs over the
+              API and run your evals against what actually happened.
+            </dd>
+          </div>
+          <div class="ledger__item">
+            <dt>Forks and retries</dt>
+            <dd>
+              <code>POST /runs/:id/fork</code> from any step, with a different
+              model or system prompt if you like, and compare the two logs. Or
+              send a failed run again from the top.
+            </dd>
+          </div>
+          <div class="ledger__item">
+            <dt>Cost</dt>
+            <dd>
+              Every run knows its own token counts and cost, the sub-agents it
+              launched included.
+            </dd>
+          </div>
+        </dl>
       </section>
 
       <section class="reference" aria-labelledby="reference-heading">
         <div class="section-header">
-          <div class="section-header__eyebrow">Reference implementation</div>
           <h2 id="reference-heading" class="section-header__title">
-            See it in a real app — meet Mimir.
+            It has been running Mimir since April.
           </h2>
           <p class="section-header__lede">
-            Mimir is a Slack bot that answers questions about your project by
-            searching the GitHub repos and pages you connect. It's built on
-            Norns, so every thread is a durable run: state lives in Postgres,
-            and conversations resume from the last checkpoint across crashes
-            and redeploys.
+            Mimir is a Slack bot that answers questions about a project from
+            the GitHub repos and pages you point it at. Every Slack thread is
+            a Norns run. Since 2026-04-15 that is 62 threads and 130 runs,
+            with the runtime underneath it redeployed 104 times and Mimir
+            itself 44. Eleven runs failed, each one a provider or request
+            error you can read in its event log; none was lost to a worker
+            going away.
           </p>
         </div>
 
@@ -356,13 +367,12 @@
 
       <section class="quickstart" aria-labelledby="quickstart-heading">
         <div class="section-header">
-          <div class="section-header__eyebrow">Quickstart</div>
           <h2 id="quickstart-heading" class="section-header__title">
             From zero to a running agent.
           </h2>
           <p class="section-header__lede">
-            Workers run in your own infrastructure. Norns never touches your API keys
-            or data — it coordinates runs, retries, checkpoints, and event timelines.
+            Workers run wherever you run them. The orchestrator never sees an
+            API key; it holds the log, dispatches the next step, and waits.
           </p>
         </div>
 
