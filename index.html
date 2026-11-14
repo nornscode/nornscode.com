@@ -102,7 +102,6 @@
         </a>
         <nav class="nav__links" aria-label="Resources">
           <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture</a>
-          <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">api</a>
           <a href="/mimir/">mimir</a>
           <a class="nav__github" href="https://github.com/nornscode/norns">github</a>
           <button
@@ -304,136 +303,39 @@
         <div class="wrap section__inner">
           <div class="section__label">Agent process</div>
           <div>
-            <h2 id="states-heading" class="section__title">States</h2>
-            <p class="section__lede">
-              The process is never blocked. It answers status queries in
-              every state, and the state is derived from the log, so a
-              crashed process comes back in the state it left.
-            </p>
+            <h2 id="states-heading" class="section__title">One process per agent, state from the log</h2>
+            <div class="prose">
+              <p>
+                Each agent is a GenServer that moves between a small set of
+                states. It is never blocked: it answers status queries in
+                every state, and because the state is derived from the event
+                log rather than held in memory, a process that crashes comes
+                back where it was. A run parked on a question re-parks on
+                the same question. Completed steps are not run again.
+              </p>
+            </div>
 
-            <div class="table-wrap">
+            <div class="table-wrap" style="margin-top: 1.75rem">
               <table class="spec">
-                <thead>
-                  <tr><th>state</th><th>meaning</th><th>leaves when</th></tr>
-                </thead>
                 <tbody>
-                  <tr><td class="mono">idle</td><td>no run in progress</td><td>a message, trigger, or hook starts a run</td></tr>
-                  <tr><td class="mono">running</td><td>driving the loop between dispatches</td><td>the next task is dispatched</td></tr>
-                  <tr><td class="mono">awaiting_llm</td><td>an <code>llm_task</code> is held by a worker</td><td>the worker reports, or times out and the task is re-dispatched</td></tr>
-                  <tr><td class="mono">awaiting_tools</td><td>one or more <code>tool_task</code>s are held by workers</td><td>every result is in, or a worker is lost and the calls are re-dispatched</td></tr>
-                  <tr><td class="mono">waiting_timer</td><td>parked on the <code>wait</code> builtin</td><td>the timer fires</td></tr>
-                  <tr><td class="mono">waiting</td><td>parked on <code>ask_human</code>, indefinitely</td><td><code>POST /runs/:id/reply</code>, or the agent's next message</td></tr>
+                  <tr><td class="mono">idle</td><td>no run in progress</td></tr>
+                  <tr><td class="mono">running</td><td>between dispatches</td></tr>
+                  <tr><td class="mono">awaiting_llm</td><td>a worker holds the LLM task</td></tr>
+                  <tr><td class="mono">awaiting_tools</td><td>workers hold one or more tool tasks</td></tr>
+                  <tr><td class="mono">waiting_timer</td><td>parked on <code>wait</code> until a timer fires</td></tr>
+                  <tr><td class="mono">waiting</td><td>parked on <code>ask_human</code> until a person answers, however long that takes</td></tr>
                 </tbody>
               </table>
             </div>
-            <p class="block__note">
-              A run parked on a question re-parks on the same question after
-              a restart, because the pause is re-derived from the still
-              pending <code>ask_human</code> call. The run JSON carries
-              <code>status: "waiting"</code> and a <code>waiting_for</code>
-              object, so a client can tell working from waiting without
-              reading the log.
-            </p>
 
-            <div class="prose" style="margin-top: 2rem">
+            <div class="prose" style="margin-top: 1.75rem">
               <p>
-                An agent runs in task mode, where each message starts a
-                fresh run with no history, or conversation mode, where
-                messages append to a persistent conversation keyed by an
-                external id such as a Slack thread. One agent serves many
-                conversations concurrently, each in its own process, and a
-                sliding window with a compaction summary bounds context
-                growth.
-              </p>
-              <p>
-                Four tools are resolved by the orchestrator itself and
-                cannot be shadowed by a worker: <code>wait</code>,
-                <code>ask_human</code>, <code>launch_agent</code> and
-                <code>list_agents</code>. Sub-agent launches are authorized
-                server-side by allowlist and nesting depth, every decision
-                is logged, and a resumed parent reattaches to its in-flight
-                child rather than launching it again. Everything else is a
-                worker tool.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="protocol-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">Worker protocol</div>
-          <div>
-            <h2 id="protocol-heading" class="section__title">On the wire</h2>
-            <p class="section__lede">
-              Workers join <code>worker:lobby</code> with a registration and
-              then receive task pushes. The format is provider-neutral; the
-              reference implementations are the
-              <a href="https://github.com/nornscode/norns-sdk-python">Python</a>
-              and <a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a> SDKs.
-            </p>
-
-            <div class="code-grid">
-              <figure class="code">
-                <figcaption class="code__cap"><span>registration</span><span>worker → orchestrator</span></figcaption>
-                <pre class="code__body"><code>{
-  <span class="cb-k">"worker_id"</span>:    <span class="cb-s">"docs-worker"</span>,
-  <span class="cb-k">"capabilities"</span>: [<span class="cb-s">"llm"</span>, <span class="cb-s">"tools"</span>],
-  <span class="cb-k">"features"</span>:     [<span class="cb-s">"message_cache"</span>],
-  <span class="cb-k">"tools"</span>: [
-    {
-      <span class="cb-k">"name"</span>: <span class="cb-s">"search"</span>,
-      <span class="cb-k">"description"</span>: <span class="cb-s">"..."</span>,
-      <span class="cb-k">"input_schema"</span>: { <span class="cb-c">...JSON Schema...</span> }
-    }
-  ]
-}</code></pre>
-              </figure>
-
-              <figure class="code">
-                <figcaption class="code__cap"><span>llm result</span><span>worker → orchestrator</span></figcaption>
-                <pre class="code__body"><code>{
-  <span class="cb-k">"task_id"</span>:       <span class="cb-s">"..."</span>,
-  <span class="cb-k">"status"</span>:        <span class="cb-s">"ok"</span>,
-  <span class="cb-k">"content"</span>:       <span class="cb-c">...</span>,
-  <span class="cb-k">"tool_calls"</span>:    [ <span class="cb-c">...</span> ],
-  <span class="cb-k">"finish_reason"</span>: <span class="cb-s">"tool_use"</span>,
-  <span class="cb-k">"model"</span>:         <span class="cb-s">"claude-sonnet-4-6"</span>,
-  <span class="cb-k">"usage"</span>: {
-    <span class="cb-k">"input_tokens"</span>:      1980,
-    <span class="cb-k">"output_tokens"</span>:     5,
-    <span class="cb-k">"cache_read_tokens"</span>: 1800
-  }
-}</code></pre>
-              </figure>
-            </div>
-
-            <div class="block">
-              <div class="block__title">messages</div>
-              <div class="table-wrap">
-                <table class="spec">
-                  <thead>
-                    <tr><th>direction</th><th>event</th><th>payload</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>server → worker</td><td class="mono">llm_task</td><td>model, system_prompt, summary, date, messages or messages_delta, tools, context_policy</td></tr>
-                    <tr><td>worker → server</td><td class="mono">tool_result</td><td>task_id, status, content or tool_calls, finish_reason, usage, model, final_output</td></tr>
-                    <tr><td>server → worker</td><td class="mono">tool_task</td><td>task_id, tool_name, input</td></tr>
-                    <tr><td>worker → server</td><td class="mono">tool_result</td><td>task_id, status, result or error</td></tr>
-                    <tr><td>worker → server</td><td class="mono">drain</td><td>stop dispatching; in-flight tasks finish, then the worker leaves</td></tr>
-                    <tr><td>worker → server</td><td class="mono">register_port</td><td>internal_port, name, protocol, url. Gard workers only.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="block__note">
-                A worker that joined with <code>message_cache</code> keeps
-                the last message list it was sent per run and receives
-                <code>messages_delta: {base_count, drop, append}</code> on
-                later steps instead of the full history. A miss is answered
-                with <code>message_cache_miss</code> and the full list is
-                resent at the same step without counting a retry. Unknown
-                feature names are ignored, so a newer SDK joins an older
-                core.
+                Four tools are resolved by the orchestrator itself rather
+                than a worker: <code>wait</code>, <code>ask_human</code>,
+                <code>launch_agent</code> and <code>list_agents</code>. They
+                are the primitives for time, people, and other agents, and
+                they live in the orchestrator because each one is a reason
+                for a run to outlast a process.
               </p>
             </div>
           </div>
@@ -444,116 +346,38 @@
         <div class="wrap section__inner">
           <div class="section__label">Event log</div>
           <div>
-            <h2 id="log-heading" class="section__title">What is recorded</h2>
-            <p class="section__lede">
-              Every event is validated against a schema before it is written
-              and carries <code>schema_version: 1</code>. Run state is a
-              fold over this table. Resume, fork, cost, and the run summary
-              all read from it and nothing else.
-            </p>
-
-            <div class="table-wrap">
-              <table class="spec">
-                <thead>
-                  <tr><th>group</th><th>events</th><th>notes</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>lifecycle</td><td class="mono">run_started, run_completed, run_failed</td><td></td></tr>
-                  <tr><td>llm</td><td class="mono">llm_request, llm_response</td><td>request records the tool names offered; response records usage and the serving model. Full history only on the first request; later ones record a count.</td></tr>
-                  <tr><td>tools</td><td class="mono">tool_call, tool_result, tool_duplicate</td><td><code>tool_duplicate</code> is a worker declining a call it already ran under the same idempotency key</td></tr>
-                  <tr><td>checkpoint</td><td class="mono">checkpoint_saved, context_compacted</td><td>markers, not copies: step, message count, compaction summary</td></tr>
-                  <tr><td>human</td><td class="mono">waiting_for_user, user_response</td><td></td></tr>
-                  <tr><td>sub-agents</td><td class="mono">subagent_launched, subagent_launch_allowed, subagent_launch_denied, subagent_list_allowed, subagent_list_denied</td><td>denials carry a reason: <code>disabled</code>, <code>not_allowlisted</code>, <code>max_depth</code>, <code>list_agents_disabled</code></td></tr>
-                  <tr><td>retry</td><td class="mono">retry</td><td>attempt, error class, backoff</td></tr>
-                </tbody>
-              </table>
+            <h2 id="log-heading" class="section__title">Append-only, versioned, the only source of truth</h2>
+            <div class="prose">
+              <p>
+                Every LLM request and response, tool call and result,
+                checkpoint, retry, human question and answer, and sub-agent
+                launch is a validated event in Postgres. Run state is a fold
+                over that table. Resume, fork, cost accounting and the run
+                summary all read from it and nothing else, so there is no
+                second copy of the truth to drift.
+              </p>
+              <p>
+                Delivery is at-least-once with duplicate suppression. A
+                side-effecting tool call carries a deterministic idempotency
+                key, issued by the orchestrator and recorded in the log.
+                When a worker is lost, the call is dispatched again under
+                the same key, and a worker that already ran it reports a
+                duplicate instead of running it twice. Exactly-once requires
+                the destination to dedupe on that key; the runtime does not
+                pretend otherwise.
+              </p>
+              <p>
+                Transient failures retry with backoff; rate limits retry
+                longer; validation and policy failures are terminal. Token
+                usage and the serving model are stored per call, and cost is
+                priced when a run is read, so a rate change never rewrites
+                history.
+              </p>
             </div>
-
-            <div class="block">
-              <div class="block__title">failure classes and retry policy</div>
-              <div class="table-wrap">
-                <table class="spec">
-                  <thead>
-                    <tr><th>class</th><th>example</th><th>policy</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr><td class="mono">transient</td><td>timeout, worker disconnect</td><td>3 attempts, exponential backoff</td></tr>
-                    <tr><td class="mono">external_dependency</td><td>rate limit, upstream down</td><td>10 attempts, linear backoff</td></tr>
-                    <tr><td class="mono">validation</td><td>invalid payload</td><td>terminal</td></tr>
-                    <tr><td class="mono">policy</td><td>denied launch, cancelled</td><td>terminal</td></tr>
-                    <tr><td class="mono">internal</td><td>unexpected error</td><td>terminal</td></tr>
-                  </tbody>
-                </table>
-              </div>
+            <div class="links">
+              <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture.md</a>
+              <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">openapi.yaml</a>
             </div>
-
-            <div class="block">
-              <div class="block__title">delivery guarantee</div>
-              <div class="prose">
-                <p>
-                  At-least-once with duplicate suppression. A side-effecting
-                  tool call carries a deterministic idempotency key issued by
-                  the orchestrator and recorded in the log. When a worker is
-                  lost, the call is re-dispatched with the same task id and
-                  key; a worker that already ran it reports
-                  <code>tool_duplicate</code> instead of running it twice.
-                  Exactly-once requires the destination to dedupe on that
-                  key.
-                </p>
-                <p>
-                  The alternative, handing the model a failed result and
-                  letting it retry, produces a new call at a new step with a
-                  new key that no worker can recognise. That is how the side
-                  effect happens twice. Norns does not do that.
-                </p>
-              </div>
-            </div>
-
-            <div class="block">
-              <div class="block__title">cost</div>
-              <div class="prose">
-                <p>
-                  Tokens are stored per call: input, output, and cache read
-                  and write when the provider reports them, with the model
-                  that actually served the request. Dollars are not stored.
-                  Cost is computed when a run is read, from a rate table
-                  operators extend in config, so a price change never
-                  rewrites history and a model with no price is reported as
-                  unpriced rather than free.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="api-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">HTTP API</div>
-          <div>
-            <h2 id="api-heading" class="section__title">Driving a run</h2>
-            <p class="section__lede">
-              Bearer-token authenticated under <code>/api/v1</code>. A
-              client needs five calls; the rest of the surface is in
-              <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">openapi.yaml</a>.
-            </p>
-
-            <div class="table-wrap">
-              <table class="spec">
-                <tbody>
-                  <tr><td class="mono">POST /agents/:id/messages</td><td>send a message. Starts a run, or answers a parked one.</td></tr>
-                  <tr><td class="mono">GET  /runs/:id</td><td>status, lineage, <code>waiting_for</code>, cost</td></tr>
-                  <tr><td class="mono">GET  /runs/:id/events</td><td>the full log</td></tr>
-                  <tr><td class="mono">GET  /runs/:id/summary</td><td>a fixed-size account of the run, with signals such as <code>loop</code> and <code>retry_storm</code></td></tr>
-                  <tr><td class="mono">POST /runs/:id/fork</td><td>a new run from any step, optionally on a different model or system prompt</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <p class="block__note">
-              Run webhooks deliver a signed POST when a run parks, completes,
-              or fails. Cron triggers and inbound webhooks start runs without
-              a client.
-            </p>
           </div>
         </div>
       </section>
@@ -565,20 +389,17 @@
             <h2 id="record-heading" class="section__title">Hosted instance, 2026-04-15 to 2026-10-04</h2>
             <p class="section__lede">
               Mimir is a Slack bot that answers questions about a project
-              from the GitHub repositories and pages it is pointed at. Each
-              Slack thread is a Norns run in conversation mode. It is the
-              reference application and has run on the hosted instance since
-              April.
+              from the repositories and pages it is pointed at. Each thread
+              is a Norns run. It is the reference application and has run on
+              the hosted instance since April.
             </p>
 
             <div class="table-wrap">
               <table class="spec">
                 <tbody>
-                  <tr><td>Slack threads</td><td class="num">62</td></tr>
                   <tr><td>runs</td><td class="num">130</td></tr>
                   <tr><td>redeploys of the runtime during the period</td><td class="num">104</td></tr>
-                  <tr><td>redeploys of Mimir</td><td class="num">44</td></tr>
-                  <tr><td>runs failed, each on a provider or request error recorded in its log</td><td class="num">11</td></tr>
+                  <tr><td>runs failed on a provider or request error, each recorded in its log</td><td class="num">11</td></tr>
                   <tr><td>runs lost to a worker or orchestrator going away</td><td class="num">0</td></tr>
                 </tbody>
               </table>
@@ -598,10 +419,8 @@
           <div>
             <h2 id="setup-heading" class="section__title">Orchestrator, scaffold, worker</h2>
             <p class="section__lede">
-              <code>nornsctl dev</code> starts a local orchestrator with
-              Postgres. <code>nornsctl new</code> scaffolds an agent
-              project with a Python worker. Point the worker at the
-              orchestrator and send it a message.
+              A local orchestrator with Postgres, a scaffolded agent project,
+              and a Python worker connected to it.
             </p>
 
             <div class="code-grid">
@@ -620,18 +439,6 @@
     <span class="cb-s">"Where is my order?"</span>,
     wait=True,
 )</code></pre>
-              </figure>
-            </div>
-
-            <div class="block">
-              <div class="block__title">inspect</div>
-              <figure class="code">
-                <figcaption class="code__cap"><span>nornsctl</span></figcaption>
-                <pre class="code__body"><code><span class="cb-prompt">$</span>nornsctl agents status support-bot      <span class="cb-c"># idle | running | awaiting_llm | awaiting_tools | waiting</span>
-<span class="cb-prompt">$</span>nornsctl runs show 189                  <span class="cb-c"># status, failure inspector, cost</span>
-<span class="cb-prompt">$</span>nornsctl runs events 189 --json         <span class="cb-c"># the log</span>
-<span class="cb-prompt">$</span>nornsctl runs fork 189 --step 4         <span class="cb-c"># new run from step 4</span>
-<span class="cb-prompt">$</span>nornsctl workers list                   <span class="cb-c"># connected and asleep workers, their tools</span></code></pre>
               </figure>
             </div>
 
