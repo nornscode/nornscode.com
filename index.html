@@ -177,10 +177,9 @@
 <span class="tm-muted">6</span>    <span class="tm-dim">06:00:11</span>  <span class="tm-accent">llm_response</span>   1,980 in  5 out
 <span class="tm-muted">7</span>    <span class="tm-dim">06:00:11</span>  <span class="tm-ok">run_completed</span></pre>
             <figcaption class="log__foot">
-              Run 189 on the hosted instance, 2026-10-04. The LLM task timed
-              out, no worker was connected for 1 h 47 min, and the same step
-              was dispatched again when one registered. Nothing was retried
-              by hand.
+              Run 189, on 2026-10-04. No worker was connected for 1 h 47
+              min. Once a worker registered, the same step was dispatched
+              again to the LLM and the agent kept going.
             </figcaption>
           </figure>
         </div>
