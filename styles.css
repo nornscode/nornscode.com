@@ -298,6 +298,21 @@ li code {
 
 .install {
   max-width: 34rem;
+  margin-top: 0.5rem;
+}
+
+.strip {
+  border-top: 1px solid var(--line);
+}
+.strip__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 2.25rem;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--fg-3);
 }
 
 .install__row {
@@ -473,10 +488,6 @@ li code {
   color: var(--fg-3);
   padding-top: 0.3rem;
 }
-.section__label span {
-  display: block;
-  color: var(--fg-4);
-}
 
 .section__title {
   font-size: 1.35rem;
@@ -614,25 +625,64 @@ li code {
 
 /* --------------------------- Diagram --------------------------- */
 
+.figure {
+  margin-top: 2.5rem;
+}
+
 .diagram {
-  margin: 0 0 2rem;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--line);
-  background: var(--bg-1);
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  line-height: 1.6;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 55rem;
   color: var(--fg-2);
-  overflow-x: auto;
-  white-space: pre;
+  font-family: var(--mono);
+  font-size: 12.5px;
 }
-.diagram b {
+.diagram text {
+  fill: var(--fg-2);
+}
+.diagram .dg-title {
+  fill: var(--fg);
   font-weight: 500;
-  color: var(--fg);
 }
-.diagram i {
-  font-style: normal;
-  color: var(--fg-4);
+.diagram .dg-dim {
+  fill: var(--fg-3);
+}
+.diagram rect {
+  fill: var(--bg-1);
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+.diagram rect.dg-inner {
+  fill: var(--bg);
+  stroke: var(--line);
+}
+.diagram .dg-arrow line {
+  stroke: currentColor;
+  stroke-width: 1;
+}
+.diagram .dg-lost rect {
+  stroke-dasharray: 4 4;
+  stroke: var(--line-2);
+}
+.diagram .dg-lost text,
+.diagram .dg-lost .dg-title {
+  fill: var(--fg-4);
+}
+.diagram .dg-lost line {
+  stroke: var(--fg-4);
+  stroke-dasharray: 4 4;
+}
+.diagram .dg-lost marker path {
+  stroke: var(--fg-4);
+}
+
+.figure__cap {
+  margin-top: 0.9rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--fg-3);
+  max-width: 64ch;
 }
 
 /* --------------------------- Code --------------------------- */
@@ -787,10 +837,6 @@ li code {
   .footer__inner {
     grid-template-columns: minmax(0, 1fr);
     gap: 1rem 0;
-  }
-  .section__label {
-    display: flex;
-    gap: 0.75rem;
   }
   .code-grid {
     grid-template-columns: minmax(0, 1fr);
