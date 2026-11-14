@@ -274,20 +274,15 @@
             <h2 id="log-heading" class="section__title">State lives in the log, not the process</h2>
             <div class="prose">
               <p>
-                Every step of a run is an event in Postgres: each model
-                call, each tool call and its result, each question put to a
-                person and each answer. An agent's state is derived from
-                that log, so a process that crashes comes back where it was,
-                a run parked on a question re-parks on the same question,
-                and completed steps are never run again. A run can wait on a
-                timer, a person, or another agent for as long as it takes.
+                Every step of an agent run is written to a durable log in
+                Postgres. Agents restore their state by replaying the log. A
+                crashed process restarts exactly where it was, and completed
+                steps are never run again. A run can wait on a timer, a
+                person, or another agent for as long as it takes.
               </p>
               <p>
                 Delivery is at-least-once with duplicate suppression. Tool
-                calls that have side effects carry an idempotency key, so a
-                call dispatched twice runs once. Exactly-once is the
-                destination's job, and the runtime does not pretend
-                otherwise.
+                calls that have side effects carry an idempotency key.
               </p>
             </div>
             <div class="links">
