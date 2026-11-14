@@ -186,7 +186,7 @@
           <div class="wrap strip__inner">
             <span>elixir / otp</span>
             <span>postgresql</span>
-            <span>websocket workers</span>
+            <span>workers in any language</span>
             <span>at-least-once, deduplicated</span>
             <span>single node</span>
             <span>mit</span>
@@ -209,7 +209,17 @@
               <p>
                 Workers are your code, in your network, holding your keys.
                 A worker connects over a WebSocket, says what it can do, and
-                receives one task at a time in a provider-neutral format.
+                receives one task at a time in a provider-neutral JSON
+                format. That is the whole contract, so a worker can be
+                written in whatever language the job calls for: a Python
+                worker for the model and data tools, a Go or Rust worker
+                where a sandbox or a binary matters, an Elixir worker when
+                it is already a Phoenix app. SDKs ship for
+                <a href="https://github.com/nornscode/norns-sdk-python">Python</a>
+                and <a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a>;
+                the protocol is documented for the rest.
+              </p>
+              <p>
                 When a worker goes away, the work it held is handed to the
                 next one. When none is available, it waits.
               </p>
