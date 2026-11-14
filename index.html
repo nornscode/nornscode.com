@@ -202,181 +202,97 @@
             <div class="prose">
               <p>
                 The orchestrator is an Elixir application in front of
-                Postgres. It holds agent definitions, conversations, and the
-                run event log, and runs one BEAM process per live agent,
-                started on the first message and stopped when idle. It
-                decides what happens next and writes it down. It does not
-                hold provider API keys, tool implementations, or a network
-                path to anything the tools reach, and it cannot call a
-                model. Message content is opaque to it: routing is on roles,
-                tool names, ids, steps and usage, never on the text the
-                model sees.
+                Postgres. It holds agent definitions, conversations and the
+                event log, runs one process per live agent, and decides what
+                happens next. It never calls a model and never runs a tool.
               </p>
               <p>
-                Workers are your code, in your network. A worker connects
-                over a WebSocket, registers its capabilities and the tools
-                it serves with their JSON schemas, and receives task pushes
-                in a provider-neutral format that it translates to
-                Anthropic, OpenAI, or whatever it uses. A worker can also be
-                asleep: a serverless worker declares its tools and a wake
-                URL up front, and the orchestrator POSTs a signed wake when
-                a task arrives for it.
-              </p>
-              <p>
-                When a worker goes away, the tasks it held are dispatched
-                again to any matching worker, with the same task id and the
-                same idempotency key. With no worker available they queue
-                until one registers. A task that outlives three workers is
-                reported to the agent rather than dispatched a fourth time,
-                since by then it is more likely the cause than the victim.
+                Workers are your code, in your network, holding your keys.
+                A worker connects over a WebSocket, says what it can do, and
+                receives one task at a time in a provider-neutral format.
+                When a worker goes away, the work it held is handed to the
+                next one. When none is available, it waits.
               </p>
             </div>
 
             <figure class="figure">
               <svg class="diagram" viewBox="0 0 880 300" role="img" aria-labelledby="diagram-title">
-                <title id="diagram-title">An orchestrator dispatches a tool task to worker a, which disconnects; the same task, with the same id and idempotency key, is dispatched to worker b when it registers, and worker b returns the result.</title>
+                <title id="diagram-title">An orchestrator dispatches a task to worker a, which disconnects. The same task is dispatched to worker b when it registers, and worker b returns the result.</title>
                 <defs>
                   <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                     <path d="M0 0.5 L9 5 L0 9.5" fill="none" stroke="currentColor" stroke-width="1.2" />
                   </marker>
                 </defs>
-
-                <!-- orchestrator -->
                 <g class="dg-box">
                   <rect x="20.5" y="20.5" width="300" height="259" />
                   <text x="40" y="50" class="dg-title">orchestrator</text>
                   <text x="40" y="70" class="dg-dim">elixir · postgres</text>
-                  <rect x="40.5" y="90.5" width="260" height="40" class="dg-inner" />
-                  <text x="54" y="115">agent process</text>
-                  <text x="190" y="115" class="dg-dim">awaiting_tools</text>
-                  <rect x="40.5" y="142.5" width="260" height="40" class="dg-inner" />
-                  <text x="54" y="167">event log</text>
-                  <text x="190" y="167" class="dg-dim">append-only</text>
-                  <rect x="40.5" y="194.5" width="260" height="40" class="dg-inner" />
-                  <text x="54" y="219">task queue</text>
-                  <text x="190" y="219" class="dg-dim">1 held</text>
+                  <rect x="40.5" y="110.5" width="260" height="40" class="dg-inner" />
+                  <text x="54" y="135">agent processes</text>
+                  <rect x="40.5" y="170.5" width="260" height="40" class="dg-inner" />
+                  <text x="54" y="195">event log</text>
                 </g>
-
-                <!-- worker a, lost -->
                 <g class="dg-box dg-lost">
                   <rect x="560.5" y="20.5" width="300" height="80" />
                   <text x="580" y="50" class="dg-title">worker a</text>
-                  <text x="580" y="70" class="dg-dim">disconnected 04:13:20</text>
+                  <text x="580" y="70" class="dg-dim">disconnected</text>
                 </g>
-
-                <!-- worker b -->
                 <g class="dg-box">
                   <rect x="560.5" y="199.5" width="300" height="80" />
                   <text x="580" y="229" class="dg-title">worker b</text>
-                  <text x="580" y="249" class="dg-dim">registered 06:00:07 · llm, tools</text>
+                  <text x="580" y="249" class="dg-dim">your code, your keys</text>
                 </g>
-
-                <!-- arrows -->
                 <g class="dg-arrow dg-lost">
                   <line x1="320" y1="60" x2="556" y2="60" marker-end="url(#arr)" />
-                  <text x="438" y="50" text-anchor="middle">tool_task  id 4821</text>
+                  <text x="438" y="50" text-anchor="middle">task</text>
                   <text x="438" y="78" text-anchor="middle" class="dg-dim">no result</text>
                 </g>
                 <g class="dg-arrow">
                   <line x1="320" y1="225" x2="556" y2="225" marker-end="url(#arr)" />
-                  <text x="438" y="215" text-anchor="middle">tool_task  id 4821</text>
-                  <text x="438" y="243" text-anchor="middle" class="dg-dim">same id, same idempotency key</text>
+                  <text x="438" y="215" text-anchor="middle">the same task</text>
                 </g>
                 <g class="dg-arrow">
                   <line x1="556" y1="265" x2="324" y2="265" marker-end="url(#arr)" />
-                  <text x="438" y="283" text-anchor="middle">tool_result</text>
+                  <text x="438" y="283" text-anchor="middle">result</text>
                 </g>
               </svg>
               <figcaption class="figure__cap">
-                Recovery of one tool call. Worker a is lost holding task
-                4821. The call queues, and when worker b registers it is
-                dispatched again under the same id and key. If worker a had
-                in fact run it, worker b's tool sees the key and reports
-                <code>tool_duplicate</code> instead.
+                A worker is lost holding a task. The task waits, and when
+                the next worker registers it is dispatched again, under the
+                same id, so a tool that already ran it can say so instead of
+                running it twice.
               </figcaption>
             </figure>
           </div>
         </div>
       </section>
 
-      <section class="section" aria-labelledby="states-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">Agent process</div>
-          <div>
-            <h2 id="states-heading" class="section__title">One process per agent, state from the log</h2>
-            <div class="prose">
-              <p>
-                Each agent is a GenServer that moves between a small set of
-                states. It is never blocked: it answers status queries in
-                every state, and because the state is derived from the event
-                log rather than held in memory, a process that crashes comes
-                back where it was. A run parked on a question re-parks on
-                the same question. Completed steps are not run again.
-              </p>
-            </div>
-
-            <div class="table-wrap" style="margin-top: 1.75rem">
-              <table class="spec">
-                <tbody>
-                  <tr><td class="mono">idle</td><td>no run in progress</td></tr>
-                  <tr><td class="mono">running</td><td>between dispatches</td></tr>
-                  <tr><td class="mono">awaiting_llm</td><td>a worker holds the LLM task</td></tr>
-                  <tr><td class="mono">awaiting_tools</td><td>workers hold one or more tool tasks</td></tr>
-                  <tr><td class="mono">waiting_timer</td><td>parked on <code>wait</code> until a timer fires</td></tr>
-                  <tr><td class="mono">waiting</td><td>parked on <code>ask_human</code> until a person answers, however long that takes</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="prose" style="margin-top: 1.75rem">
-              <p>
-                Four tools are resolved by the orchestrator itself rather
-                than a worker: <code>wait</code>, <code>ask_human</code>,
-                <code>launch_agent</code> and <code>list_agents</code>. They
-                are the primitives for time, people, and other agents, and
-                they live in the orchestrator because each one is a reason
-                for a run to outlast a process.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section class="section" aria-labelledby="log-heading">
         <div class="wrap section__inner">
-          <div class="section__label">Event log</div>
+          <div class="section__label">Durability</div>
           <div>
-            <h2 id="log-heading" class="section__title">Append-only, versioned, the only source of truth</h2>
+            <h2 id="log-heading" class="section__title">State lives in the log, not the process</h2>
             <div class="prose">
               <p>
-                Every LLM request and response, tool call and result,
-                checkpoint, retry, human question and answer, and sub-agent
-                launch is a validated event in Postgres. Run state is a fold
-                over that table. Resume, fork, cost accounting and the run
-                summary all read from it and nothing else, so there is no
-                second copy of the truth to drift.
+                Every step of a run is an event in Postgres: each model
+                call, each tool call and its result, each question put to a
+                person and each answer. An agent's state is derived from
+                that log, so a process that crashes comes back where it was,
+                a run parked on a question re-parks on the same question,
+                and completed steps are never run again. A run can wait on a
+                timer, a person, or another agent for as long as it takes.
               </p>
               <p>
-                Delivery is at-least-once with duplicate suppression. A
-                side-effecting tool call carries a deterministic idempotency
-                key, issued by the orchestrator and recorded in the log.
-                When a worker is lost, the call is dispatched again under
-                the same key, and a worker that already ran it reports a
-                duplicate instead of running it twice. Exactly-once requires
-                the destination to dedupe on that key; the runtime does not
-                pretend otherwise.
-              </p>
-              <p>
-                Transient failures retry with backoff; rate limits retry
-                longer; validation and policy failures are terminal. Token
-                usage and the serving model are stored per call, and cost is
-                priced when a run is read, so a rate change never rewrites
-                history.
+                Delivery is at-least-once with duplicate suppression. Tool
+                calls that have side effects carry an idempotency key, so a
+                call dispatched twice runs once. Exactly-once is the
+                destination's job, and the runtime does not pretend
+                otherwise.
               </p>
             </div>
             <div class="links">
               <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture.md</a>
-              <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">openapi.yaml</a>
+              <a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">decision-log.md</a>
             </div>
           </div>
         </div>
@@ -384,30 +300,25 @@
 
       <section class="section" aria-labelledby="record-heading">
         <div class="wrap section__inner">
-          <div class="section__label">Production record</div>
+          <div class="section__label">In production</div>
           <div>
-            <h2 id="record-heading" class="section__title">Hosted instance, 2026-04-15 to 2026-10-04</h2>
+            <h2 id="record-heading" class="section__title">Since April</h2>
             <p class="section__lede">
-              Mimir is a Slack bot that answers questions about a project
-              from the repositories and pages it is pointed at. Each thread
-              is a Norns run. It is the reference application and has run on
-              the hosted instance since April.
+              Mimir, a Slack bot that answers questions about a project from
+              its repositories and docs, has run on the hosted instance since
+              2026-04-15. Each thread is a Norns run.
             </p>
-
             <div class="table-wrap">
               <table class="spec">
                 <tbody>
                   <tr><td>runs</td><td class="num">130</td></tr>
-                  <tr><td>redeploys of the runtime during the period</td><td class="num">104</td></tr>
-                  <tr><td>runs failed on a provider or request error, each recorded in its log</td><td class="num">11</td></tr>
+                  <tr><td>redeploys of the runtime underneath them</td><td class="num">104</td></tr>
                   <tr><td>runs lost to a worker or orchestrator going away</td><td class="num">0</td></tr>
                 </tbody>
               </table>
             </div>
-
             <div class="links">
               <a href="/mimir/">how mimir is built</a>
-              <a href="https://github.com/nornscode/norns-mimir-agent">nornscode/norns-mimir-agent</a>
             </div>
           </div>
         </div>
@@ -417,35 +328,19 @@
         <div class="wrap section__inner">
           <div class="section__label">Local setup</div>
           <div>
-            <h2 id="setup-heading" class="section__title">Orchestrator, scaffold, worker</h2>
-            <p class="section__lede">
-              A local orchestrator with Postgres, a scaffolded agent project,
-              and a Python worker connected to it.
-            </p>
-
-            <div class="code-grid">
-              <figure class="code">
-                <figcaption class="code__cap"><span>shell</span></figcaption>
-                <pre class="code__body"><code><span class="cb-prompt">$</span>brew install nornscode/tap/nornsctl
+            <h2 id="setup-heading" class="section__title">A local orchestrator and a worker</h2>
+            <figure class="code" style="max-width: 36rem">
+              <figcaption class="code__cap"><span>shell</span></figcaption>
+              <pre class="code__body"><code><span class="cb-prompt">$</span>brew install nornscode/tap/nornsctl
 <span class="cb-prompt">$</span>nornsctl dev
 <span class="cb-prompt">$</span>nornsctl new my-agent && cd my-agent
 <span class="cb-prompt">$</span>uv sync && uv run my-agent-worker</code></pre>
-              </figure>
-
-              <figure class="code">
-                <figcaption class="code__cap"><span>client</span><span>python</span></figcaption>
-                <pre class="code__body"><code>result = client.send_message(
-    <span class="cb-s">"support-bot"</span>,
-    <span class="cb-s">"Where is my order?"</span>,
-    wait=True,
-)</code></pre>
-              </figure>
-            </div>
-
+            </figure>
             <div class="links">
               <a href="https://github.com/nornscode/norns#get-started">quickstart</a>
-              <a href="https://github.com/nornscode/norns-hello-agent">nornscode/norns-hello-agent</a>
-              <a href="https://github.com/nornscode/nornsctl">nornscode/nornsctl</a>
+              <a href="https://github.com/nornscode/norns-hello-agent">hello agent</a>
+              <a href="https://github.com/nornscode/norns-sdk-python">python sdk</a>
+              <a href="https://github.com/nornscode/norns-sdk-elixir">elixir sdk</a>
             </div>
           </div>
         </div>
