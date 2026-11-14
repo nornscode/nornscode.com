@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Norns — Durability for agents</title>
+    <title>Norns — Durable agent runtime</title>
     <meta
       name="description"
-      content="Norns is a durable runtime for AI agents. Every step of a run is written down as it happens, so when the process dies the next worker continues from the last step, not the first. Workers and keys stay in your infrastructure."
+      content="Norns is a durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools. A run survives the loss of any worker."
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
@@ -41,10 +41,10 @@
     <meta property="og:site_name" content="Norns" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://nornscode.com/" />
-    <meta property="og:title" content="Norns — Durability for agents" />
+    <meta property="og:title" content="Norns — Durable agent runtime" />
     <meta
       property="og:description"
-      content="Durable runtime for AI agents. Every step is written down as it happens; when the process dies, the next worker continues from the last step, not the first."
+      content="Durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools."
     />
     <meta property="og:image" content="https://nornscode.com/assets/og.png" />
     <meta property="og:image:secure_url" content="https://nornscode.com/assets/og.png" />
@@ -53,19 +53,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Norns — durability for agents. An event log shows a worker crash and a resumed run."
+      content="Norns event log: a worker times out, no worker is available for 1 h 47 min, then a worker connects and the run completes."
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Norns — Durability for agents" />
+    <meta name="twitter:title" content="Norns — Durable agent runtime" />
     <meta
       name="twitter:description"
-      content="Durable runtime for AI agents. Every step is written down as it happens; when the process dies, the next worker continues from the last step, not the first."
+      content="Durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools."
     />
     <meta name="twitter:image" content="https://nornscode.com/assets/og.png" />
     <meta
       name="twitter:image:alt"
-      content="Norns — durability for agents. An event log shows a worker crash and a resumed run."
+      content="Norns event log: a worker times out, no worker is available for 1 h 47 min, then a worker connects and the run completes."
     />
 
     <link rel="icon" href="/assets/norns-logo.png" type="image/png" />
@@ -99,7 +99,7 @@
         <span class="nav__wordmark">norns</span>
       </a>
       <nav class="nav__links" aria-label="Resources">
-        <a href="https://github.com/nornscode/norns#get-started">Docs</a>
+        <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a>
         <a href="/mimir/">Mimir</a>
         <a href="https://github.com/nornscode/norns-hello-agent">Example</a>
         <a href="https://github.com/nornscode/norns" class="nav__github">
@@ -154,17 +154,13 @@
             <span class="dot"></span>
             open source · MIT · v0.7
           </div>
-          <h1 class="hero__title">Durability for agents.</h1>
+          <h1 class="hero__title">Durable agent runtime.</h1>
           <p class="hero__lede">
-            Agents are loops of LLM calls and tool calls, and sometimes they
-            run long enough for the process underneath them to die. Norns keeps
-            track of each agent's progress, allowing new workers to pick up where
-            crashed ones left off. Your code and your keys stay on your workers.
-          </p>
-
-          <p class="hero__myth">
-            Named for the three who sit beneath the world tree and spin every
-            thread of fate.
+            Norns separates an agent's state from the process that executes
+            it. The orchestrator holds an append-only event log and
+            dispatches one step at a time. Workers in your infrastructure
+            make the LLM calls, run the tools, and hold the keys. A run
+            outlives any worker, deploy, or orchestrator restart.
           </p>
 
           <div class="install">
@@ -185,8 +181,8 @@
               </button>
             </div>
             <div class="install__secondary">
-              <a href="https://github.com/nornscode/norns-hello-agent">
-                Walk through the hello example →
+              <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">
+                Architecture →
               </a>
             </div>
           </div>
@@ -209,40 +205,45 @@
 <div class="term-line"><span class="tm-muted">7</span>  <span class="tm-dim">06:00:11</span>  <span class="tm-ok">run_completed</span></div>
           </div>
           <figcaption class="terminal__foot">
-            A real run from 2026-10-04: a test message sent to Mimir while
-            its worker was offline. Norns held it, and finished the run when
-            a worker came back.
+            Run 189 on the hosted instance, 2026-10-04. The LLM task timed
+            out, no worker was connected for 1 h 47 min, and the step was
+            dispatched again when one registered.
           </figcaption>
         </figure>
       </section>
 
-      <section class="scenarios" aria-labelledby="scenarios-heading">
+      <section class="scenarios" aria-labelledby="model-heading">
         <div class="section-header">
-          <h2 id="scenarios-heading" class="section-header__title">
-            The three ways a run dies in production.
+          <h2 id="model-heading" class="section-header__title">
+            Execution model.
           </h2>
+          <p class="section-header__lede">
+            The orchestrator is a state machine. It never calls a model and
+            never runs a tool.
+          </p>
         </div>
 
         <div class="scenarios__grid">
           <article class="scenario">
             <header class="scenario__head">
               <span class="scenario__num">01</span>
-              <h3 class="scenario__title">A buggy tool.</h3>
+              <h3 class="scenario__title">Orchestrator</h3>
             </header>
             <div class="scenario__cols">
-              <div class="scenario__col" data-state="without">
-                <div class="scenario__label">Without Norns</div>
+              <div class="scenario__col">
+                <div class="scenario__label">Holds</div>
                 <p>
-                  The tool errors, the worker fails, and your orchestrator
-                  dutifully restarts it with an empty memory. The run is gone,
-                  and so are the eight model calls that came before it.
+                  Agent definitions, conversations, and the run event log, in
+                  Postgres. Each agent is a BEAM process with four states:
+                  idle, awaiting LLM, awaiting tools, waiting on a human.
                 </p>
               </div>
-              <div class="scenario__col" data-state="with">
-                <div class="scenario__label">With Norns</div>
+              <div class="scenario__col">
+                <div class="scenario__label">Does not hold</div>
                 <p>
-                  The run's progress is saved outside the worker. Fix the tool,
-                  redeploy, and the run picks up at that step.
+                  API keys, tool code, or prompt text it has to read. Message
+                  content is opaque to the core; it routes on roles, tool
+                  names, ids and steps.
                 </p>
               </div>
             </div>
@@ -251,23 +252,26 @@
           <article class="scenario">
             <header class="scenario__head">
               <span class="scenario__num">02</span>
-              <h3 class="scenario__title">Timeouts and network errors.</h3>
+              <h3 class="scenario__title">Workers</h3>
             </header>
             <div class="scenario__cols">
-              <div class="scenario__col" data-state="without">
-                <div class="scenario__label">Without Norns</div>
+              <div class="scenario__col">
+                <div class="scenario__label">Connect</div>
                 <p>
-                  The call times out, the client retries, the tool runs again.
-                  You charge the customer twice and explain it to support
-                  tomorrow.
+                  Over a WebSocket, registering capabilities
+                  (<code>llm</code>, <code>tools</code>) and the tools they
+                  serve with their input schemas. Tasks are pushed in a
+                  provider-neutral format; the worker translates to its LLM
+                  provider.
                 </p>
               </div>
-              <div class="scenario__col" data-state="with">
-                <div class="scenario__label">With Norns</div>
+              <div class="scenario__col">
+                <div class="scenario__label">Disconnect</div>
                 <p>
-                  The retry carries the same key as the first call. The worker
-                  recognizes it and returns the original result instead of
-                  charging again.
+                  Tasks the worker held are re-dispatched with the same task
+                  id and idempotency key. With no worker to take them they
+                  queue and flush on the next registration. A worker can
+                  also be asleep behind a signed wake URL.
                 </p>
               </div>
             </div>
@@ -276,68 +280,81 @@
           <article class="scenario">
             <header class="scenario__head">
               <span class="scenario__num">03</span>
-              <h3 class="scenario__title">A deploy ships mid-flight.</h3>
+              <h3 class="scenario__title">Recovery</h3>
             </header>
             <div class="scenario__cols">
-              <div class="scenario__col" data-state="without">
-                <div class="scenario__label">Without Norns</div>
+              <div class="scenario__col">
+                <div class="scenario__label">Resume</div>
                 <p>
-                  In-flight runs die with the old workers. Users see half-done tasks
-                  vanish.
+                  Run state is rebuilt from the log, not from a process. On
+                  restart, pending tool calls are re-dispatched and a run
+                  parked on <code>ask_human</code> re-parks on the same
+                  question. Completed steps are not run again.
                 </p>
               </div>
-              <div class="scenario__col" data-state="with">
-                <div class="scenario__label">With Norns</div>
+              <div class="scenario__col">
+                <div class="scenario__label">Guarantee</div>
                 <p>
-                  The new workers pick the run up where the old ones left it.
+                  At-least-once with duplicate suppression. Side-effecting
+                  tools carry a deterministic key; a worker that already ran
+                  the call reports <code>tool_duplicate</code> instead of
+                  running it twice. Exactly-once needs a destination that
+                  dedupes on the key.
                 </p>
               </div>
             </div>
           </article>
         </div>
-
       </section>
 
       <section class="ledger-section" aria-labelledby="ledger-heading">
         <div class="section-header">
           <h2 id="ledger-heading" class="section-header__title">
-            Every run leaves a record of the work.
+            The event log.
           </h2>
           <p class="section-header__lede">
-            Each prompt, response, tool call and result, with timestamps,
-            tokens and cost, appended as it happens.
+            Versioned, validated events: lifecycle, LLM request and
+            response, tool call and result, checkpoint, retry, human
+            question and answer, sub-agent launch. Token usage and the
+            serving model are recorded per call; cost is priced at read
+            time so a rate change never rewrites history.
           </p>
         </div>
 
         <dl class="ledger">
           <div class="ledger__item">
-            <dt>Audit</dt>
+            <dt>Read</dt>
             <dd>
-              <code>nornsctl runs events 189 --json</code> is the whole run,
-              step by step: what the model saw, what it decided, what the tool
-              returned.
+              <code>GET /runs/:id/events</code> is the full log.
+              <code>GET /runs/:id/summary</code> is a fixed-size account of
+              it: verdict, counters, per-tool usage, a collapsed timeline,
+              and signals such as <code>loop</code>,
+              <code>retry_storm</code>, <code>unknown_tool</code>.
             </dd>
           </div>
           <div class="ledger__item">
-            <dt>Evals</dt>
+            <dt>Fork</dt>
             <dd>
-              Real production runs, not synthetic ones. Pull the logs over the
-              API and run your evals against what actually happened.
+              <code>POST /runs/:id/fork</code> starts a new run from any
+              step of an existing one, optionally with a different model,
+              system prompt, or next message.
             </dd>
           </div>
           <div class="ledger__item">
-            <dt>Forks and retries</dt>
+            <dt>Retry</dt>
             <dd>
-              <code>POST /runs/:id/fork</code> from any step, with a different
-              model or system prompt if you like, and compare the two logs. Or
-              send a failed run again from the top.
+              <code>POST /runs/:id/retry</code> resubmits a failed run.
+              Transient failures retry on their own: exponential backoff,
+              three attempts; rate limits get ten.
             </dd>
           </div>
           <div class="ledger__item">
-            <dt>Cost</dt>
+            <dt>Notify</dt>
             <dd>
-              Every run knows its own token counts and cost, the sub-agents it
-              launched included.
+              A run webhook receives a signed POST when a run parks on a
+              question, completes, or fails. Reply to a parked run with
+              <code>POST /runs/:id/reply</code> or by sending the agent its
+              next message.
             </dd>
           </div>
         </dl>
@@ -346,33 +363,32 @@
       <section class="reference" aria-labelledby="reference-heading">
         <div class="section-header">
           <h2 id="reference-heading" class="section-header__title">
-            It has been running Mimir since April.
+            In production since April.
           </h2>
           <p class="section-header__lede">
             Mimir is a Slack bot that answers questions about a project from
-            the GitHub repos and pages you point it at. Every Slack thread is
-            a Norns run. Since 2026-04-15 that is 62 threads and 130 runs,
-            with the runtime underneath it redeployed 104 times and Mimir
-            itself 44. Eleven runs failed, each one a provider or request
-            error you can read in its event log; none was lost to a worker
-            going away.
+            the GitHub repos and pages it is pointed at. Every Slack thread
+            is a Norns run. Between 2026-04-15 and 2026-10-04: 62 threads,
+            130 runs, 104 redeploys of the runtime and 44 of Mimir. Eleven
+            runs failed, each on a provider or request error recorded in its
+            log. None was lost to a worker going away.
           </p>
         </div>
 
         <div class="quickstart__cta">
-          <a class="btn btn--primary" href="/mimir/">See Mimir</a>
-          <a class="btn btn--ghost" href="https://github.com/nornscode/norns-mimir-agent">Source on GitHub</a>
+          <a class="btn btn--primary" href="/mimir/">Mimir</a>
+          <a class="btn btn--ghost" href="https://github.com/nornscode/norns-mimir-agent">Source</a>
         </div>
       </section>
 
       <section class="quickstart" aria-labelledby="quickstart-heading">
         <div class="section-header">
           <h2 id="quickstart-heading" class="section-header__title">
-            From zero to a running agent.
+            Local setup.
           </h2>
           <p class="section-header__lede">
-            Workers run wherever you run them. The orchestrator never sees an
-            API key; it holds the log, dispatches the next step, and waits.
+            A local orchestrator, a scaffolded agent project, and a Python
+            worker connected to it.
           </p>
         </div>
 
@@ -397,10 +413,10 @@
 
         <div class="quickstart__cta">
           <a class="btn btn--primary" href="https://github.com/nornscode/norns#get-started">
-            Read the full quickstart
+            Quickstart
           </a>
-          <a class="btn btn--ghost" href="https://github.com/nornscode/norns">
-            Star on GitHub
+          <a class="btn btn--ghost" href="https://github.com/nornscode/norns-hello-agent">
+            Hello agent
           </a>
         </div>
       </section>
@@ -412,7 +428,7 @@
           <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
           <div>
             <div class="footer__name">norns</div>
-            <div class="footer__tag">Durability for agents.</div>
+            <div class="footer__tag">Durable agent runtime.</div>
           </div>
         </div>
 
@@ -442,6 +458,8 @@
             <div class="footer__heading">Project</div>
             <ul role="list">
               <li><a href="https://github.com/nornscode/norns">Repository</a></li>
+              <li><a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a></li>
+              <li><a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">Decision log</a></li>
               <li><a href="https://github.com/nornscode/norns/blob/main/LICENSE">MIT license</a></li>
             </ul>
           </div>
@@ -449,7 +467,7 @@
       </div>
       <div class="footer__bottom">
         <span>Released under the MIT license.</span>
-        <span>Named for the Norns — the weavers of fate in Norse myth.</span>
+        <span>Elixir on the BEAM. PostgreSQL.</span>
       </div>
     </footer>
 
