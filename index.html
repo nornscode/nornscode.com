@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Norns — Durable agent runtime</title>
+    <title>Norns — The runtime for long-lived agents</title>
     <meta
       name="description"
       content="Norns is a durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools. A run survives the loss of any worker."
@@ -41,7 +41,7 @@
     <meta property="og:site_name" content="Norns" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://nornscode.com/" />
-    <meta property="og:title" content="Norns — Durable agent runtime" />
+    <meta property="og:title" content="Norns — The runtime for long-lived agents" />
     <meta
       property="og:description"
       content="Durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools."
@@ -57,7 +57,7 @@
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Norns — Durable agent runtime" />
+    <meta name="twitter:title" content="Norns — The runtime for long-lived agents" />
     <meta
       name="twitter:description"
       content="Durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools."
@@ -128,7 +128,7 @@
       <section class="hero">
         <div class="wrap hero__inner">
           <div>
-            <h1 class="hero__title">A durable runtime for LLM agents.</h1>
+            <h1 class="hero__title">The runtime for long-lived agents.</h1>
             <p class="hero__lede">
               Norns keeps an agent's state in an append-only event log and
               dispatches one step at a time to workers you run. The
@@ -137,20 +137,6 @@
               orchestrator itself.
             </p>
 
-            <dl class="facts">
-              <dt>runtime</dt>
-              <dd>Elixir on BEAM/OTP, one process per agent</dd>
-              <dt>state</dt>
-              <dd>PostgreSQL, versioned events, rebuilt on resume</dd>
-              <dt>workers</dt>
-              <dd>WebSocket, <code>llm</code> and <code>tools</code> capabilities, provider-neutral tasks</dd>
-              <dt>delivery</dt>
-              <dd>at-least-once, duplicates suppressed by idempotency key</dd>
-              <dt>deployment</dt>
-              <dd>single node; multi-node is <a href="https://github.com/nornscode/norns/blob/main/docs/roadmap.md">on the roadmap</a></dd>
-              <dt>license</dt>
-              <dd>MIT</dd>
-            </dl>
 
             <div class="install">
               <div class="install__row">
@@ -198,107 +184,126 @@
             </figcaption>
           </figure>
         </div>
+        <div class="strip">
+          <div class="wrap strip__inner">
+            <span>elixir / otp</span>
+            <span>postgresql</span>
+            <span>websocket workers</span>
+            <span>at-least-once, deduplicated</span>
+            <span>single node</span>
+            <span>mit</span>
+          </div>
+        </div>
       </section>
 
       <section class="section" aria-labelledby="system-heading">
         <div class="wrap section__inner">
-          <div class="section__label"><span>01</span>System</div>
+          <div class="section__label">System</div>
           <div>
             <h2 id="system-heading" class="section__title">Orchestrator and workers</h2>
-            <p class="section__lede">
-              The orchestrator is a state machine over an event log. Workers
-              are your code, in your network, holding your API keys. The
-              split is the whole design: anything that can fail or leak
-              lives on the worker side, and anything that must survive lives
-              on the orchestrator side.
-            </p>
-
-            <pre class="diagram"><b>orchestrator</b>  (Elixir, Postgres)            <b>worker</b>  (your process, your keys)
-      │                                        │
-      │  llm_task  {model, messages, tools} ──▶ │  calls the LLM provider
-      │ ◀── tool_result  {content, usage} ──────│
-      │  <i>append llm_response</i>                   │
-      │  tool_task  {task_id, name, input} ───▶ │  runs the tool
-      │ ◀── tool_result  {result | error} ──────│
-      │  <i>append tool_result, checkpoint</i>        │
-      │                                        ╳  <i>worker lost</i>
-      │  <i>re-dispatch held tasks with the same</i>
-      │  <i>task_id and idempotency key; with no</i>
-      │  <i>worker available, queue</i>                │  <i>next worker registers</i>
-      │  tool_task  {same task_id, input} ────▶ │  runs it, or reports tool_duplicate
-      │ ◀── tool_result ────────────────────────│</pre>
-
-            <div class="rows">
-              <div class="row">
-                <div class="row__key">orchestrator<small>holds</small></div>
-                <div class="row__body">
-                  <p>
-                    Agent definitions, conversations, and the run event log,
-                    all in Postgres. Each live agent is one BEAM process
-                    under a DynamicSupervisor, started on the first message
-                    and stopped when idle. Message content is opaque to it:
-                    routing is on roles, tool names, ids, steps and usage,
-                    never on the text the model sees.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">orchestrator<small>does not hold</small></div>
-                <div class="row__body">
-                  <p>
-                    Provider API keys, tool implementations, or a network
-                    path to anything the tools reach. It cannot call a
-                    model. With no worker connected, tasks queue and the
-                    run waits.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">worker<small>registers</small></div>
-                <div class="row__body">
-                  <p>
-                    Over a WebSocket on <code>/worker</code>, with a worker
-                    id, capabilities (<code>llm</code>, <code>tools</code>),
-                    the tools it serves with their JSON input schemas, and
-                    optional protocol features. Tasks are pushed in a
-                    provider-neutral format; the worker translates to
-                    Anthropic, OpenAI, or whatever it uses.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">worker<small>leaves</small></div>
-                <div class="row__body">
-                  <p>
-                    A clean shutdown sends <code>drain</code>, finishes its
-                    in-flight tasks, and disconnects. A worker that just
-                    drops has the tasks it held re-dispatched to any
-                    matching worker, or to the queue. Three attempts in
-                    total: a task that outlives three workers is reported to
-                    the agent rather than dispatched a fourth time.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">worker<small>asleep</small></div>
-                <div class="row__body">
-                  <p>
-                    A serverless worker declares its tools and a wake URL
-                    up front. When a task arrives with no connected worker,
-                    the orchestrator POSTs a signed wake to that URL, the
-                    platform starts the worker, and it connects like any
-                    other.
-                  </p>
-                </div>
-              </div>
+            <div class="prose">
+              <p>
+                The orchestrator is an Elixir application in front of
+                Postgres. It holds agent definitions, conversations, and the
+                run event log, and runs one BEAM process per live agent,
+                started on the first message and stopped when idle. It
+                decides what happens next and writes it down. It does not
+                hold provider API keys, tool implementations, or a network
+                path to anything the tools reach, and it cannot call a
+                model. Message content is opaque to it: routing is on roles,
+                tool names, ids, steps and usage, never on the text the
+                model sees.
+              </p>
+              <p>
+                Workers are your code, in your network. A worker connects
+                over a WebSocket, registers its capabilities and the tools
+                it serves with their JSON schemas, and receives task pushes
+                in a provider-neutral format that it translates to
+                Anthropic, OpenAI, or whatever it uses. A worker can also be
+                asleep: a serverless worker declares its tools and a wake
+                URL up front, and the orchestrator POSTs a signed wake when
+                a task arrives for it.
+              </p>
+              <p>
+                When a worker goes away, the tasks it held are dispatched
+                again to any matching worker, with the same task id and the
+                same idempotency key. With no worker available they queue
+                until one registers. A task that outlives three workers is
+                reported to the agent rather than dispatched a fourth time,
+                since by then it is more likely the cause than the victim.
+              </p>
             </div>
+
+            <figure class="figure">
+              <svg class="diagram" viewBox="0 0 880 300" role="img" aria-labelledby="diagram-title">
+                <title id="diagram-title">An orchestrator dispatches a tool task to worker a, which disconnects; the same task, with the same id and idempotency key, is dispatched to worker b when it registers, and worker b returns the result.</title>
+                <defs>
+                  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                    <path d="M0 0.5 L9 5 L0 9.5" fill="none" stroke="currentColor" stroke-width="1.2" />
+                  </marker>
+                </defs>
+
+                <!-- orchestrator -->
+                <g class="dg-box">
+                  <rect x="20.5" y="20.5" width="300" height="259" />
+                  <text x="40" y="50" class="dg-title">orchestrator</text>
+                  <text x="40" y="70" class="dg-dim">elixir · postgres</text>
+                  <rect x="40.5" y="90.5" width="260" height="40" class="dg-inner" />
+                  <text x="54" y="115">agent process</text>
+                  <text x="190" y="115" class="dg-dim">awaiting_tools</text>
+                  <rect x="40.5" y="142.5" width="260" height="40" class="dg-inner" />
+                  <text x="54" y="167">event log</text>
+                  <text x="190" y="167" class="dg-dim">append-only</text>
+                  <rect x="40.5" y="194.5" width="260" height="40" class="dg-inner" />
+                  <text x="54" y="219">task queue</text>
+                  <text x="190" y="219" class="dg-dim">1 held</text>
+                </g>
+
+                <!-- worker a, lost -->
+                <g class="dg-box dg-lost">
+                  <rect x="560.5" y="20.5" width="300" height="80" />
+                  <text x="580" y="50" class="dg-title">worker a</text>
+                  <text x="580" y="70" class="dg-dim">disconnected 04:13:20</text>
+                </g>
+
+                <!-- worker b -->
+                <g class="dg-box">
+                  <rect x="560.5" y="199.5" width="300" height="80" />
+                  <text x="580" y="229" class="dg-title">worker b</text>
+                  <text x="580" y="249" class="dg-dim">registered 06:00:07 · llm, tools</text>
+                </g>
+
+                <!-- arrows -->
+                <g class="dg-arrow dg-lost">
+                  <line x1="320" y1="60" x2="556" y2="60" marker-end="url(#arr)" />
+                  <text x="438" y="50" text-anchor="middle">tool_task  id 4821</text>
+                  <text x="438" y="78" text-anchor="middle" class="dg-dim">no result</text>
+                </g>
+                <g class="dg-arrow">
+                  <line x1="320" y1="225" x2="556" y2="225" marker-end="url(#arr)" />
+                  <text x="438" y="215" text-anchor="middle">tool_task  id 4821</text>
+                  <text x="438" y="243" text-anchor="middle" class="dg-dim">same id, same idempotency key</text>
+                </g>
+                <g class="dg-arrow">
+                  <line x1="556" y1="265" x2="324" y2="265" marker-end="url(#arr)" />
+                  <text x="438" y="283" text-anchor="middle">tool_result</text>
+                </g>
+              </svg>
+              <figcaption class="figure__cap">
+                Recovery of one tool call. Worker a is lost holding task
+                4821. The call queues, and when worker b registers it is
+                dispatched again under the same id and key. If worker a had
+                in fact run it, worker b's tool sees the key and reports
+                <code>tool_duplicate</code> instead.
+              </figcaption>
+            </figure>
           </div>
         </div>
       </section>
 
       <section class="section" aria-labelledby="states-heading">
         <div class="wrap section__inner">
-          <div class="section__label"><span>02</span>Agent process</div>
+          <div class="section__label">Agent process</div>
           <div>
             <h2 id="states-heading" class="section__title">States</h2>
             <p class="section__lede">
@@ -331,33 +336,25 @@
               reading the log.
             </p>
 
-            <div class="block">
-              <div class="block__title">modes</div>
-              <div class="table-wrap">
-                <table class="spec">
-                  <tbody>
-                    <tr><td class="mono">task</td><td>each message starts a fresh run with no history. Default.</td></tr>
-                    <tr><td class="mono">conversation</td><td>messages append to a persistent conversation keyed by an external id, such as a Slack channel. One agent serves many conversations concurrently, each one process. A sliding window with a compaction summary bounds context growth.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="block">
-              <div class="block__title">built-in tools, resolved by the orchestrator</div>
-              <div class="table-wrap">
-                <table class="spec">
-                  <tbody>
-                    <tr><td class="mono">wait</td><td>park until a timer fires</td></tr>
-                    <tr><td class="mono">ask_human</td><td>park until a human answers; delivered by run webhook</td></tr>
-                    <tr><td class="mono">launch_agent</td><td>start a child run; authorized server-side by allowlist and <code>max_depth</code>, every decision logged. A resumed parent reattaches to its in-flight child instead of launching it again.</td></tr>
-                    <tr><td class="mono">list_agents</td><td>enumerate agents the policy allows the caller to see</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="block__note">
-                A worker cannot shadow a built-in; dispatch resolves these
-                first. Everything else is a worker tool.
+            <div class="prose" style="margin-top: 2rem">
+              <p>
+                An agent runs in task mode, where each message starts a
+                fresh run with no history, or conversation mode, where
+                messages append to a persistent conversation keyed by an
+                external id such as a Slack thread. One agent serves many
+                conversations concurrently, each in its own process, and a
+                sliding window with a compaction summary bounds context
+                growth.
+              </p>
+              <p>
+                Four tools are resolved by the orchestrator itself and
+                cannot be shadowed by a worker: <code>wait</code>,
+                <code>ask_human</code>, <code>launch_agent</code> and
+                <code>list_agents</code>. Sub-agent launches are authorized
+                server-side by allowlist and nesting depth, every decision
+                is logged, and a resumed parent reattaches to its in-flight
+                child rather than launching it again. Everything else is a
+                worker tool.
               </p>
             </div>
           </div>
@@ -366,7 +363,7 @@
 
       <section class="section" aria-labelledby="protocol-heading">
         <div class="wrap section__inner">
-          <div class="section__label"><span>03</span>Worker protocol</div>
+          <div class="section__label">Worker protocol</div>
           <div>
             <h2 id="protocol-heading" class="section__title">On the wire</h2>
             <p class="section__lede">
@@ -446,7 +443,7 @@
 
       <section class="section" aria-labelledby="log-heading">
         <div class="wrap section__inner">
-          <div class="section__label"><span>04</span>Event log</div>
+          <div class="section__label">Event log</div>
           <div>
             <h2 id="log-heading" class="section__title">What is recorded</h2>
             <p class="section__lede">
@@ -533,38 +530,30 @@
 
       <section class="section" aria-labelledby="api-heading">
         <div class="wrap section__inner">
-          <div class="section__label"><span>05</span>HTTP API</div>
+          <div class="section__label">HTTP API</div>
           <div>
-            <h2 id="api-heading" class="section__title">Runs</h2>
+            <h2 id="api-heading" class="section__title">Driving a run</h2>
             <p class="section__lede">
-              Bearer-token authenticated under <code>/api/v1</code>. The
-              full surface is in
-              <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">openapi.yaml</a>;
-              these are the endpoints a client that drives runs needs.
+              Bearer-token authenticated under <code>/api/v1</code>. A
+              client needs five calls; the rest of the surface is in
+              <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">openapi.yaml</a>.
             </p>
 
             <div class="table-wrap">
               <table class="spec">
                 <tbody>
-                  <tr><td class="mono">POST /agents/:id/messages</td><td>send a message; starts a run, or answers a parked one. Conversational clients never need to switch endpoints.</td></tr>
+                  <tr><td class="mono">POST /agents/:id/messages</td><td>send a message. Starts a run, or answers a parked one.</td></tr>
                   <tr><td class="mono">GET  /runs/:id</td><td>status, lineage, <code>waiting_for</code>, cost</td></tr>
                   <tr><td class="mono">GET  /runs/:id/events</td><td>the full log</td></tr>
-                  <tr><td class="mono">GET  /runs/:id/summary</td><td>fixed-size account: verdict, counters, per-tool usage, collapsed timeline, and signals such as <code>loop</code>, <code>retry_storm</code>, <code>unknown_tool</code>, <code>parked_unanswered</code>. A 200-step run with 6.4 MB of events summarises to about 5 KB.</td></tr>
-                  <tr><td class="mono">POST /runs/:id/reply</td><td>answer a run parked on <code>ask_human</code></td></tr>
-                  <tr><td class="mono">POST /runs/:id/fork</td><td>new run from the history as it stood after <code>step</code>, optionally with a different model, system prompt, or next message</td></tr>
-                  <tr><td class="mono">POST /runs/:id/retry</td><td>resubmit a failed run</td></tr>
-                  <tr><td class="mono">POST /runs/:id/cancel</td><td>terminal; recorded as a policy failure</td></tr>
-                  <tr><td class="mono">GET  /tools</td><td>what an agent in this tenant can call right now, with source and schema, plus which workers are connected to serve it</td></tr>
-                  <tr><td class="mono">POST /run_webhooks</td><td>register a URL that receives a signed POST when a run parks, completes, or fails</td></tr>
-                  <tr><td class="mono">POST /hooks/:token</td><td>inbound webhook ingress: a signed external event starts a run</td></tr>
-                  <tr><td class="mono">POST /serverless_workers</td><td>declare an asleep worker: its tools and a wake URL</td></tr>
+                  <tr><td class="mono">GET  /runs/:id/summary</td><td>a fixed-size account of the run, with signals such as <code>loop</code> and <code>retry_storm</code></td></tr>
+                  <tr><td class="mono">POST /runs/:id/fork</td><td>a new run from any step, optionally on a different model or system prompt</td></tr>
                 </tbody>
               </table>
             </div>
             <p class="block__note">
-              Cron triggers start runs on a schedule. A trigger that fires
-              into a conversation parked on a question is refused as busy
-              and that firing is skipped, so the question stays open.
+              Run webhooks deliver a signed POST when a run parks, completes,
+              or fails. Cron triggers and inbound webhooks start runs without
+              a client.
             </p>
           </div>
         </div>
@@ -572,7 +561,7 @@
 
       <section class="section" aria-labelledby="record-heading">
         <div class="wrap section__inner">
-          <div class="section__label"><span>06</span>Production record</div>
+          <div class="section__label">Production record</div>
           <div>
             <h2 id="record-heading" class="section__title">Hosted instance, 2026-04-15 to 2026-10-04</h2>
             <p class="section__lede">
@@ -606,7 +595,7 @@
 
       <section class="section" aria-labelledby="setup-heading">
         <div class="wrap section__inner">
-          <div class="section__label"><span>07</span>Local setup</div>
+          <div class="section__label">Local setup</div>
           <div>
             <h2 id="setup-heading" class="section__title">Orchestrator, scaffold, worker</h2>
             <p class="section__lede">

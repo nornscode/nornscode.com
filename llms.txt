@@ -1,6 +1,6 @@
 # Norns
 
-> Durable agent runtime. Open source, MIT. The orchestrator holds an append-only event log and dispatches one step at a time; workers in your infrastructure make the LLM calls, run the tools, and hold the API keys. A run outlives any worker, deploy, or orchestrator restart.
+> The runtime for long-lived agents. Open source, MIT. The orchestrator holds an append-only event log and dispatches one step at a time; workers in your infrastructure make the LLM calls, run the tools, and hold the API keys. A run outlives any worker, deploy, or orchestrator restart.
 
 Norns is written in Elixir on the BEAM, with PostgreSQL for all persistent state. The orchestrator is a state machine: it never calls a model and never runs a tool. Workers connect over WebSocket, register capabilities (`llm`, `tools`) and the tools they serve, and receive task pushes in a provider-neutral format. Message content is opaque to the core; it routes on roles, tool names, ids and steps.
 
