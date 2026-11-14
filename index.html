@@ -10,7 +10,7 @@
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#f5f4f0" media="(prefers-color-scheme: light)" />
 
     <script>
       // Set theme before first paint to avoid flash-of-wrong-theme.
@@ -32,7 +32,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
     />
 
     <link rel="canonical" href="https://nornscode.com/" />
@@ -94,380 +94,615 @@
     <a class="skip" href="#main">Skip to content</a>
 
     <header class="nav" aria-label="Primary">
-      <a class="nav__brand" href="/" aria-label="Norns home">
-        <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
-        <span class="nav__wordmark">norns</span>
-      </a>
-      <nav class="nav__links" aria-label="Resources">
-        <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a>
-        <a href="/mimir/">Mimir</a>
-        <a href="https://github.com/nornscode/norns-hello-agent">Example</a>
-        <a href="https://github.com/nornscode/norns" class="nav__github">
-          <svg
-            aria-hidden="true"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-          >
-            <path
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0016 8c0-4.42-3.58-8-8-8z"
-            />
-          </svg>
-          GitHub
+      <div class="wrap nav__inner">
+        <a class="nav__brand" href="/" aria-label="Norns home">
+          <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
+          <span class="nav__wordmark">norns</span>
+          <span class="nav__version">v0.7</span>
         </a>
-        <button
-          type="button"
-          class="theme-toggle"
-          data-theme-toggle
-          aria-label="Toggle color theme"
-          title="Toggle theme"
-        >
-          <svg
-            class="theme-toggle__sun"
-            aria-hidden="true"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.4"
-            stroke-linecap="round"
+        <nav class="nav__links" aria-label="Resources">
+          <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture</a>
+          <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">api</a>
+          <a href="/mimir/">mimir</a>
+          <a class="nav__github" href="https://github.com/nornscode/norns">github</a>
+          <button
+            type="button"
+            class="theme-toggle"
+            data-theme-toggle
+            aria-label="Toggle color theme"
+            title="Toggle theme"
           >
-            <circle cx="8" cy="8" r="3" />
-            <path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4" />
-          </svg>
-          <svg
-            class="theme-toggle__moon"
-            aria-hidden="true"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-          >
-            <path d="M6.8 1.8a6.4 6.4 0 108.6 8.6 5.3 5.3 0 01-8.6-8.6z" />
-          </svg>
-        </button>
-      </nav>
+            <svg class="theme-toggle__sun" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <circle cx="8" cy="8" r="3" />
+              <path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4" />
+            </svg>
+            <svg class="theme-toggle__moon" aria-hidden="true" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M6.8 1.8a6.4 6.4 0 108.6 8.6 5.3 5.3 0 01-8.6-8.6z" />
+            </svg>
+          </button>
+        </nav>
+      </div>
     </header>
 
     <main id="main">
       <section class="hero">
-        <div class="hero__content">
-          <div class="hero__eyebrow">
-            <span class="dot"></span>
-            open source · MIT · v0.7
-          </div>
-          <h1 class="hero__title">Durable agent runtime.</h1>
-          <p class="hero__lede">
-            Norns separates an agent's state from the process that executes
-            it. The orchestrator holds an append-only event log and
-            dispatches one step at a time. Workers in your infrastructure
-            make the LLM calls, run the tools, and hold the keys. A run
-            outlives any worker, deploy, or orchestrator restart.
-          </p>
+        <div class="wrap hero__inner">
+          <div>
+            <h1 class="hero__title">A durable runtime for LLM agents.</h1>
+            <p class="hero__lede">
+              Norns keeps an agent's state in an append-only event log and
+              dispatches one step at a time to workers you run. The
+              orchestrator never calls a model or executes a tool. A run
+              survives the loss of any worker, a deploy, or a restart of the
+              orchestrator itself.
+            </p>
 
-          <div class="install">
-            <div class="install__label">Install</div>
-            <div class="install__row">
-              <code id="install-cmd" class="install__cmd"
-                ><span class="install__prompt">$</span> brew install nornscode/tap/nornsctl</code
-              >
-              <button
-                type="button"
-                class="install__copy"
-                data-copy-target="#install-cmd"
-                data-copy-text="brew install nornscode/tap/nornsctl"
-                aria-label="Copy install command"
-              >
-                <span class="install__copy-default" aria-hidden="true">Copy</span>
-                <span class="install__copy-done" aria-hidden="true">Copied</span>
-              </button>
-            </div>
-            <div class="install__secondary">
-              <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">
-                Architecture →
-              </a>
-            </div>
-          </div>
-        </div>
+            <dl class="facts">
+              <dt>runtime</dt>
+              <dd>Elixir on BEAM/OTP, one process per agent</dd>
+              <dt>state</dt>
+              <dd>PostgreSQL, versioned events, rebuilt on resume</dd>
+              <dt>workers</dt>
+              <dd>WebSocket, <code>llm</code> and <code>tools</code> capabilities, provider-neutral tasks</dd>
+              <dt>delivery</dt>
+              <dd>at-least-once, duplicates suppressed by idempotency key</dd>
+              <dt>deployment</dt>
+              <dd>single node; multi-node is <a href="https://github.com/nornscode/norns/blob/main/docs/roadmap.md">on the roadmap</a></dd>
+              <dt>license</dt>
+              <dd>MIT</dd>
+            </dl>
 
-        <figure class="terminal">
-          <div class="terminal__chrome">
-            <span class="terminal__cmd"><span class="tm-prompt">$</span>nornsctl runs events 189</span>
-            <span class="terminal__title">cloud.nornscode.com</span>
-          </div>
-          <div class="terminal__body is-static">
-<div class="term-line"><span class="tm-muted">1</span>  <span class="tm-dim">04:08:20</span>  <span class="tm-ok">run_started</span></div>
-<div class="term-line"><span class="tm-muted">2</span>  <span class="tm-dim">04:08:20</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6 · step 1</div>
-<div class="term-line"><span class="tm-muted">3</span>  <span class="tm-dim">04:13:20</span>  <span class="tm-warn">retry</span>          <span class="tm-err">timeout</span> · attempt 1 · transient</div>
-<div class="term-line">              <span class="tm-muted">"LLM task timed out — worker may have disconnected"</span></div>
-<div class="term-line"><span class="tm-muted">4</span>  <span class="tm-dim">04:13:21</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6 · step 1</div>
-<div class="term-line term-line--note">              — no worker for 1 h 47 min —</div>
-<div class="term-line"><span class="tm-muted">5</span>  <span class="tm-dim">06:00:07</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6 · step 1</div>
-<div class="term-line"><span class="tm-muted">6</span>  <span class="tm-dim">06:00:11</span>  <span class="tm-accent">llm_response</span>   1,980 in · 5 out</div>
-<div class="term-line"><span class="tm-muted">7</span>  <span class="tm-dim">06:00:11</span>  <span class="tm-ok">run_completed</span></div>
-          </div>
-          <figcaption class="terminal__foot">
-            Run 189 on the hosted instance, 2026-10-04. The LLM task timed
-            out, no worker was connected for 1 h 47 min, and the step was
-            dispatched again when one registered.
-          </figcaption>
-        </figure>
-      </section>
-
-      <section class="scenarios" aria-labelledby="model-heading">
-        <div class="section-header">
-          <h2 id="model-heading" class="section-header__title">
-            Execution model.
-          </h2>
-          <p class="section-header__lede">
-            The orchestrator is a state machine. It never calls a model and
-            never runs a tool.
-          </p>
-        </div>
-
-        <div class="scenarios__grid">
-          <article class="scenario">
-            <header class="scenario__head">
-              <span class="scenario__num">01</span>
-              <h3 class="scenario__title">Orchestrator</h3>
-            </header>
-            <div class="scenario__cols">
-              <div class="scenario__col">
-                <div class="scenario__label">Holds</div>
-                <p>
-                  Agent definitions, conversations, and the run event log, in
-                  Postgres. Each agent is a BEAM process with four states:
-                  idle, awaiting LLM, awaiting tools, waiting on a human.
-                </p>
+            <div class="install">
+              <div class="install__row">
+                <code id="install-cmd" class="install__cmd"><span class="install__prompt">$</span>brew install nornscode/tap/nornsctl</code>
+                <button
+                  type="button"
+                  class="install__copy"
+                  data-copy-target="#install-cmd"
+                  data-copy-text="brew install nornscode/tap/nornsctl"
+                  aria-label="Copy install command"
+                >
+                  <span class="install__copy-default" aria-hidden="true">copy</span>
+                  <span class="install__copy-done" aria-hidden="true">copied</span>
+                </button>
               </div>
-              <div class="scenario__col">
-                <div class="scenario__label">Does not hold</div>
-                <p>
-                  API keys, tool code, or prompt text it has to read. Message
-                  content is opaque to the core; it routes on roles, tool
-                  names, ids and steps.
-                </p>
+              <div class="install__links">
+                <a href="https://github.com/nornscode/norns#get-started">quickstart</a>
+                <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture.md</a>
+                <a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">decision-log.md</a>
               </div>
             </div>
-          </article>
+          </div>
 
-          <article class="scenario">
-            <header class="scenario__head">
-              <span class="scenario__num">02</span>
-              <h3 class="scenario__title">Workers</h3>
-            </header>
-            <div class="scenario__cols">
-              <div class="scenario__col">
-                <div class="scenario__label">Connect</div>
-                <p>
-                  Over a WebSocket, registering capabilities
-                  (<code>llm</code>, <code>tools</code>) and the tools they
-                  serve with their input schemas. Tasks are pushed in a
-                  provider-neutral format; the worker translates to its LLM
-                  provider.
-                </p>
-              </div>
-              <div class="scenario__col">
-                <div class="scenario__label">Disconnect</div>
-                <p>
-                  Tasks the worker held are re-dispatched with the same task
-                  id and idempotency key. With no worker to take them they
-                  queue and flush on the next registration. A worker can
-                  also be asleep behind a signed wake URL.
-                </p>
-              </div>
+          <figure class="log">
+            <div class="log__head">
+              <span><span class="tm-prompt">$ </span>nornsctl runs events 189</span>
+              <span class="log__host">cloud.nornscode.com</span>
             </div>
-          </article>
-
-          <article class="scenario">
-            <header class="scenario__head">
-              <span class="scenario__num">03</span>
-              <h3 class="scenario__title">Recovery</h3>
-            </header>
-            <div class="scenario__cols">
-              <div class="scenario__col">
-                <div class="scenario__label">Resume</div>
-                <p>
-                  Run state is rebuilt from the log, not from a process. On
-                  restart, pending tool calls are re-dispatched and a run
-                  parked on <code>ask_human</code> re-parks on the same
-                  question. Completed steps are not run again.
-                </p>
-              </div>
-              <div class="scenario__col">
-                <div class="scenario__label">Guarantee</div>
-                <p>
-                  At-least-once with duplicate suppression. Side-effecting
-                  tools carry a deterministic key; a worker that already ran
-                  the call reports <code>tool_duplicate</code> instead of
-                  running it twice. Exactly-once needs a destination that
-                  dedupes on the key.
-                </p>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="ledger-section" aria-labelledby="ledger-heading">
-        <div class="section-header">
-          <h2 id="ledger-heading" class="section-header__title">
-            The event log.
-          </h2>
-          <p class="section-header__lede">
-            Versioned, validated events: lifecycle, LLM request and
-            response, tool call and result, checkpoint, retry, human
-            question and answer, sub-agent launch. Token usage and the
-            serving model are recorded per call; cost is priced at read
-            time so a rate change never rewrites history.
-          </p>
-        </div>
-
-        <dl class="ledger">
-          <div class="ledger__item">
-            <dt>Read</dt>
-            <dd>
-              <code>GET /runs/:id/events</code> is the full log.
-              <code>GET /runs/:id/summary</code> is a fixed-size account of
-              it: verdict, counters, per-tool usage, a collapsed timeline,
-              and signals such as <code>loop</code>,
-              <code>retry_storm</code>, <code>unknown_tool</code>.
-            </dd>
-          </div>
-          <div class="ledger__item">
-            <dt>Fork</dt>
-            <dd>
-              <code>POST /runs/:id/fork</code> starts a new run from any
-              step of an existing one, optionally with a different model,
-              system prompt, or next message.
-            </dd>
-          </div>
-          <div class="ledger__item">
-            <dt>Retry</dt>
-            <dd>
-              <code>POST /runs/:id/retry</code> resubmits a failed run.
-              Transient failures retry on their own: exponential backoff,
-              three attempts; rate limits get ten.
-            </dd>
-          </div>
-          <div class="ledger__item">
-            <dt>Notify</dt>
-            <dd>
-              A run webhook receives a signed POST when a run parks on a
-              question, completes, or fails. Reply to a parked run with
-              <code>POST /runs/:id/reply</code> or by sending the agent its
-              next message.
-            </dd>
-          </div>
-        </dl>
-      </section>
-
-      <section class="reference" aria-labelledby="reference-heading">
-        <div class="section-header">
-          <h2 id="reference-heading" class="section-header__title">
-            In production since April.
-          </h2>
-          <p class="section-header__lede">
-            Mimir is a Slack bot that answers questions about a project from
-            the GitHub repos and pages it is pointed at. Every Slack thread
-            is a Norns run. Between 2026-04-15 and 2026-10-04: 62 threads,
-            130 runs, 104 redeploys of the runtime and 44 of Mimir. Eleven
-            runs failed, each on a provider or request error recorded in its
-            log. None was lost to a worker going away.
-          </p>
-        </div>
-
-        <div class="quickstart__cta">
-          <a class="btn btn--primary" href="/mimir/">Mimir</a>
-          <a class="btn btn--ghost" href="https://github.com/nornscode/norns-mimir-agent">Source</a>
-        </div>
-      </section>
-
-      <section class="quickstart" aria-labelledby="quickstart-heading">
-        <div class="section-header">
-          <h2 id="quickstart-heading" class="section-header__title">
-            Local setup.
-          </h2>
-          <p class="section-header__lede">
-            A local orchestrator, a scaffolded agent project, and a Python
-            worker connected to it.
-          </p>
-        </div>
-
-        <div class="quickstart__blocks">
-          <figure class="codeblock">
-            <figcaption class="codeblock__caption">Install and run</figcaption>
-            <pre class="codeblock__body"><code><span class="cb-prompt">$</span> brew install nornscode/tap/nornsctl
-<span class="cb-prompt">$</span> nornsctl dev
-<span class="cb-prompt">$</span> nornsctl new my-agent && cd my-agent
-<span class="cb-prompt">$</span> uv sync && uv run my-agent-worker</code></pre>
+            <pre class="log__body"><span class="tm-muted">seq</span>  <span class="tm-muted">time</span>      <span class="tm-muted">event</span>          <span class="tm-muted">detail</span>
+<span class="tm-muted">1</span>    <span class="tm-dim">04:08:20</span>  <span class="tm-ok">run_started</span>
+<span class="tm-muted">2</span>    <span class="tm-dim">04:08:20</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6  step 1
+<span class="tm-muted">3</span>    <span class="tm-dim">04:13:20</span>  <span class="tm-warn">retry</span>          <span class="tm-err">timeout</span>  attempt 1  transient
+                                "LLM task timed out — worker
+                                 may have disconnected"
+<span class="tm-muted">4</span>    <span class="tm-dim">04:13:21</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6  step 1
+<span class="log__note">                                no worker connected, 1 h 47 min</span>
+<span class="tm-muted">5</span>    <span class="tm-dim">06:00:07</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6  step 1
+<span class="tm-muted">6</span>    <span class="tm-dim">06:00:11</span>  <span class="tm-accent">llm_response</span>   1,980 in  5 out
+<span class="tm-muted">7</span>    <span class="tm-dim">06:00:11</span>  <span class="tm-ok">run_completed</span></pre>
+            <figcaption class="log__foot">
+              Run 189 on the hosted instance, 2026-10-04. The LLM task timed
+              out, no worker was connected for 1 h 47 min, and the same step
+              was dispatched again when one registered. Nothing was retried
+              by hand.
+            </figcaption>
           </figure>
+        </div>
+      </section>
 
-          <figure class="codeblock">
-            <figcaption class="codeblock__caption">Send a message <span class="codeblock__lang">python</span></figcaption>
-            <pre class="codeblock__body"><code>result = client.send_message(
-    "support-bot",
-    "Where is my order?",
+      <section class="section" aria-labelledby="system-heading">
+        <div class="wrap section__inner">
+          <div class="section__label"><span>01</span>System</div>
+          <div>
+            <h2 id="system-heading" class="section__title">Orchestrator and workers</h2>
+            <p class="section__lede">
+              The orchestrator is a state machine over an event log. Workers
+              are your code, in your network, holding your API keys. The
+              split is the whole design: anything that can fail or leak
+              lives on the worker side, and anything that must survive lives
+              on the orchestrator side.
+            </p>
+
+            <pre class="diagram"><b>orchestrator</b>  (Elixir, Postgres)            <b>worker</b>  (your process, your keys)
+      │                                        │
+      │  llm_task  {model, messages, tools} ──▶ │  calls the LLM provider
+      │ ◀── tool_result  {content, usage} ──────│
+      │  <i>append llm_response</i>                   │
+      │  tool_task  {task_id, name, input} ───▶ │  runs the tool
+      │ ◀── tool_result  {result | error} ──────│
+      │  <i>append tool_result, checkpoint</i>        │
+      │                                        ╳  <i>worker lost</i>
+      │  <i>re-dispatch held tasks with the same</i>
+      │  <i>task_id and idempotency key; with no</i>
+      │  <i>worker available, queue</i>                │  <i>next worker registers</i>
+      │  tool_task  {same task_id, input} ────▶ │  runs it, or reports tool_duplicate
+      │ ◀── tool_result ────────────────────────│</pre>
+
+            <div class="rows">
+              <div class="row">
+                <div class="row__key">orchestrator<small>holds</small></div>
+                <div class="row__body">
+                  <p>
+                    Agent definitions, conversations, and the run event log,
+                    all in Postgres. Each live agent is one BEAM process
+                    under a DynamicSupervisor, started on the first message
+                    and stopped when idle. Message content is opaque to it:
+                    routing is on roles, tool names, ids, steps and usage,
+                    never on the text the model sees.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">orchestrator<small>does not hold</small></div>
+                <div class="row__body">
+                  <p>
+                    Provider API keys, tool implementations, or a network
+                    path to anything the tools reach. It cannot call a
+                    model. With no worker connected, tasks queue and the
+                    run waits.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">worker<small>registers</small></div>
+                <div class="row__body">
+                  <p>
+                    Over a WebSocket on <code>/worker</code>, with a worker
+                    id, capabilities (<code>llm</code>, <code>tools</code>),
+                    the tools it serves with their JSON input schemas, and
+                    optional protocol features. Tasks are pushed in a
+                    provider-neutral format; the worker translates to
+                    Anthropic, OpenAI, or whatever it uses.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">worker<small>leaves</small></div>
+                <div class="row__body">
+                  <p>
+                    A clean shutdown sends <code>drain</code>, finishes its
+                    in-flight tasks, and disconnects. A worker that just
+                    drops has the tasks it held re-dispatched to any
+                    matching worker, or to the queue. Three attempts in
+                    total: a task that outlives three workers is reported to
+                    the agent rather than dispatched a fourth time.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">worker<small>asleep</small></div>
+                <div class="row__body">
+                  <p>
+                    A serverless worker declares its tools and a wake URL
+                    up front. When a task arrives with no connected worker,
+                    the orchestrator POSTs a signed wake to that URL, the
+                    platform starts the worker, and it connects like any
+                    other.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="states-heading">
+        <div class="wrap section__inner">
+          <div class="section__label"><span>02</span>Agent process</div>
+          <div>
+            <h2 id="states-heading" class="section__title">States</h2>
+            <p class="section__lede">
+              The process is never blocked. It answers status queries in
+              every state, and the state is derived from the log, so a
+              crashed process comes back in the state it left.
+            </p>
+
+            <div class="table-wrap">
+              <table class="spec">
+                <thead>
+                  <tr><th>state</th><th>meaning</th><th>leaves when</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td class="mono">idle</td><td>no run in progress</td><td>a message, trigger, or hook starts a run</td></tr>
+                  <tr><td class="mono">running</td><td>driving the loop between dispatches</td><td>the next task is dispatched</td></tr>
+                  <tr><td class="mono">awaiting_llm</td><td>an <code>llm_task</code> is held by a worker</td><td>the worker reports, or times out and the task is re-dispatched</td></tr>
+                  <tr><td class="mono">awaiting_tools</td><td>one or more <code>tool_task</code>s are held by workers</td><td>every result is in, or a worker is lost and the calls are re-dispatched</td></tr>
+                  <tr><td class="mono">waiting_timer</td><td>parked on the <code>wait</code> builtin</td><td>the timer fires</td></tr>
+                  <tr><td class="mono">waiting</td><td>parked on <code>ask_human</code>, indefinitely</td><td><code>POST /runs/:id/reply</code>, or the agent's next message</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="block__note">
+              A run parked on a question re-parks on the same question after
+              a restart, because the pause is re-derived from the still
+              pending <code>ask_human</code> call. The run JSON carries
+              <code>status: "waiting"</code> and a <code>waiting_for</code>
+              object, so a client can tell working from waiting without
+              reading the log.
+            </p>
+
+            <div class="block">
+              <div class="block__title">modes</div>
+              <div class="table-wrap">
+                <table class="spec">
+                  <tbody>
+                    <tr><td class="mono">task</td><td>each message starts a fresh run with no history. Default.</td></tr>
+                    <tr><td class="mono">conversation</td><td>messages append to a persistent conversation keyed by an external id, such as a Slack channel. One agent serves many conversations concurrently, each one process. A sliding window with a compaction summary bounds context growth.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="block">
+              <div class="block__title">built-in tools, resolved by the orchestrator</div>
+              <div class="table-wrap">
+                <table class="spec">
+                  <tbody>
+                    <tr><td class="mono">wait</td><td>park until a timer fires</td></tr>
+                    <tr><td class="mono">ask_human</td><td>park until a human answers; delivered by run webhook</td></tr>
+                    <tr><td class="mono">launch_agent</td><td>start a child run; authorized server-side by allowlist and <code>max_depth</code>, every decision logged. A resumed parent reattaches to its in-flight child instead of launching it again.</td></tr>
+                    <tr><td class="mono">list_agents</td><td>enumerate agents the policy allows the caller to see</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="block__note">
+                A worker cannot shadow a built-in; dispatch resolves these
+                first. Everything else is a worker tool.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="protocol-heading">
+        <div class="wrap section__inner">
+          <div class="section__label"><span>03</span>Worker protocol</div>
+          <div>
+            <h2 id="protocol-heading" class="section__title">On the wire</h2>
+            <p class="section__lede">
+              Workers join <code>worker:lobby</code> with a registration and
+              then receive task pushes. The format is provider-neutral; the
+              reference implementations are the
+              <a href="https://github.com/nornscode/norns-sdk-python">Python</a>
+              and <a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a> SDKs.
+            </p>
+
+            <div class="code-grid">
+              <figure class="code">
+                <figcaption class="code__cap"><span>registration</span><span>worker → orchestrator</span></figcaption>
+                <pre class="code__body"><code>{
+  <span class="cb-k">"worker_id"</span>:    <span class="cb-s">"docs-worker"</span>,
+  <span class="cb-k">"capabilities"</span>: [<span class="cb-s">"llm"</span>, <span class="cb-s">"tools"</span>],
+  <span class="cb-k">"features"</span>:     [<span class="cb-s">"message_cache"</span>],
+  <span class="cb-k">"tools"</span>: [
+    {
+      <span class="cb-k">"name"</span>: <span class="cb-s">"search"</span>,
+      <span class="cb-k">"description"</span>: <span class="cb-s">"..."</span>,
+      <span class="cb-k">"input_schema"</span>: { <span class="cb-c">...JSON Schema...</span> }
+    }
+  ]
+}</code></pre>
+              </figure>
+
+              <figure class="code">
+                <figcaption class="code__cap"><span>llm result</span><span>worker → orchestrator</span></figcaption>
+                <pre class="code__body"><code>{
+  <span class="cb-k">"task_id"</span>:       <span class="cb-s">"..."</span>,
+  <span class="cb-k">"status"</span>:        <span class="cb-s">"ok"</span>,
+  <span class="cb-k">"content"</span>:       <span class="cb-c">...</span>,
+  <span class="cb-k">"tool_calls"</span>:    [ <span class="cb-c">...</span> ],
+  <span class="cb-k">"finish_reason"</span>: <span class="cb-s">"tool_use"</span>,
+  <span class="cb-k">"model"</span>:         <span class="cb-s">"claude-sonnet-4-6"</span>,
+  <span class="cb-k">"usage"</span>: {
+    <span class="cb-k">"input_tokens"</span>:      1980,
+    <span class="cb-k">"output_tokens"</span>:     5,
+    <span class="cb-k">"cache_read_tokens"</span>: 1800
+  }
+}</code></pre>
+              </figure>
+            </div>
+
+            <div class="block">
+              <div class="block__title">messages</div>
+              <div class="table-wrap">
+                <table class="spec">
+                  <thead>
+                    <tr><th>direction</th><th>event</th><th>payload</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>server → worker</td><td class="mono">llm_task</td><td>model, system_prompt, summary, date, messages or messages_delta, tools, context_policy</td></tr>
+                    <tr><td>worker → server</td><td class="mono">tool_result</td><td>task_id, status, content or tool_calls, finish_reason, usage, model, final_output</td></tr>
+                    <tr><td>server → worker</td><td class="mono">tool_task</td><td>task_id, tool_name, input</td></tr>
+                    <tr><td>worker → server</td><td class="mono">tool_result</td><td>task_id, status, result or error</td></tr>
+                    <tr><td>worker → server</td><td class="mono">drain</td><td>stop dispatching; in-flight tasks finish, then the worker leaves</td></tr>
+                    <tr><td>worker → server</td><td class="mono">register_port</td><td>internal_port, name, protocol, url. Gard workers only.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="block__note">
+                A worker that joined with <code>message_cache</code> keeps
+                the last message list it was sent per run and receives
+                <code>messages_delta: {base_count, drop, append}</code> on
+                later steps instead of the full history. A miss is answered
+                with <code>message_cache_miss</code> and the full list is
+                resent at the same step without counting a retry. Unknown
+                feature names are ignored, so a newer SDK joins an older
+                core.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="log-heading">
+        <div class="wrap section__inner">
+          <div class="section__label"><span>04</span>Event log</div>
+          <div>
+            <h2 id="log-heading" class="section__title">What is recorded</h2>
+            <p class="section__lede">
+              Every event is validated against a schema before it is written
+              and carries <code>schema_version: 1</code>. Run state is a
+              fold over this table. Resume, fork, cost, and the run summary
+              all read from it and nothing else.
+            </p>
+
+            <div class="table-wrap">
+              <table class="spec">
+                <thead>
+                  <tr><th>group</th><th>events</th><th>notes</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>lifecycle</td><td class="mono">run_started, run_completed, run_failed</td><td></td></tr>
+                  <tr><td>llm</td><td class="mono">llm_request, llm_response</td><td>request records the tool names offered; response records usage and the serving model. Full history only on the first request; later ones record a count.</td></tr>
+                  <tr><td>tools</td><td class="mono">tool_call, tool_result, tool_duplicate</td><td><code>tool_duplicate</code> is a worker declining a call it already ran under the same idempotency key</td></tr>
+                  <tr><td>checkpoint</td><td class="mono">checkpoint_saved, context_compacted</td><td>markers, not copies: step, message count, compaction summary</td></tr>
+                  <tr><td>human</td><td class="mono">waiting_for_user, user_response</td><td></td></tr>
+                  <tr><td>sub-agents</td><td class="mono">subagent_launched, subagent_launch_allowed, subagent_launch_denied, subagent_list_allowed, subagent_list_denied</td><td>denials carry a reason: <code>disabled</code>, <code>not_allowlisted</code>, <code>max_depth</code>, <code>list_agents_disabled</code></td></tr>
+                  <tr><td>retry</td><td class="mono">retry</td><td>attempt, error class, backoff</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="block">
+              <div class="block__title">failure classes and retry policy</div>
+              <div class="table-wrap">
+                <table class="spec">
+                  <thead>
+                    <tr><th>class</th><th>example</th><th>policy</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td class="mono">transient</td><td>timeout, worker disconnect</td><td>3 attempts, exponential backoff</td></tr>
+                    <tr><td class="mono">external_dependency</td><td>rate limit, upstream down</td><td>10 attempts, linear backoff</td></tr>
+                    <tr><td class="mono">validation</td><td>invalid payload</td><td>terminal</td></tr>
+                    <tr><td class="mono">policy</td><td>denied launch, cancelled</td><td>terminal</td></tr>
+                    <tr><td class="mono">internal</td><td>unexpected error</td><td>terminal</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="block">
+              <div class="block__title">delivery guarantee</div>
+              <div class="prose">
+                <p>
+                  At-least-once with duplicate suppression. A side-effecting
+                  tool call carries a deterministic idempotency key issued by
+                  the orchestrator and recorded in the log. When a worker is
+                  lost, the call is re-dispatched with the same task id and
+                  key; a worker that already ran it reports
+                  <code>tool_duplicate</code> instead of running it twice.
+                  Exactly-once requires the destination to dedupe on that
+                  key.
+                </p>
+                <p>
+                  The alternative, handing the model a failed result and
+                  letting it retry, produces a new call at a new step with a
+                  new key that no worker can recognise. That is how the side
+                  effect happens twice. Norns does not do that.
+                </p>
+              </div>
+            </div>
+
+            <div class="block">
+              <div class="block__title">cost</div>
+              <div class="prose">
+                <p>
+                  Tokens are stored per call: input, output, and cache read
+                  and write when the provider reports them, with the model
+                  that actually served the request. Dollars are not stored.
+                  Cost is computed when a run is read, from a rate table
+                  operators extend in config, so a price change never
+                  rewrites history and a model with no price is reported as
+                  unpriced rather than free.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="api-heading">
+        <div class="wrap section__inner">
+          <div class="section__label"><span>05</span>HTTP API</div>
+          <div>
+            <h2 id="api-heading" class="section__title">Runs</h2>
+            <p class="section__lede">
+              Bearer-token authenticated under <code>/api/v1</code>. The
+              full surface is in
+              <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">openapi.yaml</a>;
+              these are the endpoints a client that drives runs needs.
+            </p>
+
+            <div class="table-wrap">
+              <table class="spec">
+                <tbody>
+                  <tr><td class="mono">POST /agents/:id/messages</td><td>send a message; starts a run, or answers a parked one. Conversational clients never need to switch endpoints.</td></tr>
+                  <tr><td class="mono">GET  /runs/:id</td><td>status, lineage, <code>waiting_for</code>, cost</td></tr>
+                  <tr><td class="mono">GET  /runs/:id/events</td><td>the full log</td></tr>
+                  <tr><td class="mono">GET  /runs/:id/summary</td><td>fixed-size account: verdict, counters, per-tool usage, collapsed timeline, and signals such as <code>loop</code>, <code>retry_storm</code>, <code>unknown_tool</code>, <code>parked_unanswered</code>. A 200-step run with 6.4 MB of events summarises to about 5 KB.</td></tr>
+                  <tr><td class="mono">POST /runs/:id/reply</td><td>answer a run parked on <code>ask_human</code></td></tr>
+                  <tr><td class="mono">POST /runs/:id/fork</td><td>new run from the history as it stood after <code>step</code>, optionally with a different model, system prompt, or next message</td></tr>
+                  <tr><td class="mono">POST /runs/:id/retry</td><td>resubmit a failed run</td></tr>
+                  <tr><td class="mono">POST /runs/:id/cancel</td><td>terminal; recorded as a policy failure</td></tr>
+                  <tr><td class="mono">GET  /tools</td><td>what an agent in this tenant can call right now, with source and schema, plus which workers are connected to serve it</td></tr>
+                  <tr><td class="mono">POST /run_webhooks</td><td>register a URL that receives a signed POST when a run parks, completes, or fails</td></tr>
+                  <tr><td class="mono">POST /hooks/:token</td><td>inbound webhook ingress: a signed external event starts a run</td></tr>
+                  <tr><td class="mono">POST /serverless_workers</td><td>declare an asleep worker: its tools and a wake URL</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="block__note">
+              Cron triggers start runs on a schedule. A trigger that fires
+              into a conversation parked on a question is refused as busy
+              and that firing is skipped, so the question stays open.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="record-heading">
+        <div class="wrap section__inner">
+          <div class="section__label"><span>06</span>Production record</div>
+          <div>
+            <h2 id="record-heading" class="section__title">Hosted instance, 2026-04-15 to 2026-10-04</h2>
+            <p class="section__lede">
+              Mimir is a Slack bot that answers questions about a project
+              from the GitHub repositories and pages it is pointed at. Each
+              Slack thread is a Norns run in conversation mode. It is the
+              reference application and has run on the hosted instance since
+              April.
+            </p>
+
+            <div class="table-wrap">
+              <table class="spec">
+                <tbody>
+                  <tr><td>Slack threads</td><td class="num">62</td></tr>
+                  <tr><td>runs</td><td class="num">130</td></tr>
+                  <tr><td>redeploys of the runtime during the period</td><td class="num">104</td></tr>
+                  <tr><td>redeploys of Mimir</td><td class="num">44</td></tr>
+                  <tr><td>runs failed, each on a provider or request error recorded in its log</td><td class="num">11</td></tr>
+                  <tr><td>runs lost to a worker or orchestrator going away</td><td class="num">0</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="links">
+              <a href="/mimir/">how mimir is built</a>
+              <a href="https://github.com/nornscode/norns-mimir-agent">nornscode/norns-mimir-agent</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="setup-heading">
+        <div class="wrap section__inner">
+          <div class="section__label"><span>07</span>Local setup</div>
+          <div>
+            <h2 id="setup-heading" class="section__title">Orchestrator, scaffold, worker</h2>
+            <p class="section__lede">
+              <code>nornsctl dev</code> starts a local orchestrator with
+              Postgres. <code>nornsctl new</code> scaffolds an agent
+              project with a Python worker. Point the worker at the
+              orchestrator and send it a message.
+            </p>
+
+            <div class="code-grid">
+              <figure class="code">
+                <figcaption class="code__cap"><span>shell</span></figcaption>
+                <pre class="code__body"><code><span class="cb-prompt">$</span>brew install nornscode/tap/nornsctl
+<span class="cb-prompt">$</span>nornsctl dev
+<span class="cb-prompt">$</span>nornsctl new my-agent && cd my-agent
+<span class="cb-prompt">$</span>uv sync && uv run my-agent-worker</code></pre>
+              </figure>
+
+              <figure class="code">
+                <figcaption class="code__cap"><span>client</span><span>python</span></figcaption>
+                <pre class="code__body"><code>result = client.send_message(
+    <span class="cb-s">"support-bot"</span>,
+    <span class="cb-s">"Where is my order?"</span>,
     wait=True,
 )</code></pre>
-          </figure>
-        </div>
+              </figure>
+            </div>
 
-        <div class="quickstart__cta">
-          <a class="btn btn--primary" href="https://github.com/nornscode/norns#get-started">
-            Quickstart
-          </a>
-          <a class="btn btn--ghost" href="https://github.com/nornscode/norns-hello-agent">
-            Hello agent
-          </a>
+            <div class="block">
+              <div class="block__title">inspect</div>
+              <figure class="code">
+                <figcaption class="code__cap"><span>nornsctl</span></figcaption>
+                <pre class="code__body"><code><span class="cb-prompt">$</span>nornsctl agents status support-bot      <span class="cb-c"># idle | running | awaiting_llm | awaiting_tools | waiting</span>
+<span class="cb-prompt">$</span>nornsctl runs show 189                  <span class="cb-c"># status, failure inspector, cost</span>
+<span class="cb-prompt">$</span>nornsctl runs events 189 --json         <span class="cb-c"># the log</span>
+<span class="cb-prompt">$</span>nornsctl runs fork 189 --step 4         <span class="cb-c"># new run from step 4</span>
+<span class="cb-prompt">$</span>nornsctl workers list                   <span class="cb-c"># connected and asleep workers, their tools</span></code></pre>
+              </figure>
+            </div>
+
+            <div class="links">
+              <a href="https://github.com/nornscode/norns#get-started">quickstart</a>
+              <a href="https://github.com/nornscode/norns-hello-agent">nornscode/norns-hello-agent</a>
+              <a href="https://github.com/nornscode/nornsctl">nornscode/nornsctl</a>
+            </div>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="footer__top">
+      <div class="wrap footer__inner">
         <div class="footer__brand">
           <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
-          <div>
-            <div class="footer__name">norns</div>
-            <div class="footer__tag">Durable agent runtime.</div>
-          </div>
+          <span>norns</span>
         </div>
 
         <div class="footer__cols">
           <div class="footer__col">
-            <div class="footer__heading">SDKs</div>
+            <div class="footer__heading">sdks</div>
             <ul role="list">
               <li><a href="https://github.com/nornscode/norns-sdk-python">Python</a></li>
               <li><a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a></li>
             </ul>
           </div>
           <div class="footer__col">
-            <div class="footer__heading">Tools</div>
+            <div class="footer__heading">tools</div>
             <ul role="list">
               <li><a href="https://github.com/nornscode/nornsctl">nornsctl</a></li>
               <li><a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">OpenAPI</a></li>
             </ul>
           </div>
           <div class="footer__col">
-            <div class="footer__heading">Examples</div>
+            <div class="footer__heading">examples</div>
             <ul role="list">
               <li><a href="https://github.com/nornscode/norns-hello-agent">Hello agent</a></li>
-              <li><a href="/mimir/">Mimir (full app)</a></li>
+              <li><a href="/mimir/">Mimir</a></li>
+              <li><a href="https://github.com/nornscode/sleipnir">Sleipnir</a></li>
             </ul>
           </div>
           <div class="footer__col">
-            <div class="footer__heading">Project</div>
+            <div class="footer__heading">project</div>
             <ul role="list">
               <li><a href="https://github.com/nornscode/norns">Repository</a></li>
               <li><a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a></li>
               <li><a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">Decision log</a></li>
+              <li><a href="https://github.com/nornscode/norns/blob/main/docs/roadmap.md">Roadmap</a></li>
               <li><a href="https://github.com/nornscode/norns/blob/main/LICENSE">MIT license</a></li>
             </ul>
           </div>
         </div>
-      </div>
-      <div class="footer__bottom">
-        <span>Released under the MIT license.</span>
-        <span>Elixir on the BEAM. PostgreSQL.</span>
+
+        <div class="footer__bottom">
+          <span>MIT license</span>
+          <span>Elixir / OTP · PostgreSQL · v0.7</span>
+        </div>
       </div>
     </footer>
 
