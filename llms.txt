@@ -1,36 +1,44 @@
 # Norns
 
-> Durability for AI agents. An open-source runtime that keeps agent runs alive across crashes, retries, and deploys, without ever touching your API keys or data.
+> Durable agent runtime. Open source, MIT. The orchestrator holds an append-only event log and dispatches one step at a time; workers in your infrastructure make the LLM calls, run the tools, and hold the API keys. A run outlives any worker, deploy, or orchestrator restart.
 
-Agents are loops of LLM calls and tool calls that run long enough for the process underneath them to die. Norns writes each step to an append-only log as it happens; workers execute LLM calls and tools in your own infrastructure, and when one dies the next reads the log and continues from the last step, not the first. Retries are keyed so side effects happen once.
+Norns is written in Elixir on the BEAM, with PostgreSQL for all persistent state. The orchestrator is a state machine: it never calls a model and never runs a tool. Workers connect over WebSocket, register capabilities (`llm`, `tools`) and the tools they serve, and receive task pushes in a provider-neutral format. Message content is opaque to the core; it routes on roles, tool names, ids and steps.
 
-Core primitives: Agents (definition of a model, system prompt, tools, and mode), Runs (single execution instances), Event logs (append-only timelines of requests, results, failures, retries), Checkpoints (durable state snapshots used for resume and replay), and Workers (processes that execute LLM or tool tasks).
+Every LLM request and response, tool call and result, checkpoint, retry, human question and answer, and sub-agent launch is a versioned, validated event in the log. Run state is rebuilt from the log, not from a process. When a worker disconnects, the tasks it held are re-dispatched with the same task id and idempotency key; with no worker available they queue and flush on the next registration. The delivery guarantee is at-least-once with duplicate suppression: a worker that already ran a side-effecting call reports `tool_duplicate` instead of running it again. Exactly-once requires a destination that dedupes on the key.
 
-Licensed MIT. Version v0.7. The reference application, Mimir (a Slack bot), has run on the hosted instance since April 2026.
+Agent states: idle, awaiting_llm, awaiting_tools, waiting (on a human). A run parked on `ask_human` stays parked indefinitely and re-parks on the same question after a restart. Built-in tools intercepted by the orchestrator: `wait`, `ask_human`, `launch_agent`, `list_agents`. Sub-agent launches are authorized server-side by allowlist and depth.
+
+Run API: `GET /runs/:id/events` (full log), `GET /runs/:id/summary` (fixed-size account with signals such as loop, retry_storm, unknown_tool), `POST /runs/:id/fork` (new run from any step, optionally with a different model or system prompt), `POST /runs/:id/retry`, `POST /runs/:id/reply`. Run webhooks deliver a signed POST when a run parks, completes, or fails. Cron triggers start runs on a schedule. Serverless workers declare their tools and a wake URL and are started on demand.
+
+Transient failures retry with exponential backoff, three attempts; rate limits get ten. Token usage and serving model are recorded per call; cost is priced at read time.
+
+Version v0.7. The reference application, Mimir (a Slack knowledge bot), has run on the hosted instance since 2026-04-15. Supported deployment is a single node; multi-node is on the roadmap.
 
 ## Project
 
-- [GitHub repository](https://github.com/nornscode/norns): Elixir orchestrator, CLI, and protocol source
-- [README](https://github.com/nornscode/norns#readme): Quickstart, concepts, and primary documentation
+- [GitHub repository](https://github.com/nornscode/norns): Elixir orchestrator source
+- [README](https://github.com/nornscode/norns#readme): Quickstart
+- [Architecture](https://github.com/nornscode/norns/blob/main/docs/architecture.md): Orchestrator/worker split, worker protocol, event schema, agent states
+- [Decision log](https://github.com/nornscode/norns/blob/main/docs/decision-log.md): What is built and why, with dates
+- [Roadmap](https://github.com/nornscode/norns/blob/main/docs/roadmap.md): Sequencing and what is not being built
 - [OpenAPI spec](https://github.com/nornscode/norns/blob/main/openapi.yaml): HTTP API surface
 
 ## SDKs
 
-- [Python SDK](https://github.com/nornscode/norns-sdk-python): Official Python worker and client library
-- [Elixir SDK](https://github.com/nornscode/norns-sdk-elixir): Official Elixir worker and client library
+- [Python SDK](https://github.com/nornscode/norns-sdk-python): Worker and client library, `pip install norns-sdk`
+- [Elixir SDK](https://github.com/nornscode/norns-sdk-elixir): Worker and client library, `{:norns_sdk, "~> 0.1"}`
 
 ## Tooling
 
-- [nornsctl](https://github.com/nornscode/nornsctl): Command-line tool for running a local orchestrator and scaffolding agent projects
+- [nornsctl](https://github.com/nornscode/nornsctl): CLI for running a local orchestrator, scaffolding agent projects, and inspecting agents, runs and event logs
 
 ## Examples
 
-- [Hello agent](https://github.com/nornscode/norns-hello-agent): Minimal walkthrough agent
-- [Mimir](https://github.com/nornscode/norns-mimir-agent): Full example application built on Norns
+- [Hello agent](https://github.com/nornscode/norns-hello-agent): Minimal worker
+- [Mimir](https://github.com/nornscode/norns-mimir-agent): Slack knowledge bot, the reference application
+- [Sleipnir](https://github.com/nornscode/sleipnir): Coding agent that other agents hand work to
 
 ## Install
-
-Install the CLI via Homebrew, then start a local orchestrator and scaffold an agent project:
 
 ```
 brew install nornscode/tap/nornsctl

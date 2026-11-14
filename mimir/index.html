@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mimir — Product knowledge for Slack</title>
+    <title>Mimir — Slack knowledge bot on Norns</title>
     <meta
       name="description"
-      content="Mimir is a Slack bot that answers product questions by searching connected GitHub repos and pages. Conversations are durable: state lives in Postgres and runs resume across restarts."
+      content="Mimir is a Slack bot that answers questions about a project from connected GitHub repos and pages. Each thread is a Norns run; state lives in Postgres and runs resume across restarts."
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
@@ -43,7 +43,7 @@
     <meta property="og:title" content="Mimir — Product knowledge for Slack" />
     <meta
       property="og:description"
-      content="A Slack bot that answers product questions and remembers across restarts."
+      content="A Slack bot that answers questions about a project from connected repos and pages. Each thread is a Norns run."
     />
     <meta property="og:image" content="https://nornscode.com/assets/og.png" />
 
@@ -183,16 +183,17 @@
             <span class="dot"></span>
             open source · MIT · built on norns
           </div>
-          <h1 class="hero__title">Product knowledge that lives in Slack.</h1>
+          <h1 class="hero__title">Slack knowledge bot, built on Norns.</h1>
           <p class="hero__lede">
-            Mimir is a Slack bot that answers questions about your project by
-            searching the GitHub repos and pages you connect. It remembers
-            across restarts. Conversations resume from the last checkpoint.
+            Mimir answers questions about a project from the GitHub repos and pages
+            it is connected to. Each Slack thread is a Norns run in
+            conversation mode. Facts it is told are stored in Postgres,
+            and a run resumes from the event log after a restart.
           </p>
 
           <div class="quickstart__cta" style="margin-top: 2rem; padding: 0;">
             <a class="btn btn--primary" href="https://github.com/nornscode/norns-mimir-agent">
-              Self-host on GitHub
+              Source on GitHub
             </a>
           </div>
         </div>
@@ -209,12 +210,12 @@
       <section class="scenarios" aria-labelledby="how-heading">
         <div class="section-header">
           <h2 id="how-heading" class="section-header__title">
-            A stateful bot, by construction.
+            How it is built.
           </h2>
           <p class="section-header__lede">
-            Mimir doesn't forget. Every conversation is a durable run; every
-            fact you tell it lives in your Postgres. Replays survive crashes,
-            redeploys, and the entire weekend.
+            A Norns worker with a handful of tools, a Postgres table, and the Slack
+            API. The orchestrator holds the conversation; the worker
+            holds the keys.
           </p>
         </div>
 
@@ -223,11 +224,10 @@
             <div class="pillar-card__num">01</div>
             <div class="pillar-card__title">Memory in Postgres</div>
             <div class="pillar-card__body">
-              When you say "remember this", Mimir embeds the fact and writes
-              it to a <code>memories</code> table with <code>pgvector</code>.
-              Subsequent questions search by semantic similarity. Reset
-              Postgres and the memory is gone — that's the only way it
-              forgets.
+              A fact given with "remember this" is embedded and written to a
+              <code>memories</code> table with <code>pgvector</code>.
+              Later questions search it by similarity. The memory lives
+              as long as the table does.
             </div>
           </div>
 
@@ -235,20 +235,20 @@
             <div class="pillar-card__num">02</div>
             <div class="pillar-card__title">Resumable runs</div>
             <div class="pillar-card__body">
-              Each Slack thread is a Norns run, checkpointed after every tool
-              call. If the worker crashes mid-search, the next worker picks up
-              from the last completed step — no duplicate API calls, no lost
-              context.
+              Each Slack thread is a Norns run. If the worker is lost mid-search, the
+              pending tool call is re-dispatched with the same
+              idempotency key and the run continues from the last
+              completed step. The conversation history is on the
+              orchestrator, not the worker.
             </div>
           </div>
 
           <div class="pillar-card">
             <div class="pillar-card__num">03</div>
-            <div class="pillar-card__title">Just repos and URLs</div>
+            <div class="pillar-card__title">Sources</div>
             <div class="pillar-card__body">
-              Connect a GitHub repo, paste a URL, point Mimir at your wiki.
-              No vector DB to operate, no ingestion pipeline. Searches hit the
-              source on demand and Mimir cites where the answer came from.
+              GitHub repos and URLs. There is no ingestion pipeline; searches hit the
+              source on demand and the answer cites where it came from.
             </div>
           </div>
         </div>
@@ -257,21 +257,20 @@
       <section class="quickstart" aria-labelledby="cta-heading">
         <div class="section-header">
           <h2 id="cta-heading" class="section-header__title">
-            Run Mimir, or build your own.
+            Source.
           </h2>
           <p class="section-header__lede">
-            Mimir is the reference implementation for Norns — a small,
-            production-shaped agent you can self-host in fifteen minutes, or
-            crack open as a starting point for something else.
+            Mimir is the reference application for Norns: a small agent with a
+            production history, and a starting point for other workers.
           </p>
         </div>
 
         <div class="quickstart__cta">
           <a class="btn btn--primary" href="https://github.com/nornscode/norns-mimir-agent">
-            Self-host Mimir
+            Mimir repository
           </a>
           <a class="btn btn--ghost" href="https://github.com/nornscode/norns">
-            Build your own on Norns
+            Norns repository
           </a>
         </div>
       </section>
@@ -283,7 +282,7 @@
           <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
           <div>
             <div class="footer__name">norns</div>
-            <div class="footer__tag">Durability for agents.</div>
+            <div class="footer__tag">Durable agent runtime.</div>
           </div>
         </div>
 
@@ -320,7 +319,7 @@
       </div>
       <div class="footer__bottom">
         <span>Released under the MIT license.</span>
-        <span>Mimir is the wisest of the Norse gods — keeper of the well of knowledge.</span>
+        <span>Elixir on the BEAM. PostgreSQL.</span>
       </div>
     </footer>
 

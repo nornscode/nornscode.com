@@ -319,16 +319,6 @@ pre {
   margin-bottom: 1.25rem;
 }
 
-.hero__myth {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.05rem;
-  line-height: 1.5;
-  color: var(--fg-muted);
-  max-width: 34rem;
-  margin: 0 0 2.5rem;
-}
-
 .install {
   max-width: 42rem;
 }
@@ -633,7 +623,8 @@ pre {
   font-size: 0.95rem;
 }
 
-.ledger code {
+.ledger code,
+.scenario__col code {
   font-family: var(--mono);
   font-size: 0.84em;
   color: var(--fg);
@@ -648,7 +639,8 @@ pre {
   .ledger {
     grid-template-columns: minmax(0, 1fr);
   }
-  .ledger code {
+  .ledger code,
+  .scenario__col code {
     white-space: normal;
   }
 }
@@ -738,24 +730,12 @@ pre {
   border-left: 1px solid var(--border);
 }
 
-.scenario__col[data-state="with"] {
-  background: linear-gradient(
-    180deg,
-    rgba(212, 164, 90, 0.04),
-    rgba(212, 164, 90, 0.0) 80%
-  );
-}
-
 .scenario__label {
   font-family: var(--mono);
   display: inline-block;
   font-size: 0.7rem;
   color: var(--fg-muted);
   margin-bottom: 0.7rem;
-}
-
-.scenario__col[data-state="with"] .scenario__label {
-  color: var(--accent);
 }
 
 
