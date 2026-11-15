@@ -649,6 +649,14 @@ li code {
 .diagram .dg-dim {
   fill: var(--fg-3);
 }
+.diagram .dg-tools {
+  fill: var(--fg-3);
+  font-size: 11.5px;
+}
+.diagram .dg-bus {
+  stroke: currentColor;
+  stroke-width: 1;
+}
 .diagram rect {
   fill: var(--bg-1);
   stroke: var(--line-2);

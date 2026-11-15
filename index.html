@@ -226,51 +226,97 @@
             </div>
 
             <figure class="figure">
-              <svg class="diagram" viewBox="0 0 880 300" role="img" aria-labelledby="diagram-title">
-                <title id="diagram-title">An orchestrator dispatches a task to worker a, which disconnects. The same task is dispatched to worker b when it registers, and worker b returns the result.</title>
+              <svg class="diagram" viewBox="0 0 880 512" role="img" aria-labelledby="diagram-title">
+                <title id="diagram-title">One orchestrator dispatching tasks to a fleet of workers. Each worker is written in a different language and serves its own set of tools: a Python Slack worker, a Go GitHub worker, a Rust sandbox worker, an Elixir warehouse worker, and more fading off the bottom of the list.</title>
                 <defs>
                   <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                     <path d="M0 0.5 L9 5 L0 9.5" fill="none" stroke="currentColor" stroke-width="1.2" />
                   </marker>
                 </defs>
+
                 <g class="dg-box">
-                  <rect x="20.5" y="20.5" width="300" height="259" />
+                  <rect x="20.5" y="20.5" width="240" height="472" />
                   <text x="40" y="50" class="dg-title">orchestrator</text>
                   <text x="40" y="70" class="dg-dim">elixir · postgres</text>
-                  <rect x="40.5" y="110.5" width="260" height="40" class="dg-inner" />
-                  <text x="54" y="135">agent processes</text>
-                  <rect x="40.5" y="170.5" width="260" height="40" class="dg-inner" />
-                  <text x="54" y="195">event log</text>
+                  <rect x="40.5" y="100.5" width="200" height="40" class="dg-inner" />
+                  <text x="54" y="125">agent processes</text>
+                  <rect x="40.5" y="156.5" width="200" height="40" class="dg-inner" />
+                  <text x="54" y="181">event log</text>
+                  <text x="40" y="452" class="dg-dim">routes each call to a worker</text>
+                  <text x="40" y="470" class="dg-dim">that serves the tool</text>
                 </g>
-                <g class="dg-box dg-lost">
-                  <rect x="560.5" y="20.5" width="300" height="80" />
-                  <text x="580" y="50" class="dg-title">worker a</text>
-                  <text x="580" y="70" class="dg-dim">disconnected</text>
-                </g>
-                <g class="dg-box">
-                  <rect x="560.5" y="199.5" width="300" height="80" />
-                  <text x="580" y="229" class="dg-title">worker b</text>
-                  <text x="580" y="249" class="dg-dim">your code, your keys</text>
-                </g>
-                <g class="dg-arrow dg-lost">
-                  <line x1="320" y1="60" x2="556" y2="60" marker-end="url(#arr)" />
-                  <text x="438" y="50" text-anchor="middle">task</text>
-                  <text x="438" y="78" text-anchor="middle" class="dg-dim">no result</text>
-                </g>
+
                 <g class="dg-arrow">
-                  <line x1="320" y1="225" x2="556" y2="225" marker-end="url(#arr)" />
-                  <text x="438" y="215" text-anchor="middle">the same task</text>
+                  <line x1="260" y1="248.0" x2="326" y2="248.0" marker-end="url(#arr)" />
+                  <line x1="326" y1="264.0" x2="264" y2="264.0" marker-end="url(#arr)" />
+                  <text x="293" y="241.0" text-anchor="middle" class="dg-dim">tasks</text>
+                  <text x="293" y="282.0" text-anchor="middle" class="dg-dim">results</text>
+                  <line x1="330" y1="46.0" x2="330" y2="466.0" class="dg-bus" />
+                  <line x1="330" y1="46.0" x2="396" y2="46.0" marker-end="url(#arr)" opacity="1" />
+                  <line x1="330" y1="106.0" x2="396" y2="106.0" marker-end="url(#arr)" opacity="1" />
+                  <line x1="330" y1="166.0" x2="396" y2="166.0" marker-end="url(#arr)" opacity="1" />
+                  <line x1="330" y1="226.0" x2="396" y2="226.0" marker-end="url(#arr)" opacity="1" />
+                  <line x1="330" y1="286.0" x2="396" y2="286.0" marker-end="url(#arr)" opacity="1" />
+                  <line x1="330" y1="346.0" x2="396" y2="346.0" marker-end="url(#arr)" opacity="0.6" />
+                  <line x1="330" y1="406.0" x2="396" y2="406.0" marker-end="url(#arr)" opacity="0.35" />
+                  <line x1="330" y1="466.0" x2="396" y2="466.0" marker-end="url(#arr)" opacity="0.15" />
                 </g>
-                <g class="dg-arrow">
-                  <line x1="556" y1="265" x2="324" y2="265" marker-end="url(#arr)" />
-                  <text x="438" y="283" text-anchor="middle">result</text>
+
+                <g class="dg-box" opacity="1">
+                  <rect x="400.5" y="20.5" width="459" height="52" />
+                  <text x="416" y="41" class="dg-title">slack</text>
+                  <text x="844" y="41" text-anchor="end" class="dg-dim">python</text>
+                  <text x="416" y="61" class="dg-tools">post_message  read_thread  add_reaction  open_modal</text>
+                </g>
+                <g class="dg-box" opacity="1">
+                  <rect x="400.5" y="80.5" width="459" height="52" />
+                  <text x="416" y="101" class="dg-title">github</text>
+                  <text x="844" y="101" text-anchor="end" class="dg-dim">go</text>
+                  <text x="416" y="121" class="dg-tools">search_code  read_file  open_pull_request  list_checks</text>
+                </g>
+                <g class="dg-box" opacity="1">
+                  <rect x="400.5" y="140.5" width="459" height="52" />
+                  <text x="416" y="161" class="dg-title">sandbox</text>
+                  <text x="844" y="161" text-anchor="end" class="dg-dim">rust</text>
+                  <text x="416" y="181" class="dg-tools">exec  read_file  write_file  apply_patch</text>
+                </g>
+                <g class="dg-box" opacity="1">
+                  <rect x="400.5" y="200.5" width="459" height="52" />
+                  <text x="416" y="221" class="dg-title">warehouse</text>
+                  <text x="844" y="221" text-anchor="end" class="dg-dim">elixir</text>
+                  <text x="416" y="241" class="dg-tools">query  explain  materialize  export_csv</text>
+                </g>
+                <g class="dg-box" opacity="1">
+                  <rect x="400.5" y="260.5" width="459" height="52" />
+                  <text x="416" y="281" class="dg-title">crm</text>
+                  <text x="844" y="281" text-anchor="end" class="dg-dim">typescript</text>
+                  <text x="416" y="301" class="dg-tools">find_contact  update_deal  log_activity</text>
+                </g>
+                <g class="dg-box" opacity="0.6">
+                  <rect x="400.5" y="320.5" width="459" height="52" />
+                  <text x="416" y="341" class="dg-title">browser</text>
+                  <text x="844" y="341" text-anchor="end" class="dg-dim">python</text>
+                  <text x="416" y="361" class="dg-tools">open_page  click  extract  screenshot</text>
+                </g>
+                <g class="dg-box" opacity="0.35">
+                  <rect x="400.5" y="380.5" width="459" height="52" />
+                  <text x="416" y="401" class="dg-title">pagerduty</text>
+                  <text x="844" y="401" text-anchor="end" class="dg-dim">go</text>
+                  <text x="416" y="421" class="dg-tools">open_incident  acknowledge  escalate</text>
+                </g>
+                <g class="dg-box" opacity="0.15">
+                  <rect x="400.5" y="440.5" width="459" height="52" />
+                  <text x="416" y="461" class="dg-title">billing</text>
+                  <text x="844" y="461" text-anchor="end" class="dg-dim">rust</text>
+                  <text x="416" y="481" class="dg-tools">lookup_invoice  issue_credit  charge</text>
                 </g>
               </svg>
               <figcaption class="figure__cap">
-                A worker is lost holding a task. The task waits, and when
-                the next worker registers it is dispatched again, under the
-                same id, so a tool that already ran it can say so instead of
-                running it twice.
+                One orchestrator, a fleet of workers. Each worker is written
+                in the language its tools are in, connects outbound, and
+                advertises what it serves. The orchestrator routes every call
+                to a worker that has the tool, and to the next one if that
+                worker goes away.
               </figcaption>
             </figure>
           </div>
