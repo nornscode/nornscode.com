@@ -653,6 +653,11 @@ li code {
   fill: var(--fg-3);
   font-size: 11.5px;
 }
+.diagram .dg-float {
+  fill: var(--fg-3);
+  font-size: 11.5px;
+  opacity: 0.85;
+}
 .diagram .dg-bus {
   stroke: currentColor;
   stroke-width: 1;
