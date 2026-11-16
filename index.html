@@ -353,13 +353,10 @@
                 <text x="820" y="456" class="dg-float">tts</text>
               </svg>
               <figcaption class="figure__cap">
-                One orchestrator, a fleet of workers. Each worker is written
-                in the language its tools are in, runs the model loop
-                itself, and keeps its keys in your network; the orchestrator
-                only ever sees tasks and results. A tool can also stand on
-                its own, behind a worker that sleeps until it is called.
-                Every call goes to a worker that has the tool, and to the
-                next one if that worker goes away.
+                One orchestrator, a fleet of workers. Workers are written in
+                Python, TypeScript, or Elixir. The orchestrator routes calls
+                to a worker that has the tool. Each worker runs its own model
+                loop and keeps its keys in your network.
               </figcaption>
             </figure>
           </div>
