@@ -226,8 +226,7 @@
             </div>
 
             <figure class="figure">
-              <svg class="diagram" viewBox="0 0 880 520" role="img" aria-labelledby="diagram-title">
-                <title id="diagram-title">One orchestrator dispatching tasks to a fleet of workers inside your network. The orchestrator holds state but no secrets. Five workers of different sizes and languages are drawn with the tools they serve: a Python Slack worker, a Go GitHub worker, a Rust sandbox, an Elixir warehouse, a TypeScript CRM. Each runs its own LLM loop and holds its own keys. More tool names float between them, each behind a worker that sleeps until it is called.</title>
+              <svg class="diagram" viewBox="0 0 880 520" role="img" aria-label="An orchestrator sends tasks to workers in your network. Each worker runs its own LLM loop and holds its own keys; the orchestrator holds none.">
                 <defs>
                   <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                     <path d="M0 0.5 L9 5 L0 9.5" fill="none" stroke="currentColor" stroke-width="1.2" />
@@ -250,8 +249,10 @@
                   <text x="52" y="129">agent processes</text>
                   <rect x="38.5" y="160.5" width="154" height="40" class="dg-inner" />
                   <text x="52" y="185">event log</text>
-                  <text x="38" y="466" class="dg-dim">routes the work,</text>
-                  <text x="38" y="484" class="dg-dim">holds no secrets</text>
+                  <text x="38" y="440" class="dg-dim">routes the work,</text>
+                  <text x="38" y="458" class="dg-dim">holds no secrets,</text>
+                  <text x="38" y="476" class="dg-dim">on nornscode.com</text>
+                  <text x="38" y="494" class="dg-dim">or self-hosted</text>
                 </g>
 
                 <g class="dg-zone">
