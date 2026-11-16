@@ -671,6 +671,22 @@ li code {
   fill: var(--bg);
   stroke: var(--line);
 }
+.diagram .dg-zone rect {
+  fill: none;
+  stroke: var(--line-2);
+  stroke-dasharray: 5 4;
+}
+.diagram .dg-rule {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.diagram .dg-foot {
+  fill: var(--fg-2);
+  font-size: 11px;
+}
+.diagram use {
+  color: var(--fg-2);
+}
 .diagram .dg-arrow line {
   stroke: currentColor;
   stroke-width: 1;
