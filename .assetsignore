@@ -1,0 +1,10 @@
+.git
+.github
+.gitignore
+.nojekyll
+.claude
+.preview
+.tool-versions
+.DS_Store
+CNAME
+wrangler.jsonc
