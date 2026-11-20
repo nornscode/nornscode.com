@@ -58,6 +58,184 @@
     <link rel="icon" href="/assets/norns-logo.png" type="image/png" />
     <link rel="stylesheet" href="/styles.css" />
 
+    <style>
+      /* Fulla-page only: the reminder demo. */
+      .demo {
+        display: grid;
+        gap: 0.75rem;
+        min-width: 0;
+        align-self: start;
+      }
+      .demo__cap {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        color: var(--fg-3);
+      }
+      .demo__replay {
+        font: inherit;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--fg-3);
+        background: none;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .demo__replay:hover {
+        color: var(--fg);
+      }
+      .demo:not(.is-animated) .demo__replay {
+        display: none;
+      }
+
+      /* The chat keeps Signal's light palette in both themes. */
+      .signal {
+        border: 1px solid var(--line);
+        background: #fafafa;
+        color: #1b1b1b;
+        font-family: Inter, var(--sans);
+        min-width: 0;
+      }
+      .signal__head {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.6rem 0.9rem;
+        background: #fff;
+        border-bottom: 1px solid #e4e4e4;
+        font-weight: 600;
+        font-size: 0.92rem;
+      }
+      .signal__avatar {
+        display: grid;
+        place-items: center;
+        width: 1.9rem;
+        height: 1.9rem;
+        border-radius: 50%;
+        background: #dcb85f;
+        border: 2px solid #1f3d2b;
+        color: #1f3d2b;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+      }
+      .signal__icons {
+        margin-left: auto;
+        display: flex;
+        gap: 1rem;
+        color: #1b1b1b;
+      }
+      .signal__icons svg {
+        width: 1.05rem;
+        height: 1.05rem;
+      }
+      .signal__body {
+        height: 21rem;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        padding: 0.9rem;
+      }
+      .signal__day {
+        flex: none;
+        align-self: center;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #5e5e5e;
+        padding: 0.25rem 0;
+      }
+      .msg {
+        max-width: 88%;
+        padding: 0.5rem 0.8rem;
+        border-radius: 1.1rem;
+        font-size: 0.88rem;
+        line-height: 1.4;
+        background: #e9e9e9;
+        align-self: flex-start;
+        flex: none;
+      }
+      .msg--me {
+        align-self: flex-end;
+        background: #2c58e3;
+        color: #fff;
+      }
+      .msg__choices {
+        display: block;
+        margin-top: 0.35rem;
+        font-size: 0.8rem;
+      }
+      .msg time {
+        float: right;
+        margin: 0.35rem 0 0 0.7rem;
+        font-size: 0.68rem;
+        opacity: 0.65;
+      }
+      .msg--typing {
+        display: flex;
+        gap: 0.25rem;
+        padding: 0.7rem 0.8rem;
+      }
+      .msg--typing i {
+        width: 0.38rem;
+        height: 0.38rem;
+        border-radius: 50%;
+        background: #8a8a8a;
+        animation: demo-dot 1s infinite ease-in-out;
+      }
+      .msg--typing i:nth-child(2) { animation-delay: 0.15s; }
+      .msg--typing i:nth-child(3) { animation-delay: 0.3s; }
+      .signal__compose {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.55rem 0.9rem 0.7rem;
+        color: #1b1b1b;
+      }
+      .signal__input {
+        flex: 1;
+        padding: 0.4rem 0.9rem;
+        border-radius: 1rem;
+        background: #ededed;
+        color: #8a8a8a;
+        font-size: 0.85rem;
+      }
+      .signal__compose svg {
+        width: 1.05rem;
+        height: 1.05rem;
+      }
+
+      /* Animation. Without JS, or with reduced motion, everything shows. */
+      .demo:not(.is-animated) .msg--typing {
+        display: none;
+      }
+      .demo.is-animated .signal [data-step]:not(.is-on) {
+        display: none;
+      }
+      .demo.is-animated .signal [data-step].is-on {
+        animation: demo-in 0.25s ease-out;
+      }
+      .demo.is-animated .log [data-step] {
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .demo.is-animated .log [data-step].is-on {
+        opacity: 1;
+      }
+      @keyframes demo-in {
+        from { opacity: 0; transform: translateY(0.4rem); }
+      }
+      @keyframes demo-dot {
+        0%, 60%, 100% { opacity: 0.35; }
+        30% { opacity: 1; }
+      }
+    </style>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -123,18 +301,65 @@
             </dl>
           </div>
 
-          <figure class="code" style="align-self: start">
-            <figcaption class="code__cap"><span>processes</span></figcaption>
-            <pre class="code__body"><code>Telegram ◄──► fulla (one process)
-               ├── channel: posts questions with buttons
-               └── Norns worker
-                        │
-                        ▼
-                     Norns runtime
-                        ├── fulla           the manager,
-                        │                   one conversation
-                        └── fulla-reminder  one run per
-                                            commitment</code></pre>
+          <figure class="demo" data-demo>
+            <div class="signal" aria-label="A Signal chat with Fulla">
+              <div class="signal__head">
+                <span class="signal__avatar" aria-hidden="true">F</span>
+                <span>Fulla</span>
+                <span class="signal__icons" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="1.5" y="4" width="9" height="8" rx="2" /><path d="M10.5 7l4-2v6l-4-2" /></svg>
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" /></svg>
+                </span>
+              </div>
+              <div class="signal__body">
+                <div class="signal__day" data-step="1">Monday</div>
+                <div class="msg msg--me" data-step="1">Remind me to renew my passport Thursday at 9 <time>9:14 AM</time></div>
+                <div class="msg msg--typing" data-step="2" data-hide-at="3" aria-hidden="true"><i></i><i></i><i></i></div>
+                <div class="msg" data-step="3">On it, bro. I'll ask you Thursday at 9. <time>9:14 AM</time></div>
+                <div class="signal__day" data-step="5">Thursday</div>
+                <div class="msg" data-step="5">Did you renew your passport?<span class="msg__choices">Reply to this with one of: Done · Snooze 1h · Snooze 1d · Drop it</span> <time>9:00 AM</time></div>
+                <div class="msg msg--me" data-step="7">Snooze 1h <time>9:40 AM</time></div>
+                <div class="msg" data-step="9">Did you renew your passport?<span class="msg__choices">Reply to this with one of: Done · Snooze 1h · Snooze 1d · Drop it</span> <time>10:40 AM</time></div>
+                <div class="msg msg--me" data-step="11">Done <time>11:05 AM</time></div>
+                <div class="msg msg--typing" data-step="12" data-hide-at="13" aria-hidden="true"><i></i><i></i><i></i></div>
+                <div class="msg" data-step="13">Nice one, bro. Closed. <time>11:05 AM</time></div>
+              </div>
+              <div class="signal__compose" aria-hidden="true">
+                <span class="signal__input">Message</span>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11" /></svg>
+              </div>
+            </div>
+
+            <div class="log">
+              <div class="log__head">
+                <span>the same reminder, as its run</span>
+                <span class="log__host">fulla-reminder</span>
+              </div>
+              <pre class="log__body"><span class="tm-muted">time</span>          <span class="tm-muted">event</span>              <span class="tm-muted">detail</span>
+<span data-step="1"><span class="tm-dim">mon 09:14:05</span>  <span class="tm-ok">run_started</span>
+<span class="tm-dim">mon 09:14:07</span>  <span class="tm-info">tool_call</span>          wait  258,353 s
+<span class="tm-dim">mon 09:14:07</span>  <span class="tm-warn">waiting_for_timer</span>
+</span><span class="log__note" data-step="4">                                   worker stopped, 2 d 23 h 45 min
+</span><span data-step="5"><span class="tm-dim">thu 09:00:00</span>  <span class="tm-info">tool_call</span>          ask_human
+<span class="tm-dim">thu 09:00:03</span>  <span class="tm-warn">waiting_for_user</span>   "Did you renew your passport?"
+</span><span class="log__note" data-step="6">                                   parked, worker stopped, 40 min
+</span><span data-step="7"><span class="tm-dim">thu 09:40:12</span>  <span class="tm-accent">user_response</span>      "snooze 1 hour"
+<span class="tm-dim">thu 09:40:15</span>  <span class="tm-warn">waiting_for_timer</span>  3,600 s
+</span><span class="log__note" data-step="8">                                   worker stopped, 1 h
+</span><span data-step="9"><span class="tm-dim">thu 10:40:18</span>  <span class="tm-warn">waiting_for_user</span>   "Did you renew your passport?"
+</span><span class="log__note" data-step="10">                                   parked, worker stopped, 25 min
+</span><span data-step="11"><span class="tm-dim">thu 11:05:31</span>  <span class="tm-accent">user_response</span>      "done"
+<span class="tm-dim">thu 11:05:34</span>  <span class="tm-ok">run_completed</span>      "Done: renew my passport"</span></pre>
+            </div>
+
+            <figcaption class="demo__cap">
+              <span>
+                An illustration, sped up. One reminder is one run. It
+                sleeps in the orchestrator while the worker is stopped, and
+                model and tool-result events are left out.
+              </span>
+              <button type="button" class="demo__replay" data-demo-replay>replay</button>
+            </figcaption>
           </figure>
         </div>
       </section>
@@ -369,5 +594,48 @@
     </footer>
 
     <script src="/script.js" defer></script>
+    <script>
+      // Reminder demo: reveal the chat and the log step by step, in a loop.
+      (() => {
+        const demo = document.querySelector("[data-demo]");
+        if (!demo) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        // Milliseconds to hold after each step, 1 to 13.
+        const hold = [900, 900, 1600, 1800, 2200, 1500, 1500, 1500, 2200, 1500, 900, 900, 6000];
+        const items = [...demo.querySelectorAll("[data-step]")];
+        let step = 0;
+        let timer = null;
+        let visible = false;
+
+        const render = () => {
+          items.forEach((el) => {
+            const from = Number(el.dataset.step);
+            const until = Number(el.dataset.hideAt || Infinity);
+            el.classList.toggle("is-on", step >= from && step < until);
+          });
+        };
+        const tick = () => {
+          step = step >= hold.length ? 1 : step + 1;
+          render();
+          timer = setTimeout(tick, hold[step - 1]);
+        };
+        const start = () => {
+          clearTimeout(timer);
+          step = 0;
+          render();
+          timer = setTimeout(tick, 500);
+        };
+
+        demo.classList.add("is-animated");
+        render();
+        demo.querySelector("[data-demo-replay]").addEventListener("click", start);
+        new IntersectionObserver(([entry]) => {
+          if (entry.isIntersecting && !visible) start();
+          if (!entry.isIntersecting) clearTimeout(timer);
+          visible = entry.isIntersecting;
+        }, { threshold: 0.3 }).observe(demo);
+      })();
+    </script>
   </body>
 </html>
