@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Fulla — Reminders and follow-ups in chat</title>
+    <title>Fulla — A personal assistant in chat</title>
     <meta
       name="description"
-      content="Fulla sends reminders on Telegram, Signal, or SMS. Each reminder waits in Norns until it is due."
+      content="Fulla remembers what matters to you, follows up on messages and reminders, and helps with your home and coding work from chat."
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
@@ -40,10 +40,10 @@
     <meta property="og:site_name" content="Norns" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://nornscode.com/fulla/" />
-    <meta property="og:title" content="Fulla — Reminders and follow-ups in chat" />
+    <meta property="og:title" content="Fulla — A personal assistant in chat" />
     <meta
       property="og:description"
-      content="Fulla sends reminders on Telegram, Signal, or SMS. Each reminder waits in Norns until it is due."
+      content="Fulla remembers what matters to you, follows up on messages and reminders, and helps with your home and coding work from chat."
     />
     <meta property="og:image" content="https://nornscode.com/assets/og-fulla.png" />
     <meta property="og:image:width" content="1200" />
@@ -51,10 +51,10 @@
     <meta property="og:image:alt" content="A Fulla reminder waits in Norns from Monday to Thursday." />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Fulla — Reminders and follow-ups in chat" />
+    <meta name="twitter:title" content="Fulla — A personal assistant in chat" />
     <meta
       name="twitter:description"
-      content="Fulla sends reminders on Telegram, Signal, or SMS. Each reminder waits in Norns until it is due."
+      content="Fulla remembers what matters to you, follows up on messages and reminders, and helps with your home and coding work from chat."
     />
     <meta name="twitter:image" content="https://nornscode.com/assets/og-fulla.png" />
     <meta name="twitter:image:alt" content="A Fulla reminder waits in Norns from Monday to Thursday." />
@@ -98,11 +98,11 @@
     <main id="main">
       <section class="wrap hero">
         <div>
-          <h1>Fulla sends reminders and follows up in chat</h1>
+          <h1>Fulla is a personal assistant in chat</h1>
           <p class="lede">
-            Message Fulla on Telegram, Signal, or SMS. Each reminder is a
-            Norns run that waits until it’s due. The worker can shut down
-            while Norns keeps track of the reminder.
+            Talk to Fulla on Telegram, Signal, or SMS. It gets to know you
+            over time and helps you keep up with messages, reminders, and
+            the projects you’re working on.
           </p>
           <div class="links">
             <a class="primary" href="#setup-heading">Run Fulla locally</a>
@@ -149,19 +149,42 @@
         </figure>
       </section>
 
+      <section class="section" aria-labelledby="uses-heading">
+        <div class="wrap content">
+          <h2 id="uses-heading">What you can ask Fulla to do</h2>
+          <div class="examples">
+            <article>
+              <h3>Keep your goals in mind</h3>
+              <p>Tell Fulla what you like, what you’re working toward, and what keeps getting in the way. It can remember those details and check in later. If you want, ask it to get to know you by asking a question a couple of times a week.</p>
+            </article>
+            <article>
+              <h3>Help you keep up with messages</h3>
+              <p>With access to Messages on your Mac, Fulla can read recent conversations, remind you who’s waiting for a reply, and draft one for you to review. It sends the reply only after you approve it.</p>
+            </article>
+            <article>
+              <h3>Update reminders and run home automations</h3>
+              <p>Ask Fulla to move a reminder or update Apple Reminders on your Mac. You can also say “turn the lights off at eleven” and have it run a HomeKit automation you’ve made available through Shortcuts.</p>
+            </article>
+            <article>
+              <h3>Check your terminal or hand off a coding task</h3>
+              <p>Ask Fulla to run a command or check a tmux session on a machine you’ve connected and authorized. With a cloud coding worker connected, it can hand a task to Claude Code or Codex and let you know when it’s done.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="how-heading" aria-labelledby="behavior-heading">
         <div class="wrap content">
           <h2 id="behavior-heading">What stays running</h2>
           <p>
-            The hosted worker on Fly stops when it’s idle. Norns keeps the
-            conversation and pending reminders, and wakes the worker when a
-            timer fires or a reply arrives.
+            In the example above, Norns keeps the reminder while Fulla’s worker
+            is stopped. It wakes the worker when the reminder is due or you
+            reply in chat.
           </p>
           <p>
-            Fulla can use a separate worker on your Mac for Things, Reminders,
-            and iMessage drafts. If the Mac is asleep, the task waits for it to
-            reconnect. Invited contacts talk to a separate agent with no access
-            to your calendar, reminders, or devices.
+            Mac integrations and terminal access use a worker on a machine
+            you connect. Invited contacts talk to a separate agent with no
+            access to your calendar, reminders, or devices.
           </p>
         </div>
       </section>

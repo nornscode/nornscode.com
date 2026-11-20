@@ -30,7 +30,7 @@ A run can wait for a timer, a reply, or another agent. The event log records req
 
 - [Hello agent](https://github.com/nornscode/norns-hello-agent): Minimal worker
 - [Mimir](https://github.com/nornscode/norns-mimir-agent): Answers project questions in Slack using connected repositories and pages
-- [Fulla](https://github.com/nornscode/fulla): Sends reminders and follows up in chat. Each reminder waits in Norns while the worker can stop
+- [Fulla](https://github.com/nornscode/fulla): A personal assistant in chat that remembers preferences and goals, follows up on messages, manages reminders and home automations, and can work with terminals or cloud coding agents
 - [Sleipnir](https://github.com/nornscode/sleipnir): Coding agent that other agents hand work to
 
 ## Install
