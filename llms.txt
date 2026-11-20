@@ -12,7 +12,7 @@ Run API: `GET /runs/:id/events` (full log), `GET /runs/:id/summary` (fixed-size 
 
 Transient failures retry with exponential backoff, three attempts; rate limits get ten. Token usage and serving model are recorded per call; cost is priced at read time.
 
-Version v0.7. The reference application, Mimir (a Slack knowledge bot), has run on the hosted instance since 2026-04-15. Supported deployment is a single node; multi-node is on the roadmap.
+Version v0.7. The reference application, Mimir (a Slack knowledge bot), has run on the hosted instance since 2026-04-15. Fulla, a private personal manager on Telegram, Signal or SMS, has run there since 2026-10-16; each reminder is a run that sleeps until due and the worker is serverless. Supported deployment is a single node; multi-node is on the roadmap.
 
 ## Project
 
@@ -36,6 +36,7 @@ Version v0.7. The reference application, Mimir (a Slack knowledge bot), has run 
 
 - [Hello agent](https://github.com/nornscode/norns-hello-agent): Minimal worker
 - [Mimir](https://github.com/nornscode/norns-mimir-agent): Slack knowledge bot, the reference application
+- [Fulla](https://github.com/nornscode/fulla): Personal manager; one run per reminder, serverless worker, tools-only workers on other machines
 - [Sleipnir](https://github.com/nornscode/sleipnir): Coding agent that other agents hand work to
 
 ## Install
