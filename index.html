@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Norns — The runtime for long-lived agents</title>
+    <title>Norns — Run agents that can pick up after a restart</title>
     <meta
       name="description"
-      content="Norns is a durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools. A run survives the loss of any worker."
+      content="Norns saves agent progress in Postgres so a run can pick up after a worker disconnects or Norns restarts."
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
@@ -41,10 +41,10 @@
     <meta property="og:site_name" content="Norns" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://nornscode.com/" />
-    <meta property="og:title" content="Norns — The runtime for long-lived agents" />
+    <meta property="og:title" content="Norns — Run agents that can pick up after a restart" />
     <meta
       property="og:description"
-      content="Durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools."
+      content="Norns saves agent progress in Postgres so a run can pick up after a worker disconnects or Norns restarts."
     />
     <meta property="og:image" content="https://nornscode.com/assets/og.png" />
     <meta property="og:image:secure_url" content="https://nornscode.com/assets/og.png" />
@@ -53,19 +53,19 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Norns event log: a worker times out, no worker is available for 1 h 47 min, then a worker connects and the run completes."
+      content="Norns run 189 finishes after 1 hour and 47 minutes without a worker."
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Norns — The runtime for long-lived agents" />
+    <meta name="twitter:title" content="Norns — Run agents that can pick up after a restart" />
     <meta
       name="twitter:description"
-      content="Durable runtime for AI agents. The orchestrator holds the event log and dispatches steps; workers in your infrastructure make the LLM calls and run the tools."
+      content="Norns saves agent progress in Postgres so a run can pick up after a worker disconnects or Norns restarts."
     />
     <meta name="twitter:image" content="https://nornscode.com/assets/og.png" />
     <meta
       name="twitter:image:alt"
-      content="Norns event log: a worker times out, no worker is available for 1 h 47 min, then a worker connects and the run completes."
+      content="Norns run 189 finishes after 1 hour and 47 minutes without a worker."
     />
 
     <link rel="icon" href="/assets/norns-logo.png" type="image/png" />
@@ -97,14 +97,13 @@
       <div class="wrap nav__inner">
         <a class="nav__brand" href="/" aria-label="Norns home">
           <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
-          <span class="nav__wordmark">norns</span>
-          <span class="nav__version">v0.7</span>
+          <span class="nav__wordmark">Norns</span>
         </a>
         <nav class="nav__links" aria-label="Resources">
-          <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture</a>
-          <a href="/mimir/">mimir</a>
-          <a href="/fulla/">fulla</a>
-          <a class="nav__github" href="https://github.com/nornscode/norns">github</a>
+          <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a>
+          <a href="/mimir/">Mimir</a>
+          <a href="/fulla/">Fulla</a>
+          <a href="https://github.com/nornscode/norns">GitHub</a>
           <button
             type="button"
             class="theme-toggle"
@@ -125,320 +124,103 @@
     </header>
 
     <main id="main">
-      <section class="hero">
-        <div class="wrap hero__inner">
-          <div>
-            <h1 class="hero__title">The runtime for long-lived agents.</h1>
-            <p class="hero__lede">
-              Norns keeps an agent's state in an append-only event log and
-              dispatches one step at a time to workers you run. A run
-              survives a lost worker, a deploy, or a restart of the
-              orchestrator.
-            </p>
-
-
-            <div class="install">
-              <div class="install__row">
-                <code id="install-cmd" class="install__cmd"><span class="install__prompt">$</span>brew install nornscode/tap/nornsctl</code>
-                <button
-                  type="button"
-                  class="install__copy"
-                  data-copy-target="#install-cmd"
-                  data-copy-text="brew install nornscode/tap/nornsctl"
-                  aria-label="Copy install command"
-                >
-                  <span class="install__copy-default" aria-hidden="true">copy</span>
-                  <span class="install__copy-done" aria-hidden="true">copied</span>
-                </button>
-              </div>
-              <div class="install__links">
-                <a href="https://github.com/nornscode/norns#get-started">quickstart</a>
-              </div>
-            </div>
-          </div>
-
-          <figure class="log">
-            <div class="log__head">
-              <span><span class="tm-prompt">$ </span>nornsctl runs events 189</span>
-              <span class="log__host">cloud.nornscode.com</span>
-            </div>
-            <pre class="log__body"><span class="tm-muted">seq</span>  <span class="tm-muted">time</span>      <span class="tm-muted">event</span>          <span class="tm-muted">detail</span>
-<span class="tm-muted">1</span>    <span class="tm-dim">04:08:20</span>  <span class="tm-ok">run_started</span>
-<span class="tm-muted">2</span>    <span class="tm-dim">04:08:20</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6  step 1
-<span class="tm-muted">3</span>    <span class="tm-dim">04:13:20</span>  <span class="tm-warn">retry</span>          <span class="tm-err">timeout</span>  attempt 1  transient
-                                "LLM task timed out — worker
-                                 may have disconnected"
-<span class="tm-muted">4</span>    <span class="tm-dim">04:13:21</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6  step 1
-<span class="log__note">                                no worker connected, 1 h 47 min</span>
-<span class="tm-muted">5</span>    <span class="tm-dim">06:00:07</span>  <span class="tm-info">llm_request</span>    claude-sonnet-4-6  step 1
-<span class="tm-muted">6</span>    <span class="tm-dim">06:00:11</span>  <span class="tm-accent">llm_response</span>   1,980 in  5 out
-<span class="tm-muted">7</span>    <span class="tm-dim">06:00:11</span>  <span class="tm-ok">run_completed</span></pre>
-            <figcaption class="log__foot">
-              Run 189, 2026-10-04. No worker was connected for 1 h 47
-              min. When one registered, the step was dispatched again and
-              the run finished.
-            </figcaption>
-          </figure>
-        </div>
-        <div class="strip">
-          <div class="wrap strip__inner">
-            <span>elixir / otp</span>
-            <span>postgresql</span>
-            <span>workers in any language</span>
-            <span>at-least-once, deduplicated</span>
-            <span>single node</span>
-            <span>mit</span>
+      <section class="wrap hero">
+        <div>
+          <h1>Run agents that can pick up after a restart</h1>
+          <p class="lede">
+            Norns saves each run’s progress in Postgres. If a worker disconnects,
+            another can pick up the pending step. Your workers make the model
+            calls, run the tools, and keep the API keys.
+          </p>
+          <div class="links">
+            <a class="primary" href="#setup-heading">Quickstart</a>
+            <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a>
           </div>
         </div>
-      </section>
 
-      <section class="section" aria-labelledby="system-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">System</div>
-          <div>
-            <h2 id="system-heading" class="section__title">Orchestrator and workers</h2>
-            <div class="prose">
-              <p>
-                The orchestrator is an Elixir application on Postgres. It
-                holds the event log and decides what happens next. It never
-                calls a model or runs a tool.
-              </p>
-              <p>
-                Workers are your code, in your network, with your keys. A
-                worker connects over a WebSocket, says what it can do, and
-                receives one task at a time as JSON. It can be written in
-                any language. There are SDKs for
-                <a href="https://github.com/nornscode/norns-sdk-python">Python</a>
-                and <a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a>,
-                and the protocol is documented for the rest.
-              </p>
-              <p>
-                When a worker goes away, the work it held is handed to the
-                next one. When none is available, it waits.
-              </p>
-            </div>
-
-            <figure class="figure">
-              <svg class="diagram" viewBox="0 0 880 520" role="img" aria-label="An orchestrator sends tasks to workers in your network. Each worker runs its own LLM loop and holds its own keys; the orchestrator holds none.">
-                <defs>
-                  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                    <path d="M0 0.5 L9 5 L0 9.5" fill="none" stroke="currentColor" stroke-width="1.2" />
-                  </marker>
-                  <symbol id="i-loop" viewBox="0 0 12 12">
-                    <path d="M10.2 6.4 A4.2 4.2 0 1 1 8.9 2.9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
-                    <path d="M9.4 0.9 V3.4 H6.9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-                  </symbol>
-                  <symbol id="i-key" viewBox="0 0 12 12">
-                    <circle cx="3.4" cy="6" r="2.4" fill="none" stroke="currentColor" stroke-width="1.2" />
-                    <path d="M5.8 6 H11.2 M9.2 6 V8.2 M11 6 V7.6" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
-                  </symbol>
-                </defs>
-
-                <g class="dg-box">
-                  <rect x="20.5" y="24.5" width="190" height="482" />
-                  <text x="38" y="54" class="dg-title">orchestrator</text>
-                  <text x="38" y="74" class="dg-dim">elixir · postgres</text>
-                  <rect x="38.5" y="104.5" width="154" height="40" class="dg-inner" />
-                  <text x="52" y="129">agent processes</text>
-                  <rect x="38.5" y="160.5" width="154" height="40" class="dg-inner" />
-                  <text x="52" y="185">event log</text>
-                  <text x="38" y="440" class="dg-dim">routes the work,</text>
-                  <text x="38" y="458" class="dg-dim">holds no secrets,</text>
-                  <text x="38" y="476" class="dg-dim">on nornscode.com</text>
-                  <text x="38" y="494" class="dg-dim">or self-hosted</text>
-                </g>
-
-                <g class="dg-zone">
-                  <rect x="300.5" y="24.5" width="565" height="482" />
-                  <text x="316" y="48" class="dg-title">workers</text>
-                  <text x="378" y="48" class="dg-dim">· your network</text>
-                  <text x="850" y="494" text-anchor="end" class="dg-dim">model calls and keys stay on this side</text>
-                </g>
-
-                <g class="dg-arrow">
-                  <line x1="210" y1="252" x2="268" y2="252" marker-end="url(#arr)" />
-                  <line x1="268" y1="268" x2="214" y2="268" marker-end="url(#arr)" />
-                  <text x="240" y="245" text-anchor="middle" class="dg-dim">tasks</text>
-                  <text x="240" y="286" text-anchor="middle" class="dg-dim">results</text>
-                  <line x1="272" y1="118" x2="272" y2="430" class="dg-bus" />
-                  <line x1="272" y1="118" x2="312" y2="118" marker-end="url(#arr)" />
-                  <line x1="272" y1="188" x2="616" y2="188" marker-end="url(#arr)" />
-                  <line x1="272" y1="258" x2="312" y2="258" marker-end="url(#arr)" />
-                  <line x1="272" y1="348" x2="636" y2="348" marker-end="url(#arr)" />
-                  <line x1="272" y1="430" x2="312" y2="430" marker-end="url(#arr)" />
-                </g>
-
-                <g class="dg-box">
-                  <rect x="316.5" y="60.5" width="250" height="116" />
-                  <text x="332" y="82" class="dg-title">slack</text>
-                  <text x="550" y="82" text-anchor="end" class="dg-dim">python</text>
-                  <text x="332" y="102" class="dg-tools">post_message  read_thread</text>
-                  <text x="332" y="119" class="dg-tools">add_reaction  open_modal</text>
-                  <text x="332" y="136" class="dg-tools">upload_file</text>
-                  <line x1="328" y1="148.5" x2="554" y2="148.5" class="dg-rule" />
-                  <use href="#i-loop" x="332" y="157" width="11" height="11" />
-                  <text x="348" y="166" class="dg-foot">llm loop</text>
-                  <use href="#i-key" x="416" y="157" width="11" height="11" />
-                  <text x="432" y="166" class="dg-foot">SLACK_TOKEN</text>
-                </g>
-                <g class="dg-box">
-                  <rect x="620.5" y="120.5" width="210" height="133" />
-                  <text x="636" y="142" class="dg-title">github</text>
-                  <text x="814" y="142" text-anchor="end" class="dg-dim">go</text>
-                  <text x="636" y="162" class="dg-tools">search_code</text>
-                  <text x="636" y="179" class="dg-tools">read_file</text>
-                  <text x="636" y="196" class="dg-tools">open_pull_request</text>
-                  <text x="636" y="213" class="dg-tools">list_checks</text>
-                  <line x1="632" y1="225.5" x2="818" y2="225.5" class="dg-rule" />
-                  <use href="#i-loop" x="636" y="234" width="11" height="11" />
-                  <text x="652" y="243" class="dg-foot">llm loop</text>
-                  <use href="#i-key" x="720" y="234" width="11" height="11" />
-                  <text x="736" y="243" class="dg-foot">GH_APP_KEY</text>
-                </g>
-                <g class="dg-box">
-                  <rect x="316.5" y="200.5" width="290" height="116" />
-                  <text x="332" y="222" class="dg-title">sandbox</text>
-                  <text x="590" y="222" text-anchor="end" class="dg-dim">rust</text>
-                  <text x="332" y="242" class="dg-tools">exec  read_file  write_file</text>
-                  <text x="332" y="259" class="dg-tools">apply_patch  git_diff</text>
-                  <text x="332" y="276" class="dg-tools">run_tests  list_dir</text>
-                  <line x1="328" y1="288.5" x2="594" y2="288.5" class="dg-rule" />
-                  <use href="#i-loop" x="332" y="297" width="11" height="11" />
-                  <text x="348" y="306" class="dg-foot">llm loop</text>
-                  <use href="#i-key" x="416" y="297" width="11" height="11" />
-                  <text x="432" y="306" class="dg-foot">AWS_CREDS</text>
-                </g>
-                <g class="dg-box">
-                  <rect x="640.5" y="300.5" width="212" height="99" />
-                  <text x="656" y="322" class="dg-title">warehouse</text>
-                  <text x="836" y="322" text-anchor="end" class="dg-dim">elixir</text>
-                  <text x="656" y="342" class="dg-tools">query  explain</text>
-                  <text x="656" y="359" class="dg-tools">materialize  export_csv</text>
-                  <line x1="652" y1="371.5" x2="840" y2="371.5" class="dg-rule" />
-                  <use href="#i-loop" x="656" y="380" width="11" height="11" />
-                  <text x="672" y="389" class="dg-foot">llm loop</text>
-                  <use href="#i-key" x="740" y="380" width="11" height="11" />
-                  <text x="756" y="389" class="dg-foot">DB_PASSWORD</text>
-                </g>
-                <g class="dg-box">
-                  <rect x="316.5" y="380.5" width="240" height="99" />
-                  <text x="332" y="402" class="dg-title">crm</text>
-                  <text x="540" y="402" text-anchor="end" class="dg-dim">typescript</text>
-                  <text x="332" y="422" class="dg-tools">find_contact  update_deal</text>
-                  <text x="332" y="439" class="dg-tools">log_activity</text>
-                  <line x1="328" y1="451.5" x2="544" y2="451.5" class="dg-rule" />
-                  <use href="#i-loop" x="332" y="460" width="11" height="11" />
-                  <text x="348" y="469" class="dg-foot">llm loop</text>
-                  <use href="#i-key" x="416" y="460" width="11" height="11" />
-                  <text x="432" y="469" class="dg-foot">CRM_TOKEN</text>
-                </g>
-
-                <text x="600" y="72" class="dg-float">fetch_url</text>
-                <text x="720" y="72" class="dg-float">geocode</text>
-                <text x="600" y="102" class="dg-float">send_sms</text>
-                <text x="720" y="102" class="dg-float">translate</text>
-                <text x="810" y="102" class="dg-float">ocr</text>
-                <text x="636" y="280" class="dg-float">render_pdf</text>
-                <text x="750" y="280" class="dg-float">embed</text>
-                <text x="590" y="426" class="dg-float">lookup_invoice</text>
-                <text x="720" y="426" class="dg-float">open_incident</text>
-                <text x="590" y="456" class="dg-float">screenshot</text>
-                <text x="720" y="456" class="dg-float">acknowledge</text>
-                <text x="820" y="456" class="dg-float">tts</text>
-              </svg>
-              <figcaption class="figure__cap">
-                The orchestrator routes each call to a worker that has the
-                tool. Each worker runs its own model loop and keeps its own
-                keys.
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="log-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">Durability</div>
-          <div>
-            <h2 id="log-heading" class="section__title">State lives in the log</h2>
-            <div class="prose">
-              <p>
-                Every step of a run is written to a log in Postgres, and
-                state is rebuilt by replaying it. A crashed process picks up
-                where it left off, and completed steps are not run again. A
-                run can wait on a timer, a
-                person, or another agent for as long as it takes.
-              </p>
-              <p>
-                Delivery is at-least-once with duplicate suppression. Tool
-                calls with side effects carry an idempotency key.
-              </p>
-            </div>
-            <div class="links">
-              <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture.md</a>
-              <a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">decision-log.md</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="record-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">In production</div>
-          <div>
-            <h2 id="record-heading" class="section__title">Since April</h2>
-            <p class="section__lede">
-              Two applications run on the hosted instance. Mimir is a Slack
-              bot that answers questions about a project from its
-              repositories and docs. Each thread is a run. Fulla is a
-              personal manager on Telegram. Each reminder is a run that
-              sleeps until it is due.
-            </p>
-            <div class="table-wrap">
-              <table class="spec">
-                <thead>
-                  <tr><th></th><th class="num">Mimir</th><th class="num">Fulla</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>running since</td><td class="num">2026-04-15</td><td class="num">2026-10-16</td></tr>
-                  <tr><td>runs</td><td class="num">130</td><td class="num">939</td></tr>
-                  <tr><td>redeploys of the runtime</td><td class="num">104</td><td class="num">24</td></tr>
-                  <tr><td>runs failed on a task timeout with no worker answering</td><td class="num">0</td><td class="num">31</td></tr>
-                  <tr><td>runs lost to the orchestrator going away</td><td class="num">0</td><td class="num">0</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <p class="block__note">
-              Mimir counted to 2026-10-04, Fulla to 2026-11-20. Fulla's
-              worker sleeps between requests. Each timeout is recorded in
-              the run's log.
-            </p>
-            <div class="links">
-              <a href="/mimir/">how mimir is built</a>
-              <a href="/fulla/">how fulla is built</a>
-            </div>
-          </div>
-        </div>
+        <figure class="panel">
+          <figcaption>
+            <strong>Run 189 finished after 1 hour and 47 minutes without a worker</strong>
+            <span>Event log excerpt from a Mimir test on October 4, 2026</span>
+          </figcaption>
+          <table class="run-log" aria-label="Run 189 events">
+            <thead>
+              <tr><th scope="col">Time</th><th scope="col">Event</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><time>04:08:20</time></td><td><code>run_started</code></td></tr>
+              <tr><td><time>04:13:20</time></td><td><code>retry</code> <span>after a timeout</span></td></tr>
+              <tr><td colspan="2" class="log-gap">No worker connected</td></tr>
+              <tr><td><time>06:00:07</time></td><td><code>llm_request</code> <span>resent to a worker</span></td></tr>
+              <tr><td><time>06:00:11</time></td><td><code>run_completed</code></td></tr>
+            </tbody>
+          </table>
+          <div class="panel-foot"><code>nornsctl runs events 189</code></div>
+        </figure>
       </section>
 
       <section class="section" aria-labelledby="setup-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">Local setup</div>
-          <div>
-            <h2 id="setup-heading" class="section__title">A local orchestrator and a worker</h2>
-            <figure class="code" style="max-width: 36rem">
-              <figcaption class="code__cap"><span>shell</span></figcaption>
-              <pre class="code__body"><code><span class="cb-prompt">$</span>brew install nornscode/tap/nornsctl
-<span class="cb-prompt">$</span>nornsctl dev
-<span class="cb-prompt">$</span>nornsctl new my-agent && cd my-agent
-<span class="cb-prompt">$</span>uv sync && uv run my-agent-worker</code></pre>
-            </figure>
-            <div class="links">
-              <a href="https://github.com/nornscode/norns#get-started">quickstart</a>
-              <a href="https://github.com/nornscode/norns-hello-agent">hello agent</a>
-              <a href="https://github.com/nornscode/norns-sdk-python">python sdk</a>
-              <a href="https://github.com/nornscode/norns-sdk-elixir">elixir sdk</a>
-            </div>
+        <div class="wrap content">
+          <h2 id="setup-heading">Run an agent locally</h2>
+          <p>Use Homebrew to install the CLI and uv to run the Python worker.</p>
+          <div class="panel setup">
+            <pre><code id="setup-commands">brew install nornscode/tap/nornsctl
+nornsctl dev
+nornsctl new my-agent
+cd my-agent
+uv sync
+uv run my-agent-worker</code></pre>
+            <button class="install__copy" type="button" data-copy-target="#setup-commands" aria-label="Copy setup commands">
+              <span class="install__copy-default" aria-hidden="true">Copy</span>
+              <span class="install__copy-done" aria-hidden="true">Copied</span>
+            </button>
+          </div>
+          <p>Once the worker connects, the <a href="https://github.com/nornscode/norns-hello-agent">Hello agent example</a> shows how to send a message and inspect the run.</p>
+          <div class="links">
+            <a href="https://github.com/nornscode/norns#get-started">Full quickstart</a>
+            <a href="https://github.com/nornscode/norns-sdk-python">Python SDK</a>
+            <a href="https://github.com/nornscode/norns-sdk-elixir">Elixir SDK</a>
+            <a href="https://github.com/nornscode/nornsctl">CLI reference</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="system-heading" aria-labelledby="architecture-heading">
+        <div class="wrap content">
+          <h2 id="architecture-heading">How runs resume</h2>
+          <ol class="flow">
+            <li>Norns sends a task.</li>
+            <li>A worker calls the model or runs a tool.</li>
+            <li>Norns records the result in Postgres.</li>
+          </ol>
+          <p id="log-heading">
+            Norns rebuilds run state from the log after a restart. A run can
+            also wait there for a timer or a human reply, then continue when
+            it’s ready. Norns supports a single-node deployment backed by Postgres.
+          </p>
+          <p>
+            Norns can resend a pending task with the same idempotency key.
+            If a tool does something like charge a card, the payment service
+            needs to honor that key to prevent a duplicate charge.
+          </p>
+          <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Read the architecture</a>
+        </div>
+      </section>
+
+      <section class="section" id="record-heading" aria-labelledby="examples-heading">
+        <div class="wrap content">
+          <h2 id="examples-heading">What’s running on Norns</h2>
+          <div class="examples">
+            <article>
+              <h3><a href="/mimir/">Mimir</a></h3>
+              <p>Answers project questions in Slack. A thread keeps its history when a worker restarts.</p>
+              <p class="muted">130 runs from April 15 to October 4, 2026.</p>
+            </article>
+            <article>
+              <h3><a href="/fulla/">Fulla</a></h3>
+              <p>Sends reminders and follows up in chat. A reminder can wait for days with the worker stopped.</p>
+              <p class="muted">939 runs from October 16 to November 20, 2026.</p>
+            </article>
           </div>
         </div>
       </section>
@@ -446,51 +228,12 @@
 
     <footer class="footer">
       <div class="wrap footer__inner">
-        <div class="footer__brand">
-          <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
-          <span>norns</span>
-        </div>
-
-        <div class="footer__cols">
-          <div class="footer__col">
-            <div class="footer__heading">sdks</div>
-            <ul role="list">
-              <li><a href="https://github.com/nornscode/norns-sdk-python">Python</a></li>
-              <li><a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a></li>
-            </ul>
-          </div>
-          <div class="footer__col">
-            <div class="footer__heading">tools</div>
-            <ul role="list">
-              <li><a href="https://github.com/nornscode/nornsctl">nornsctl</a></li>
-              <li><a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">OpenAPI</a></li>
-            </ul>
-          </div>
-          <div class="footer__col">
-            <div class="footer__heading">examples</div>
-            <ul role="list">
-              <li><a href="https://github.com/nornscode/norns-hello-agent">Hello agent</a></li>
-              <li><a href="/mimir/">Mimir</a></li>
-              <li><a href="/fulla/">Fulla</a></li>
-              <li><a href="https://github.com/nornscode/sleipnir">Sleipnir</a></li>
-            </ul>
-          </div>
-          <div class="footer__col">
-            <div class="footer__heading">project</div>
-            <ul role="list">
-              <li><a href="https://github.com/nornscode/norns">Repository</a></li>
-              <li><a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a></li>
-              <li><a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">Decision log</a></li>
-              <li><a href="https://github.com/nornscode/norns/blob/main/docs/roadmap.md">Roadmap</a></li>
-              <li><a href="https://github.com/nornscode/norns/blob/main/LICENSE">MIT license</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="footer__bottom">
-          <span>MIT license</span>
-          <span>Elixir / OTP · PostgreSQL · v0.7</span>
-        </div>
+        <p>Norns is open source under the <a href="https://github.com/nornscode/norns/blob/main/LICENSE">MIT license</a>.</p>
+        <nav aria-label="Project resources">
+          <a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">Decision log</a>
+          <a href="https://github.com/nornscode/norns/blob/main/docs/roadmap.md">Roadmap</a>
+          <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">OpenAPI</a>
+        </nav>
       </div>
     </footer>
 

@@ -1,54 +1,92 @@
 <!doctype html>
-<!-- Source for og.png. Regenerate with:
-     node -e "const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1200,height:630},deviceScaleFactor:1});await p.goto('file://'+process.cwd()+'/assets/og.html');await p.waitForTimeout(1500);await p.screenshot({path:'assets/og.png'});await b.close();})()" -->
+<!-- Social card source. Capture at 1200 × 630: default for og.png,
+     #mimir for og-mimir.png, and #fulla for og-fulla.png. -->
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" />
-<style>
-  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #0b0d10; }
-  .card {
-    position: relative; width: 1200px; height: 630px; box-sizing: border-box;
-    padding: 64px 80px; color: #e4e7ea; background: #0b0d10;
-    font-family: "IBM Plex Sans", system-ui, sans-serif;
-    display: grid; grid-template-columns: 1fr 460px; column-gap: 56px;
-  }
-  .brand { display: flex; align-items: center; gap: 14px; font-family: "IBM Plex Mono", monospace; font-size: 24px; }
-  .brand img { width: 30px; height: 30px; filter: invert(1); }
-  .brand span.v { color: #6e757e; font-size: 20px; margin-left: 4px; }
-  h1 { font-weight: 500; font-size: 60px; line-height: 1.1; letter-spacing: -0.01em; margin: 56px 0 24px; }
-  .lede { font-size: 23px; line-height: 1.4; color: #a4abb3; margin: 0; max-width: 560px; }
-  .facts { position: absolute; left: 80px; bottom: 56px; font-family: "IBM Plex Mono", monospace; font-size: 17px; color: #6e757e; display: flex; gap: 28px; }
-  .facts b { font-weight: 400; color: #a4abb3; }
-  .log { align-self: start; margin-top: 8px; border: 1px solid #22262c; background: #0f1114;
-         font-family: "IBM Plex Mono", monospace; font-size: 16.5px; line-height: 1.75; color: #a4abb3; }
-  .log .head { padding: 10px 18px; border-bottom: 1px solid #22262c; color: #a4abb3; }
-  .log pre { margin: 0; padding: 14px 18px 16px; font: inherit; white-space: pre; }
-  .c { color: #6e757e; } .d { color: #4a515a; } .ok { color: #6cc38f; } .info { color: #7ca8d1; }
-  .warn { color: #d4a45a; } .acc { color: #d4a45a; } .err { color: #e06c6c; } .note { color: #4a515a; }
-</style>
+  <meta charset="utf-8" />
+  <title>Norns social cards</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;600&display=swap" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      width: 1200px;
+      height: 630px;
+      margin: 0;
+      padding: 64px;
+      background: #0b0d10;
+      color: #e4e7ea;
+      font: 24px/1.4 "IBM Plex Sans", system-ui, sans-serif;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid #2b313a;
+      font-weight: 600;
+    }
+    header img { filter: invert(1); }
+    section {
+      display: none;
+      align-items: center;
+      gap: 42px;
+      height: 427px;
+      grid-template-columns: minmax(0, 1fr) 408px;
+    }
+    #norns, section:target { display: grid; }
+    section:target ~ #norns { display: none; }
+    h1 { margin: 0; font-size: 60px; line-height: 1.06; letter-spacing: -0.035em; }
+    p { margin: 20px 0 0; color: #a4abb3; }
+    aside {
+      border: 1px solid #2b313a;
+      background: #12151a;
+      padding: 28px;
+      font-size: 22px;
+    }
+    aside p { font-size: 20px; }
+    pre { margin: 20px 0 0; font: 18px/1.75 "IBM Plex Mono", monospace; }
+    .slack {
+      width: 100%;
+      max-height: 354px;
+      object-fit: contain;
+      object-position: right center;
+    }
+  </style>
 </head>
 <body>
-<div class="card">
-  <div>
-    <div class="brand"><img src="norns-logo.png" alt="" /><span>norns</span><span class="v">v0.7</span></div>
-    <h1>The runtime for<br />long-lived agents.</h1>
-    <p class="lede">State in an append-only event log. Workers you run make the calls. A run survives any worker, deploy, or restart.</p>
-  </div>
-  <div class="log">
-    <div class="head"><span class="c">$ </span>nornsctl runs events 189</div>
-<pre><span class="c">1</span>  <span class="d">04:08:20</span>  <span class="ok">run_started</span>
-<span class="c">2</span>  <span class="d">04:08:20</span>  <span class="info">llm_request</span>    step 1
-<span class="c">3</span>  <span class="d">04:13:20</span>  <span class="warn">retry</span>          <span class="err">timeout</span>
-<span class="c">4</span>  <span class="d">04:13:21</span>  <span class="info">llm_request</span>    step 1
-<span class="note">              no worker, 1 h 47 min</span>
-<span class="c">5</span>  <span class="d">06:00:07</span>  <span class="info">llm_request</span>    step 1
-<span class="c">6</span>  <span class="d">06:00:11</span>  <span class="acc">llm_response</span>
-<span class="c">7</span>  <span class="d">06:00:11</span>  <span class="ok">run_completed</span></pre>
-  </div>
-  <div class="facts"><span><b>Elixir / OTP</b></span><span><b>PostgreSQL</b></span><span><b>MIT</b></span><span>at-least-once, deduplicated</span></div>
-</div>
+  <header><img src="norns-logo.png" alt="" width="30" height="30" /> Norns</header>
+  <section id="mimir">
+    <div>
+      <h1>Mimir answers project questions in Slack</h1>
+      <p>Norns saves each thread’s history so the conversation can continue after a restart.</p>
+    </div>
+    <img class="slack" src="mimir-slack.png" alt="Mimir answers a follow-up in a Slack thread." />
+  </section>
+  <section id="fulla">
+    <div>
+      <h1>Fulla sends reminders and follows up in chat</h1>
+      <p>Each reminder waits in Norns while the worker is stopped.</p>
+    </div>
+    <aside>
+      <strong>Monday, 9:14 a.m.</strong>
+      <p>Remind me to renew my passport Thursday at 9.</p>
+      <p><strong>Thursday, 9 a.m.</strong></p>
+      <p>Did you renew your passport?</p>
+    </aside>
+  </section>
+  <section id="norns">
+    <div>
+      <h1>Run agents that can pick up after a restart</h1>
+      <p>Norns saves each run’s progress in Postgres.</p>
+    </div>
+    <aside>
+      <strong>Run 189</strong>
+      <pre>04:08:20  run_started
+04:13:20  retry
+          No worker connected
+06:00:07  llm_request
+06:00:11  run_completed</pre>
+    </aside>
+  </section>
 </body>
 </html>
