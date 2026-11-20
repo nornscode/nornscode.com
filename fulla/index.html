@@ -340,14 +340,13 @@
       <section class="hero">
         <div class="wrap hero__inner">
           <div>
-            <h1 class="hero__title">Fulla: a personal manager on Norns.</h1>
+            <h1 class="hero__title">Fulla is a personal manager agent that runs on Norns.</h1>
             <p class="hero__lede">
-              Fulla keeps one person's commitments and facts. Ask for a
-              reminder and she brings it up when it is due, and keeps asking
-              until it is done. She talks to her owner on Telegram, Signal or SMS
-              and to nobody else unless told to. Each reminder is a Norns
-              run that sleeps until it is due. She has run on the hosted
-              instance since 2026-10-16.
+              You interact with Fulla on Telegram, Signal or SMS. Given
+              access to your calendar, your reminders, and your messages, it
+              can help you track commitments, draft responses, and manage
+              your time. Norns, the orchestrator for long-lived agents,
+              allows workflows that span hours, days, or months.
             </p>
 
             <dl class="facts">
@@ -445,11 +444,9 @@
           <div>
             <h2 id="how-heading" class="section__title">What runs where</h2>
             <p class="section__lede">
-              The orchestrator holds the conversation, every sleeping
-              reminder and every parked question. The worker holds the
-              model key, the messenger tokens and the tool code, and is
-              stopped most of the day. Norns is the only process that is
-              always on.
+              Norns holds the conversation and every sleeping reminder. It
+              is the only process that is always on; the worker that runs
+              the model and the tools is stopped most of the day.
             </p>
 
             <div class="rows">
@@ -457,11 +454,9 @@
                 <div class="row__key">manager<small>one conversation</small></div>
                 <div class="row__body">
                   <p>
-                    Chat, the morning brief, check-ins and the nightly
-                    review all run in one standing conversation keyed to
-                    the owner, so she sees what she said earlier in the
-                    day. The scheduled ones are cron triggers in Norns that
-                    she creates and changes when asked.
+                    Chat, the morning brief and the nightly review share one
+                    conversation, so Fulla remembers what was said earlier
+                    in the day.
                   </p>
                 </div>
               </div>
@@ -469,51 +464,28 @@
                 <div class="row__key">reminder<small>one run each</small></div>
                 <div class="row__body">
                   <p>
-                    Each commitment is its own run of a second agent. It
-                    calls <code>wait</code> until due, asks once with
-                    <code>ask_human</code>, and closes when the owner says
-                    done. A parked run treats the next message as its
-                    answer, so the agent that chats cannot be the agent
-                    that sleeps.
+                    Each reminder is its own run. It sleeps until due, asks,
+                    and closes when you say done.
                   </p>
                 </div>
               </div>
               <div class="row">
-                <div class="row__key">channel</div>
+                <div class="row__key">worker<small>serverless</small></div>
                 <div class="row__body">
                   <p>
-                    A run webhook tells the channel when a run parks,
-                    completes or fails. It posts the question with buttons;
-                    a tap, a reply or a reaction answers the run. Anything
-                    else typed goes to the manager. Swapping the messenger
-                    is a change to one module.
+                    Norns wakes the worker when a run needs a tool, and it
+                    stops when idle. A reminder a week out costs nothing
+                    until it is due.
                   </p>
                 </div>
               </div>
               <div class="row">
-                <div class="row__key">sleep<small>serverless worker</small></div>
+                <div class="row__key">machines<small>your devices</small></div>
                 <div class="row__body">
                   <p>
-                    Fulla is a serverless worker. Her tools are declared up
-                    front. When a run calls one, Norns queues the task and
-                    sends a signed POST to a wake URL. The machine starts,
-                    serves until idle, and stops. <code>wait</code> and <code>ask_human</code> are
-                    handled in the orchestrator and wake nothing, so a
-                    reminder a week out costs nothing until it is due.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">machines<small>tools-only workers</small></div>
-                <div class="row__body">
-                  <p>
-                    A worker on the owner's Mac serves Things, Reminders,
-                    iMessage drafts, Shortcuts and tmux; one on a Linux box
-                    serves tmux and, if allowed, a shell. Norns dispatches a
-                    tool call to whichever connected worker holds the tool.
-                    With the lid shut, a task for the Mac becomes a run
-                    parked on <code>ask_human</code> that the Mac worker
-                    answers when it next connects.
+                    Small workers on your Mac and a Linux box give Fulla
+                    Things, Reminders, iMessage drafts and a terminal. If
+                    the Mac is asleep, the task waits until it reconnects.
                   </p>
                 </div>
               </div>
@@ -521,12 +493,8 @@
                 <div class="row__key">reader<small>sub-agent</small></div>
                 <div class="row__body">
                   <p>
-                    The manager can act, and a web page can say anything,
-                    so she does not read pages herself. She hands
-                    the question to a reader agent with
-                    <code>launch_agent</code>. The reader can search, fetch
-                    and tell the time, but cannot act. It returns a short
-                    answer with sources.
+                    Web pages are read by a separate agent that can search
+                    and fetch but cannot act.
                   </p>
                 </div>
               </div>
@@ -534,11 +502,8 @@
                 <div class="row__key">friends<small>and groups</small></div>
                 <div class="row__body">
                   <p>
-                    People and groups the owner allows talk to a different
-                    agent with its own conversation and a tool list that
-                    has none of the owner's facts, calendar, reminders or
-                    machines. The tool list enforces this, not the
-                    prompt.
+                    People you allow talk to a separate agent that has none
+                    of your facts, calendar, reminders or machines.
                   </p>
                 </div>
               </div>
@@ -551,28 +516,33 @@
         <div class="wrap section__inner">
           <div class="section__label">Record</div>
           <div>
-            <h2 id="record-heading" class="section__title">Hosted instance, 2026-10-16 to 2026-11-20</h2>
+            <h2 id="record-heading" class="section__title">Fulla in production, stats</h2>
             <div class="table-wrap">
               <table class="spec">
                 <tbody>
-                  <tr><td>runs</td><td class="num">939</td></tr>
-                  <tr><td>of which the manager answering a message</td><td class="num">470</td></tr>
-                  <tr><td>of which the manager started by a timer</td><td class="num">276</td></tr>
-                  <tr><td>of which reminders, follow-ups, lookups, Mac tasks and group agents</td><td class="num">193</td></tr>
+                  <tr><th scope="rowgroup" colspan="2">runs</th></tr>
+                  <tr><td>total</td><td class="num">939</td></tr>
+                  <tr><td>manager answering a message</td><td class="num">470</td></tr>
+                  <tr><td>manager started by a timer</td><td class="num">276</td></tr>
+                  <tr><td>reminders, follow-ups, lookups, Mac tasks and group agents</td><td class="num">193</td></tr>
+                </tbody>
+                <tbody>
+                  <tr><th scope="rowgroup" colspan="2">runs that failed or were stopped</th></tr>
+                  <tr><td>provider error (credit balance, API key)</td><td class="num">24</td></tr>
+                  <tr><td>task timeout with no worker answering</td><td class="num">31</td></tr>
+                  <tr><td>lost to the orchestrator going away</td><td class="num">0</td></tr>
+                  <tr><td>cancelled by the owner or stopped at the step limit</td><td class="num">3</td></tr>
+                </tbody>
+                <tbody>
+                  <tr><th scope="rowgroup" colspan="2">releases</th></tr>
                   <tr><td>redeploys of the runtime</td><td class="num">24</td></tr>
                   <tr><td>releases of Fulla</td><td class="num">129</td></tr>
-                  <tr><td>runs failed on a provider error (credit balance, API key), each recorded in its log</td><td class="num">24</td></tr>
-                  <tr><td>runs failed on a task timeout with no worker answering</td><td class="num">31</td></tr>
-                  <tr><td>runs lost to the orchestrator going away</td><td class="num">0</td></tr>
-                  <tr><td>runs cancelled by the owner or stopped at the step limit</td><td class="num">3</td></tr>
                 </tbody>
               </table>
             </div>
             <p class="block__note">
-              A task timeout means no worker answered in time, and the
-              failed run says so in its log. 21 of the 31 fell between
-              2026-11-09 and 2026-11-13, when neither the runtime nor Fulla
-              was released.
+              Counted from 2026-10-16 to 2026-11-20. 21 of the 31 timeouts
+              happened between 2026-11-09 and 2026-11-13.
             </p>
           </div>
         </div>
@@ -587,7 +557,7 @@
               Locally Fulla is a normal Norns worker that stays up and
               long-polls Telegram. It needs a local orchestrator, an
               Anthropic key, a bot token from @BotFather and your numeric
-              Telegram id. Only that id is heard.
+              Telegram id.
             </p>
             <figure class="code">
               <figcaption class="code__cap"><span>shell</span></figcaption>
@@ -596,15 +566,6 @@
 <span class="cb-prompt">$</span>cp .env.example .env     <span class="cb-c"># FULLA_TELEGRAM_BOT_TOKEN, FULLA_TELEGRAM_USER_ID, NORNS_URL, NORNS_API_KEY, ANTHROPIC_API_KEY</span>
 <span class="cb-prompt">$</span>uv sync && uv run fulla</code></pre>
             </figure>
-            <p class="block__note">
-              Say <code>/start</code> to the bot, then "remind me to feed
-              the starter at 8pm". Entry points: <code>fulla</code> (worker
-              and channel together), <code>fulla-serve</code> (the sleeping
-              HTTP receiver used on Fly), <code>fulla-mac</code> and
-              <code>fulla-host</code> (tools-only workers for a Mac or a
-              Linux box). The README covers Signal, SMS, calendars and
-              deployment.
-            </p>
             <div class="links">
               <a href="https://github.com/nornscode/fulla">nornscode/fulla</a>
               <a href="https://github.com/nornscode/norns">nornscode/norns</a>
