@@ -110,27 +110,40 @@
           </div>
         </div>
 
-        <figure class="panel reminder">
+        <figure class="panel reminder" data-reminder-demo>
           <figcaption>
             <strong>A reminder from Monday to Thursday</strong>
-            <span>Illustrative example</span>
+            <span>Illustrative example with time sped up</span>
           </figcaption>
-          <ol class="timeline">
-            <li>
-              <strong>Monday, 9:14 a.m.</strong>
-              <p>You ask Fulla to remind you to renew your passport on Thursday. Norns saves the reminder and the worker stops.</p>
+          <div class="panel-foot reminder__controls" hidden>
+            <span data-reminder-status></span>
+            <button type="button" data-reminder-play>Replay</button>
+          </div>
+          <ol class="reminder__chat" aria-label="Reminder conversation">
+            <li data-reminder-step>
+              <time>Monday, 9:14 a.m.</time>
+              <p class="reminder__you"><strong>You</strong> Remind me to renew my passport Thursday at 9.</p>
+              <p><strong>Fulla</strong> I’ll remind you Thursday at 9.</p>
             </li>
-            <li>
-              <strong>Thursday, 9 a.m.</strong>
-              <p>Norns wakes the worker. Fulla asks, “Did you renew your passport?”</p>
+            <li class="reminder__wait" data-reminder-step>
+              <span>Norns holds the reminder while the worker is off.</span>
             </li>
-            <li>
-              <strong>Thursday, 9:40 a.m.</strong>
-              <p>You reply “Snooze 1h.” Fulla asks again an hour later.</p>
+            <li data-reminder-step>
+              <time>Thursday, 9 a.m.</time>
+              <p><strong>Fulla</strong> Did you renew your passport?</p>
             </li>
-            <li>
-              <strong>Thursday, 11:05 a.m.</strong>
-              <p>You reply “Done.” Norns completes the same run.</p>
+            <li data-reminder-step>
+              <time>Thursday, 9:40 a.m.</time>
+              <p class="reminder__you"><strong>You</strong> Snooze 1 hour.</p>
+            </li>
+            <li data-reminder-step>
+              <time>Thursday, 10:40 a.m.</time>
+              <p><strong>Fulla</strong> Did you renew your passport?</p>
+            </li>
+            <li data-reminder-step>
+              <time>Thursday, 11:05 a.m.</time>
+              <p class="reminder__you"><strong>You</strong> Done.</p>
+              <p><strong>Fulla</strong> Marked done.</p>
             </li>
           </ol>
         </figure>

@@ -6,7 +6,7 @@
     <title>Norns — Run agents that can pick up after a restart</title>
     <meta
       name="description"
-      content="Norns saves agent progress in Postgres so a run can pick up after a worker disconnects or Norns restarts."
+      content="Norns saves agent progress so a run can pick up after a worker disconnects or Norns restarts."
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
@@ -44,7 +44,7 @@
     <meta property="og:title" content="Norns — Run agents that can pick up after a restart" />
     <meta
       property="og:description"
-      content="Norns saves agent progress in Postgres so a run can pick up after a worker disconnects or Norns restarts."
+      content="Norns saves agent progress so a run can pick up after a worker disconnects or Norns restarts."
     />
     <meta property="og:image" content="https://nornscode.com/assets/og.png" />
     <meta property="og:image:secure_url" content="https://nornscode.com/assets/og.png" />
@@ -60,7 +60,7 @@
     <meta name="twitter:title" content="Norns — Run agents that can pick up after a restart" />
     <meta
       name="twitter:description"
-      content="Norns saves agent progress in Postgres so a run can pick up after a worker disconnects or Norns restarts."
+      content="Norns saves agent progress so a run can pick up after a worker disconnects or Norns restarts."
     />
     <meta name="twitter:image" content="https://nornscode.com/assets/og.png" />
     <meta
@@ -128,7 +128,7 @@
         <div>
           <h1>Run agents that can pick up after a restart</h1>
           <p class="lede">
-            Norns saves each run’s progress in Postgres. If a worker disconnects,
+            Norns saves each run’s progress. If a worker disconnects,
             another can pick up the pending step. Your workers make the model
             calls, run the tools, and keep the API keys.
           </p>
@@ -191,7 +191,7 @@ uv run my-agent-worker</code></pre>
           <ol class="flow">
             <li>Norns sends a task.</li>
             <li>A worker calls the model or runs a tool.</li>
-            <li>Norns records the result in Postgres.</li>
+            <li>Norns records the result.</li>
           </ol>
           <p id="log-heading">
             Norns rebuilds run state from the log after a restart. A run can
