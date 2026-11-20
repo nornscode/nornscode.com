@@ -93,6 +93,53 @@
         display: none;
       }
 
+      .demo__clock {
+        display: flex;
+        align-items: baseline;
+        gap: 0.6rem;
+        padding: 0.5rem 0.9rem;
+        border: 1px solid var(--line);
+        background: var(--bg-1);
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        color: var(--fg-3);
+      }
+      .demo:not(.is-animated) .demo__clock {
+        display: none;
+      }
+      .demo__time {
+        color: var(--fg);
+        font-variant-numeric: tabular-nums;
+        min-width: 9ch;
+      }
+      .demo__ff {
+        visibility: hidden;
+        color: var(--accent);
+        letter-spacing: -0.15em;
+      }
+      .demo__worker {
+        margin-left: auto;
+      }
+      .demo__worker::before {
+        content: "";
+        display: inline-block;
+        width: 0.45rem;
+        height: 0.45rem;
+        margin-right: 0.45rem;
+        border-radius: 50%;
+        background: var(--ok);
+      }
+      .demo__clock.is-skipping .demo__time {
+        color: var(--accent);
+      }
+      .demo__clock.is-skipping .demo__ff {
+        visibility: visible;
+        animation: demo-ff 0.5s infinite steps(2);
+      }
+      .demo__clock.is-skipping .demo__worker::before {
+        background: var(--fg-4);
+      }
+
       /* The chat keeps Signal's light palette in both themes. */
       .signal {
         border: 1px solid var(--line);
@@ -135,7 +182,7 @@
         height: 1.05rem;
       }
       .signal__body {
-        height: 21rem;
+        height: 23rem;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -150,6 +197,22 @@
         font-weight: 600;
         color: #5e5e5e;
         padding: 0.25rem 0;
+      }
+      .signal__skip {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.35rem 0;
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: #6a6a6a;
+      }
+      .signal__skip::before,
+      .signal__skip::after {
+        content: "";
+        flex: 1;
+        border-top: 1px dashed #c4c4c4;
       }
       .msg {
         max-width: 88%;
@@ -168,8 +231,7 @@
       }
       .msg__choices {
         display: block;
-        margin-top: 0.35rem;
-        font-size: 0.8rem;
+        margin-top: 1.2em;
       }
       .msg time {
         float: right;
@@ -230,6 +292,9 @@
       }
       @keyframes demo-in {
         from { opacity: 0; transform: translateY(0.4rem); }
+      }
+      @keyframes demo-ff {
+        50% { opacity: 0.3; }
       }
       @keyframes demo-dot {
         0%, 60%, 100% { opacity: 0.35; }
@@ -316,10 +381,14 @@
                 <div class="msg msg--me" data-step="1">Remind me to renew my passport Thursday at 9 <time>9:14 AM</time></div>
                 <div class="msg msg--typing" data-step="2" data-hide-at="3" aria-hidden="true"><i></i><i></i><i></i></div>
                 <div class="msg" data-step="3">On it, bro. I'll ask you Thursday at 9. <time>9:14 AM</time></div>
+                <div class="signal__skip" data-step="4">2 d 23 h 45 min later</div>
                 <div class="signal__day" data-step="5">Thursday</div>
                 <div class="msg" data-step="5">Did you renew your passport?<span class="msg__choices">Reply to this with one of: Done · Snooze 1h · Snooze 1d · Drop it</span> <time>9:00 AM</time></div>
+                <div class="signal__skip" data-step="6">40 min later</div>
                 <div class="msg msg--me" data-step="7">Snooze 1h <time>9:40 AM</time></div>
+                <div class="signal__skip" data-step="8">1 h later</div>
                 <div class="msg" data-step="9">Did you renew your passport?<span class="msg__choices">Reply to this with one of: Done · Snooze 1h · Snooze 1d · Drop it</span> <time>10:40 AM</time></div>
+                <div class="signal__skip" data-step="10">25 min later</div>
                 <div class="msg msg--me" data-step="11">Done <time>11:05 AM</time></div>
                 <div class="msg msg--typing" data-step="12" data-hide-at="13" aria-hidden="true"><i></i><i></i><i></i></div>
                 <div class="msg" data-step="13">Nice one, bro. Closed. <time>11:05 AM</time></div>
@@ -328,6 +397,12 @@
                 <span class="signal__input">Message</span>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 2.5v11M2.5 8h11" /></svg>
               </div>
+            </div>
+
+            <div class="demo__clock" aria-hidden="true">
+              <span class="demo__time" data-demo-time>mon 09:14</span>
+              <span class="demo__ff">&#9656;&#9656;</span>
+              <span class="demo__worker" data-demo-worker>worker running</span>
             </div>
 
             <div class="log">
@@ -603,7 +678,40 @@
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
         // Milliseconds to hold after each step, 1 to 13.
-        const hold = [900, 900, 1600, 1800, 2200, 1500, 1500, 1500, 2200, 1500, 900, 900, 6000];
+        const hold = [900, 900, 1600, 2600, 2200, 1900, 1500, 1900, 2200, 1900, 900, 900, 6000];
+        // The clock after each step, in minutes since Monday 00:00. Steps
+        // 4, 6, 8 and 10 are the gaps, where it runs fast.
+        const at = [554, 554, 554, 4860, 4860, 4900, 4900, 4960, 4960, 4985, 4985, 4985, 4985];
+        const gaps = [4, 6, 8, 10];
+        const clock = demo.querySelector(".demo__clock");
+        const time = demo.querySelector("[data-demo-time]");
+        const worker = demo.querySelector("[data-demo-worker]");
+        let raf = null;
+
+        const show = (m) => {
+          const pad = (n) => String(Math.floor(n)).padStart(2, "0");
+          time.textContent =
+            ["mon", "tue", "wed", "thu"][Math.floor(m / 1440)] +
+            " " + pad((m % 1440) / 60) + ":" + pad(m % 60);
+        };
+        const setClock = () => {
+          cancelAnimationFrame(raf);
+          const skipping = gaps.includes(step);
+          clock.classList.toggle("is-skipping", skipping);
+          worker.textContent = skipping ? "worker stopped" : "worker running";
+          if (!skipping) return show(at[Math.max(step, 1) - 1]);
+          const from = at[step - 2];
+          const to = at[step - 1];
+          const ms = hold[step - 1] * 0.8;
+          const t0 = performance.now();
+          const frame = (now) => {
+            const k = Math.min((now - t0) / ms, 1);
+            const eased = k < 0.5 ? 2 * k * k : 1 - 2 * (1 - k) * (1 - k);
+            show(Math.round(from + (to - from) * eased));
+            if (k < 1) raf = requestAnimationFrame(frame);
+          };
+          raf = requestAnimationFrame(frame);
+        };
         const items = [...demo.querySelectorAll("[data-step]")];
         let step = 0;
         let timer = null;
@@ -619,12 +727,14 @@
         const tick = () => {
           step = step >= hold.length ? 1 : step + 1;
           render();
+          setClock();
           timer = setTimeout(tick, hold[step - 1]);
         };
         const start = () => {
           clearTimeout(timer);
           step = 0;
           render();
+          setClock();
           timer = setTimeout(tick, 500);
         };
 
