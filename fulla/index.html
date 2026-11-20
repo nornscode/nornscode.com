@@ -99,9 +99,9 @@
           <div>
             <h1 class="hero__title">Fulla: a personal manager on Norns.</h1>
             <p class="hero__lede">
-              Fulla keeps one person's commitments and facts. Ask to be
-              reminded and she asks when it is due, and keeps asking until
-              it is done. She talks to her owner on Telegram, Signal or SMS
+              Fulla keeps one person's commitments and facts. Ask for a
+              reminder and she brings it up when it is due, and keeps asking
+              until it is done. She talks to her owner on Telegram, Signal or SMS
               and to nobody else unless told to. Each reminder is a Norns
               run that sleeps until it is due. She has run on the hosted
               instance since 2026-10-16.
@@ -194,11 +194,10 @@
                 <div class="row__key">sleep<small>serverless worker</small></div>
                 <div class="row__body">
                   <p>
-                    Fulla is registered as a serverless worker: her tools
-                    are declared up front, and when a run calls one Norns
-                    queues the task and sends a signed POST to a wake URL.
-                    The machine starts, serves until idle, drains, and
-                    stops. <code>wait</code> and <code>ask_human</code> are
+                    Fulla is a serverless worker. Her tools are declared up
+                    front. When a run calls one, Norns queues the task and
+                    sends a signed POST to a wake URL. The machine starts,
+                    serves until idle, and stops. <code>wait</code> and <code>ask_human</code> are
                     handled in the orchestrator and wake nothing, so a
                     reminder a week out costs nothing until it is due.
                   </p>
@@ -222,11 +221,11 @@
                 <div class="row__key">reader<small>sub-agent</small></div>
                 <div class="row__body">
                   <p>
-                    The manager holds the hands, and a web page can say
-                    anything, so she does not read pages herself. She hands
+                    The manager can act, and a web page can say anything,
+                    so she does not read pages herself. She hands
                     the question to a reader agent with
-                    <code>launch_agent</code>. The reader has search, fetch
-                    and a clock, nothing that acts, and returns a short
+                    <code>launch_agent</code>. The reader can search, fetch
+                    and tell the time, but cannot act. It returns a short
                     answer with sources.
                   </p>
                 </div>
@@ -238,7 +237,7 @@
                     People and groups the owner allows talk to a different
                     agent with its own conversation and a tool list that
                     has none of the owner's facts, calendar, reminders or
-                    machines. The tool list is the wall, not a line in the
+                    machines. The tool list enforces this, not the
                     prompt.
                   </p>
                 </div>

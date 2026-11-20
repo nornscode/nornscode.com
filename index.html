@@ -131,10 +131,9 @@
             <h1 class="hero__title">The runtime for long-lived agents.</h1>
             <p class="hero__lede">
               Norns keeps an agent's state in an append-only event log and
-              dispatches one step at a time to workers you run. The
-              orchestrator never calls a model or executes a tool. A run
-              survives the loss of any worker, a deploy, or a restart of the
-              orchestrator itself.
+              dispatches one step at a time to workers you run. A run
+              survives a lost worker, a deploy, or a restart of the
+              orchestrator.
             </p>
 
 
@@ -154,8 +153,6 @@
               </div>
               <div class="install__links">
                 <a href="https://github.com/nornscode/norns#get-started">quickstart</a>
-                <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture.md</a>
-                <a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">decision-log.md</a>
               </div>
             </div>
           </div>
@@ -177,9 +174,9 @@
 <span class="tm-muted">6</span>    <span class="tm-dim">06:00:11</span>  <span class="tm-accent">llm_response</span>   1,980 in  5 out
 <span class="tm-muted">7</span>    <span class="tm-dim">06:00:11</span>  <span class="tm-ok">run_completed</span></pre>
             <figcaption class="log__foot">
-              Run 189, on 2026-10-04. No worker was connected for 1 h 47
-              min. Once a worker registered, the same step was dispatched
-              again to the LLM and the agent kept going.
+              Run 189, 2026-10-04. No worker was connected for 1 h 47
+              min. When one registered, the step was dispatched again and
+              the run finished.
             </figcaption>
           </figure>
         </div>
@@ -202,23 +199,18 @@
             <h2 id="system-heading" class="section__title">Orchestrator and workers</h2>
             <div class="prose">
               <p>
-                The orchestrator is an Elixir application in front of
-                Postgres. It holds agent definitions, conversations and the
-                event log, runs one process per live agent, and decides what
-                happens next. It never calls a model and never runs a tool.
+                The orchestrator is an Elixir application on Postgres. It
+                holds the event log and decides what happens next. It never
+                calls a model or runs a tool.
               </p>
               <p>
-                Workers are your code, in your network, holding your keys.
-                A worker connects over a WebSocket, says what it can do, and
-                receives one task at a time in a provider-neutral JSON
-                format. That is the whole contract, so a worker can be
-                written in whatever language the job calls for: a Python
-                worker for the model and data tools, a Go or Rust worker
-                where a sandbox or a binary matters, an Elixir worker when
-                it is already a Phoenix app. SDKs ship for
+                Workers are your code, in your network, with your keys. A
+                worker connects over a WebSocket, says what it can do, and
+                receives one task at a time as JSON. It can be written in
+                any language. There are SDKs for
                 <a href="https://github.com/nornscode/norns-sdk-python">Python</a>
-                and <a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a>;
-                the protocol is documented for the rest.
+                and <a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a>,
+                and the protocol is documented for the rest.
               </p>
               <p>
                 When a worker goes away, the work it held is handed to the
@@ -355,10 +347,9 @@
                 <text x="820" y="456" class="dg-float">tts</text>
               </svg>
               <figcaption class="figure__cap">
-                One orchestrator, a fleet of workers. Workers are written in
-                Python, TypeScript, or Elixir. The orchestrator routes calls
-                to a worker that has the tool. Each worker runs its own model
-                loop and keeps its keys in your network.
+                The orchestrator routes each call to a worker that has the
+                tool. Each worker runs its own model loop and keeps its own
+                keys.
               </figcaption>
             </figure>
           </div>
@@ -369,18 +360,18 @@
         <div class="wrap section__inner">
           <div class="section__label">Durability</div>
           <div>
-            <h2 id="log-heading" class="section__title">State lives in the log, not the process</h2>
+            <h2 id="log-heading" class="section__title">State lives in the log</h2>
             <div class="prose">
               <p>
-                Every step of an agent run is written to a durable log in
-                Postgres. Agents restore their state by replaying the log. A
-                crashed process restarts exactly where it was, and completed
-                steps are never run again. A run can wait on a timer, a
+                Every step of a run is written to a log in Postgres, and
+                state is rebuilt by replaying it. A crashed process picks up
+                where it left off, and completed steps are not run again. A
+                run can wait on a timer, a
                 person, or another agent for as long as it takes.
               </p>
               <p>
                 Delivery is at-least-once with duplicate suppression. Tool
-                calls that have side effects carry an idempotency key.
+                calls with side effects carry an idempotency key.
               </p>
             </div>
             <div class="links">
@@ -399,8 +390,8 @@
             <p class="section__lede">
               Two applications run on the hosted instance. Mimir is a Slack
               bot that answers questions about a project from its
-              repositories and docs; each thread is a Norns run. Fulla is a
-              personal manager on Telegram; each reminder is a run that
+              repositories and docs. Each thread is a run. Fulla is a
+              personal manager on Telegram. Each reminder is a run that
               sleeps until it is due.
             </p>
             <div class="table-wrap">
@@ -411,15 +402,15 @@
                 <tbody>
                   <tr><td>running since</td><td class="num">2026-04-15</td><td class="num">2026-10-16</td></tr>
                   <tr><td>runs</td><td class="num">130</td><td class="num">939</td></tr>
-                  <tr><td>redeploys of the runtime underneath them</td><td class="num">104</td><td class="num">24</td></tr>
+                  <tr><td>redeploys of the runtime</td><td class="num">104</td><td class="num">24</td></tr>
                   <tr><td>runs lost to a worker or orchestrator going away</td><td class="num">0</td><td class="num">31</td></tr>
                 </tbody>
               </table>
             </div>
             <p class="block__note">
               Mimir counted to 2026-10-04, Fulla to 2026-11-20. Fulla's
-              worker sleeps between requests; the 31 are task timeouts with
-              no worker answering, each recorded in the run's log.
+              worker sleeps between requests. The 31 are task timeouts where
+              no worker answered, each recorded in the run's log.
             </p>
             <div class="links">
               <a href="/mimir/">how mimir is built</a>

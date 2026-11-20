@@ -123,8 +123,8 @@
             <p class="hero__lede">
               Mimir answers questions about a project from the GitHub
               repositories and pages it is connected to. Each Slack thread
-              is a Norns run in conversation mode. It is the reference
-              application for the runtime and has run on the hosted instance
+              is a Norns run. It is the reference application for the
+              runtime and has run on the hosted instance
               since 2026-04-15.
             </p>
 
@@ -150,9 +150,9 @@
               alt="Slack thread: Anson asks @Mimir what ways Norns ensures agents are durable. Mimir replies that Norns provides state persistence between crashes and automatic resumption from the last checkpoint. Anson adds that it also provides idempotent operations; Mimir confirms and folds that into its answer."
             />
             <figcaption class="shot__foot">
-              A thread on the hosted instance. The follow-up lands in the
-              same run; the history is on the orchestrator, so the worker
-              that answers it need not be the one that answered first.
+              A thread on the hosted instance. The history is on the
+              orchestrator, so a different worker can answer the
+              follow-up.
             </figcaption>
           </figure>
         </div>
@@ -165,9 +165,8 @@
             <h2 id="how-heading" class="section__title">What runs where</h2>
             <p class="section__lede">
               The orchestrator holds the conversation and the event log. The
-              worker holds the Anthropic key, the Slack tokens, the GitHub
-              token if there is one, and the tool code. Neither side can do
-              the other's job.
+              worker holds the Anthropic, Slack and GitHub keys and the tool
+              code.
             </p>
 
             <div class="rows">
@@ -175,12 +174,11 @@
                 <div class="row__key">thread<small>→ run</small></div>
                 <div class="row__body">
                   <p>
-                    A Slack event arrives over Socket Mode at the worker,
-                    which sends the message to the agent with the channel
-                    and thread ids as the conversation key. Replies in the same thread append to
-                    the same conversation; a parked question is answered by
-                    the next message, with no state tracked on the Slack
-                    side.
+                    The worker receives a Slack event over Socket Mode and
+                    sends the message to the agent, with the channel and
+                    thread ids as the conversation key. Replies in the
+                    thread append to the same conversation. If the run is
+                    parked on a question, the next message answers it.
                   </p>
                 </div>
               </div>
@@ -203,9 +201,8 @@
                     A fact given with "remember this" is embedded by a
                     small local model and written to a <code>memories</code>
                     table with pgvector.
-                    Later questions search it by similarity. The memory
-                    lives as long as the table does, independent of the
-                    worker process and of the run that wrote it.
+                    Later questions search it by similarity. It outlives
+                    the worker process and the run that wrote it.
                   </p>
                 </div>
               </div>
@@ -213,10 +210,9 @@
                 <div class="row__key">sources</div>
                 <div class="row__body">
                   <p>
-                    GitHub repositories and URLs. There is no ingestion
-                    pipeline or index to keep fresh; a search hits the
-                    source when the question is asked and the answer cites
-                    where it came from.
+                    GitHub repositories and URLs. Nothing is ingested or
+                    indexed. A search hits the source when the question is
+                    asked, and the answer cites it.
                   </p>
                 </div>
               </div>
@@ -225,11 +221,11 @@
                 <div class="row__body">
                   <p>
                     The same worker serves a second agent. A cron trigger
-                    starts it, it surveys the repositories, posts one
+                    starts it. It surveys the repositories, posts one
                     proposal to Slack, and parks on <code>ask_human</code>.
-                    The wait belongs to the orchestrator, not the process:
-                    a redeploy mid-wait loses nothing, and an answer the next
-                    day resumes the same run, which can then
+                    The orchestrator holds the wait, so a redeploy loses
+                    nothing. An answer the next day resumes the same run,
+                    which can then
                     <code>launch_agent</code> a coding agent.
                   </p>
                 </div>
@@ -241,8 +237,6 @@
                     If the worker is lost mid-search, the pending tool call
                     is re-dispatched with the same task id and idempotency
                     key, and the run continues from the last completed step.
-                    Between April and October the runtime was redeployed 104
-                    times and Mimir 44 times with no run lost.
                   </p>
                 </div>
               </div>
@@ -293,7 +287,7 @@
               Entry points: <code>mimir-agent</code> (database init, worker,
               and Slack adapter together), <code>mimir-worker</code>,
               <code>mimir-slack</code>. GitHub tools work unauthenticated
-              against public repositories; set <code>GITHUB_TOKEN</code> for
+              against public repositories. Set <code>GITHUB_TOKEN</code> for
               private ones or a higher rate limit.
             </p>
             <div class="links">
