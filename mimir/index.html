@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mimir — Slack knowledge bot on Norns</title>
+    <title>Mimir — Project questions in Slack</title>
     <meta
       name="description"
-      content="Mimir is a Slack bot that answers questions about a project from connected GitHub repos and pages. Each thread is a Norns run; state lives in Postgres and runs resume across restarts."
+      content="Mimir searches connected GitHub repositories and pages to answer project questions in Slack. Norns saves each thread’s history."
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
@@ -40,46 +40,27 @@
     <meta property="og:site_name" content="Norns" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://nornscode.com/mimir/" />
-    <meta property="og:title" content="Mimir — Slack knowledge bot on Norns" />
+    <meta property="og:title" content="Mimir — Project questions in Slack" />
     <meta
       property="og:description"
-      content="A Slack bot that answers questions about a project from connected repos and pages. Each thread is a Norns run."
+      content="Mimir searches connected GitHub repositories and pages to answer project questions in Slack. Norns saves each thread’s history."
     />
-    <meta property="og:image" content="https://nornscode.com/assets/og.png" />
+    <meta property="og:image" content="https://nornscode.com/assets/og-mimir.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Mimir answers a follow-up in a Slack thread." />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mimir — Slack knowledge bot on Norns" />
+    <meta name="twitter:title" content="Mimir — Project questions in Slack" />
     <meta
       name="twitter:description"
-      content="A Slack bot that answers questions about a project from connected repos and pages. Each thread is a Norns run."
+      content="Mimir searches connected GitHub repositories and pages to answer project questions in Slack. Norns saves each thread’s history."
     />
-    <meta name="twitter:image" content="https://nornscode.com/assets/og.png" />
+    <meta name="twitter:image" content="https://nornscode.com/assets/og-mimir.png" />
+    <meta name="twitter:image:alt" content="Mimir answers a follow-up in a Slack thread." />
 
     <link rel="icon" href="/assets/norns-logo.png" type="image/png" />
     <link rel="stylesheet" href="/styles.css" />
-
-    <style>
-      /* Mimir-page only. */
-      .shot {
-        border: 1px solid var(--line);
-        background: #fff;
-        min-width: 0;
-        align-self: start;
-      }
-      .shot img {
-        display: block;
-        width: 100%;
-        height: auto;
-      }
-      .shot__foot {
-        padding: 0.7rem 0.9rem;
-        border-top: 1px solid var(--line);
-        background: var(--bg-1);
-        font-size: 0.82rem;
-        line-height: 1.5;
-        color: var(--fg-3);
-      }
-    </style>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -88,14 +69,13 @@
       <div class="wrap nav__inner">
         <a class="nav__brand" href="/" aria-label="Norns home">
           <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
-          <span class="nav__wordmark">norns</span>
-          <span class="nav__version">/ mimir</span>
+          <span class="nav__wordmark">Norns</span>
         </a>
         <nav class="nav__links" aria-label="Resources">
-          <a href="/">norns</a>
-          <a href="/fulla/">fulla</a>
-          <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture</a>
-          <a class="nav__github" href="https://github.com/nornscode/norns-mimir-agent">github</a>
+          <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a>
+          <a href="/mimir/" aria-current="page">Mimir</a>
+          <a href="/fulla/">Fulla</a>
+          <a href="https://github.com/nornscode/norns">GitHub</a>
           <button
             type="button"
             class="theme-toggle"
@@ -116,241 +96,96 @@
     </header>
 
     <main id="main">
-      <section class="hero">
-        <div class="wrap hero__inner">
-          <div>
-            <h1 class="hero__title">Mimir: a Slack knowledge bot on Norns.</h1>
-            <p class="hero__lede">
-              Mimir answers questions about a project from the GitHub
-              repositories and pages it is connected to. Each Slack thread
-              is a Norns run. It is the reference application for the
-              runtime and has run on the hosted instance
-              since 2026-04-15.
-            </p>
-
-            <dl class="facts">
-              <dt>worker</dt>
-              <dd>one Python process: Claude calls, GitHub search and read, URL fetch, memory</dd>
-              <dt>agent mode</dt>
-              <dd>conversation, keyed by Slack channel and thread</dd>
-              <dt>memory</dt>
-              <dd>Postgres with pgvector; embeddings computed locally (all-MiniLM-L6-v2)</dd>
-              <dt>ingestion</dt>
-              <dd>none; sources are searched on demand and cited</dd>
-              <dt>runs</dt>
-              <dd>130 across 62 threads to 2026-10-04, 0 lost to restarts</dd>
-              <dt>source</dt>
-              <dd><a href="https://github.com/nornscode/norns-mimir-agent">nornscode/norns-mimir-agent</a>, MIT</dd>
-            </dl>
+      <section class="wrap hero">
+        <div>
+          <h1>Mimir answers project questions in Slack</h1>
+          <p class="lede">
+            Mimir searches the GitHub repositories and pages you connect and
+            links to the sources it used. Each Slack thread keeps its history
+            when the worker restarts.
+          </p>
+          <div class="links">
+            <a class="primary" href="#setup-heading">Run Mimir locally</a>
+            <a href="https://github.com/nornscode/norns-mimir-agent">Mimir source</a>
           </div>
-
-          <figure class="shot">
-            <img
-              src="/assets/mimir-slack.png"
-              alt="Slack thread: Anson asks @Mimir what ways Norns ensures agents are durable. Mimir replies that Norns provides state persistence between crashes and automatic resumption from the last checkpoint. Anson adds that it also provides idempotent operations; Mimir confirms and folds that into its answer."
-            />
-            <figcaption class="shot__foot">
-              A thread on the hosted instance. The history is on the
-              orchestrator, so a different worker can answer the
-              follow-up.
-            </figcaption>
-          </figure>
         </div>
+
+        <figure class="panel screenshot">
+          <img src="/assets/mimir-slack.png" width="906" height="894"
+            alt="A Slack user asks how Norns recovers after a crash, then follows up about idempotency. Mimir answers both in the same thread." />
+          <figcaption>Mimir answers a follow-up using the history Norns saved for the thread.</figcaption>
+        </figure>
       </section>
 
-      <section class="section" aria-labelledby="how-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">Structure</div>
-          <div>
-            <h2 id="how-heading" class="section__title">What runs where</h2>
-            <p class="section__lede">
-              The orchestrator holds the conversation and the event log. The
-              worker holds the Anthropic, Slack and GitHub keys and the tool
-              code.
-            </p>
-
-            <div class="rows">
-              <div class="row">
-                <div class="row__key">thread<small>→ run</small></div>
-                <div class="row__body">
-                  <p>
-                    The worker receives a Slack event over Socket Mode and
-                    sends the message to the agent, with the channel and
-                    thread ids as the conversation key. Replies in the
-                    thread append to the same conversation. If the run is
-                    parked on a question, the next message answers it.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">tools</div>
-                <div class="row__body">
-                  <p>
-                    GitHub search and read, URL fetch, connect a source,
-                    store a fact, recall facts by similarity. Each is
-                    registered with a JSON schema at worker start. The orchestrator
-                    offers them to the model and records which were offered
-                    on every <code>llm_request</code>.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">memory</div>
-                <div class="row__body">
-                  <p>
-                    A fact given with "remember this" is embedded by a
-                    small local model and written to a <code>memories</code>
-                    table with pgvector.
-                    Later questions search it by similarity. It outlives
-                    the worker process and the run that wrote it.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">sources</div>
-                <div class="row__body">
-                  <p>
-                    GitHub repositories and URLs. Nothing is ingested or
-                    indexed. A search hits the source when the question is
-                    asked, and the answer cites it.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">steward<small>second agent</small></div>
-                <div class="row__body">
-                  <p>
-                    The same worker serves a second agent. A cron trigger
-                    starts it. It surveys the repositories, posts one
-                    proposal to Slack, and parks on <code>ask_human</code>.
-                    The orchestrator holds the wait, so a redeploy loses
-                    nothing. An answer the next day resumes the same run,
-                    which can then
-                    <code>launch_agent</code> a coding agent.
-                  </p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="row__key">recovery</div>
-                <div class="row__body">
-                  <p>
-                    If the worker is lost mid-search, the pending tool call
-                    is re-dispatched with the same task id and idempotency
-                    key, and the run continues from the last completed step.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <section class="section" id="how-heading" aria-labelledby="behavior-heading">
+        <div class="wrap content">
+          <h2 id="behavior-heading">How a Slack thread survives a restart</h2>
+          <p>
+            A Python worker receives Slack messages and sends them to Norns.
+            Norns saves the conversation using the Slack channel and thread IDs.
+            A new worker can pick up that conversation and answer the next message.
+          </p>
+          <p>
+            Mimir searches sources when someone asks a question. It also stores
+            facts explicitly shared with “remember this” in Postgres and can
+            look them up in later conversations.
+          </p>
+          <p>
+            The same worker runs a scheduled agent that proposes work in Slack.
+            Norns saves the pending question, so you can reply the next day
+            even if the worker has been redeployed.
+          </p>
         </div>
       </section>
 
       <section class="section" aria-labelledby="record-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">Record</div>
-          <div>
-            <h2 id="record-heading" class="section__title">Hosted instance, 2026-04-15 to 2026-10-04</h2>
-            <div class="table-wrap">
-              <table class="spec">
-                <tbody>
-                  <tr><td>Slack threads</td><td class="num">62</td></tr>
-                  <tr><td>runs</td><td class="num">130</td></tr>
-                  <tr><td>redeploys of the runtime</td><td class="num">104</td></tr>
-                  <tr><td>redeploys of Mimir</td><td class="num">44</td></tr>
-                  <tr><td>runs failed on a provider or request error, each recorded in its log</td><td class="num">11</td></tr>
-                  <tr><td>runs failed on a task timeout with no worker answering</td><td class="num">0</td></tr>
-                  <tr><td>runs lost to the orchestrator going away</td><td class="num">0</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div class="wrap content">
+          <h2 id="record-heading">Mimir’s hosted run record</h2>
+          <p>April 15 to October 4, 2026. 130 runs across 62 Slack threads.</p>
+          <table class="stats" aria-labelledby="record-heading">
+            <tbody>
+              <tr><th scope="row">Runs that failed on a provider or request error</th><td>11</td></tr>
+              <tr><th scope="row">Runs that timed out waiting for a worker</th><td>0</td></tr>
+              <tr><th scope="row">Runs lost to an orchestrator restart</th><td>0</td></tr>
+              <tr><th scope="row">Norns redeploys</th><td>104</td></tr>
+              <tr><th scope="row">Mimir redeploys</th><td>44</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
-      <section class="section" aria-labelledby="run-heading">
-        <div class="wrap section__inner">
-          <div class="section__label">Run it</div>
-          <div>
-            <h2 id="run-heading" class="section__title">Against a local orchestrator</h2>
-            <p class="section__lede">
-              Mimir is a normal Norns worker. It needs a local orchestrator,
-              an Anthropic key, and a Slack app created from the manifest in
-              the README. Compose brings up Postgres and the worker.
-            </p>
-            <figure class="code">
-              <figcaption class="code__cap"><span>shell</span></figcaption>
-              <pre class="code__body"><code><span class="cb-prompt">$</span>nornsctl dev && nornsctl dev status
-<span class="cb-prompt">$</span>git clone https://github.com/nornscode/norns-mimir-agent.git && cd norns-mimir-agent
-<span class="cb-prompt">$</span>cp .env.example .env     <span class="cb-c"># ANTHROPIC_API_KEY, NORNS_URL, NORNS_API_KEY, SLACK_BOT_TOKEN, SLACK_APP_TOKEN</span>
-<span class="cb-prompt">$</span>docker compose up</code></pre>
-            </figure>
-            <p class="block__note">
-              Entry points: <code>mimir-agent</code> (database init, worker,
-              and Slack adapter together), <code>mimir-worker</code>,
-              <code>mimir-slack</code>. GitHub tools work unauthenticated
-              against public repositories. Set <code>GITHUB_TOKEN</code> for
-              private ones or a higher rate limit.
-            </p>
-            <div class="links">
-              <a href="https://github.com/nornscode/norns-mimir-agent">nornscode/norns-mimir-agent</a>
-              <a href="https://github.com/nornscode/norns">nornscode/norns</a>
-              <a href="/">runtime overview</a>
-            </div>
-          </div>
+      <section class="section" id="run-heading" aria-labelledby="setup-heading">
+        <div class="wrap content">
+          <h2 id="setup-heading">Run Mimir locally</h2>
+          <p>
+            You’ll need Norns, Docker Compose, an Anthropic API key, and a Slack
+            app created from the <a href="https://github.com/nornscode/norns-mimir-agent#readme">README’s manifest</a>.
+            Compose starts Postgres and the worker.
+          </p>
+          <pre class="panel"><code>nornsctl dev
+nornsctl dev status
+git clone https://github.com/nornscode/norns-mimir-agent.git
+cd norns-mimir-agent
+cp .env.example .env</code></pre>
+          <p>
+            Fill in <code>.env</code> with the Norns URL and API key from
+            <code>nornsctl dev status</code>, your Anthropic API key, and your Slack
+            bot and app tokens. Add <code>GITHUB_TOKEN</code> to read private
+            repositories. Then start the worker.
+          </p>
+          <pre class="panel"><code>docker compose up</code></pre>
         </div>
       </section>
     </main>
 
     <footer class="footer">
       <div class="wrap footer__inner">
-        <div class="footer__brand">
-          <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
-          <span>norns</span>
-        </div>
-
-        <div class="footer__cols">
-          <div class="footer__col">
-            <div class="footer__heading">norns</div>
-            <ul role="list">
-              <li><a href="/">Overview</a></li>
-              <li><a href="https://github.com/nornscode/norns#get-started">Quickstart</a></li>
-              <li><a href="https://github.com/nornscode/norns">Repository</a></li>
-            </ul>
-          </div>
-          <div class="footer__col">
-            <div class="footer__heading">mimir</div>
-            <ul role="list">
-              <li><a href="/mimir/">Overview</a></li>
-              <li><a href="https://github.com/nornscode/norns-mimir-agent">Repository</a></li>
-            </ul>
-          </div>
-          <div class="footer__col">
-            <div class="footer__heading">fulla</div>
-            <ul role="list">
-              <li><a href="/fulla/">Overview</a></li>
-              <li><a href="https://github.com/nornscode/fulla">Repository</a></li>
-            </ul>
-          </div>
-          <div class="footer__col">
-            <div class="footer__heading">sdks</div>
-            <ul role="list">
-              <li><a href="https://github.com/nornscode/norns-sdk-python">Python</a></li>
-              <li><a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a></li>
-            </ul>
-          </div>
-          <div class="footer__col">
-            <div class="footer__heading">project</div>
-            <ul role="list">
-              <li><a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a></li>
-              <li><a href="https://github.com/nornscode/norns/blob/main/LICENSE">MIT license</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="footer__bottom">
-          <span>MIT license</span>
-          <span>Elixir / OTP · PostgreSQL · v0.7</span>
-        </div>
+        <p>Norns is open source under the <a href="https://github.com/nornscode/norns/blob/main/LICENSE">MIT license</a>.</p>
+        <nav aria-label="Project resources">
+          <a href="https://github.com/nornscode/norns/blob/main/docs/decision-log.md">Decision log</a>
+          <a href="https://github.com/nornscode/norns/blob/main/docs/roadmap.md">Roadmap</a>
+          <a href="https://github.com/nornscode/norns/blob/main/openapi.yaml">OpenAPI</a>
+        </nav>
       </div>
     </footer>
 

@@ -1,18 +1,12 @@
 # Norns
 
-> The runtime for long-lived agents. Open source, MIT. The orchestrator holds an append-only event log and dispatches one step at a time; workers in your infrastructure make the LLM calls, run the tools, and hold the API keys. A run outlives any worker, deploy, or orchestrator restart.
+> Norns saves each run’s progress in Postgres so an agent can pick up after a worker disconnects or Norns restarts. It is open source under the MIT license.
 
-Norns is written in Elixir on the BEAM, with PostgreSQL for all persistent state. The orchestrator is a state machine: it never calls a model and never runs a tool. Workers connect over WebSocket, register capabilities (`llm`, `tools`) and the tools they serve, and receive task pushes in a provider-neutral format. Message content is opaque to the core; it routes on roles, tool names, ids and steps.
+The Norns server, written in Elixir, records events and sends tasks to workers over WebSocket. Your workers make model calls, run tools, and keep the API keys. Python and Elixir SDKs are available, and workers in other languages can use the documented protocol.
 
-Every LLM request and response, tool call and result, checkpoint, retry, human question and answer, and sub-agent launch is a versioned, validated event in the log. Run state is rebuilt from the log, not from a process. When a worker disconnects, the tasks it held are re-dispatched with the same task id and idempotency key; with no worker available they queue and flush on the next registration. The delivery guarantee is at-least-once with duplicate suppression: a worker that already ran a side-effecting call reports `tool_duplicate` instead of running it again. Exactly-once requires a destination that dedupes on the key.
+Norns rebuilds run state from the event log after a restart. If a worker disconnects, Norns can queue the pending task and resend it when another eligible worker connects. A resent task carries the same idempotency key. To prevent a duplicate external effect, the destination must honor that key. Norns supports a single node backed by Postgres.
 
-Agent states: idle, awaiting_llm, awaiting_tools, waiting (on a human). A run parked on `ask_human` stays parked indefinitely and re-parks on the same question after a restart. Built-in tools intercepted by the orchestrator: `wait`, `ask_human`, `launch_agent`, `list_agents`. Sub-agent launches are authorized server-side by allowlist and depth.
-
-Run API: `GET /runs/:id/events` (full log), `GET /runs/:id/summary` (fixed-size account with signals such as loop, retry_storm, unknown_tool), `POST /runs/:id/fork` (new run from any step, optionally with a different model or system prompt), `POST /runs/:id/retry`, `POST /runs/:id/reply`. Run webhooks deliver a signed POST when a run parks, completes, or fails. Cron triggers start runs on a schedule. Serverless workers declare their tools and a wake URL and are started on demand.
-
-Transient failures retry with exponential backoff, three attempts; rate limits get ten. Token usage and serving model are recorded per call; cost is priced at read time.
-
-Version v0.7. The reference application, Mimir (a Slack knowledge bot), has run on the hosted instance since 2026-04-15. Fulla, a private personal manager on Telegram, Signal or SMS, has run there since 2026-10-16; each reminder is a run that sleeps until due and the worker is serverless. Supported deployment is a single node; multi-node is on the roadmap.
+A run can wait for a timer, a reply, or another agent. The event log records requests, responses, tool calls, retries, and replies. The run API can inspect those events, retry a run, or fork one from a past step. See the architecture and API spec for details.
 
 ## Project
 
@@ -35,8 +29,8 @@ Version v0.7. The reference application, Mimir (a Slack knowledge bot), has run 
 ## Examples
 
 - [Hello agent](https://github.com/nornscode/norns-hello-agent): Minimal worker
-- [Mimir](https://github.com/nornscode/norns-mimir-agent): Slack knowledge bot, the reference application
-- [Fulla](https://github.com/nornscode/fulla): Personal manager; one run per reminder, serverless worker, tools-only workers on other machines
+- [Mimir](https://github.com/nornscode/norns-mimir-agent): Answers project questions in Slack using connected repositories and pages
+- [Fulla](https://github.com/nornscode/fulla): Sends reminders and follows up in chat. Each reminder waits in Norns while the worker can stop
 - [Sleipnir](https://github.com/nornscode/sleipnir): Coding agent that other agents hand work to
 
 ## Install
@@ -44,8 +38,10 @@ Version v0.7. The reference application, Mimir (a Slack knowledge bot), has run 
 ```
 brew install nornscode/tap/nornsctl
 nornsctl dev
-nornsctl new my-agent && cd my-agent
-uv sync && uv run my-agent-worker
+nornsctl new my-agent
+cd my-agent
+uv sync
+uv run my-agent-worker
 ```
 
 ## Optional
