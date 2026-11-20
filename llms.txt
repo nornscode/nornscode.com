@@ -1,6 +1,6 @@
 # Norns
 
-> Norns saves each run’s progress in Postgres so an agent can pick up after a worker disconnects or Norns restarts. It is open source under the MIT license.
+> Norns saves each run’s progress so an agent can pick up after a worker disconnects or Norns restarts. It is open source under the MIT license.
 
 The Norns server, written in Elixir, records events and sends tasks to workers over WebSocket. Your workers make model calls, run tools, and keep the API keys. Python and Elixir SDKs are available, and workers in other languages can use the documented protocol.
 

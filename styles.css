@@ -280,24 +280,75 @@ code {
   height: auto;
 }
 
-.timeline {
+.reminder__chat {
   display: grid;
+  gap: 0.55rem;
   margin: 0;
-  padding: 0;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid var(--line);
   list-style: none;
 }
 
-.timeline li {
-  padding: 0.75rem 1rem;
-  border-top: 1px solid var(--line);
+.reminder__chat li {
+  display: grid;
+  gap: 0.22rem;
 }
 
-.timeline strong {
+.reminder__chat time {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.reminder__chat p {
+  justify-self: start;
+  padding: 0.3rem 0.6rem;
+  border-inline-start: 2px solid var(--line);
+  background: var(--bg);
   font-size: 0.9375rem;
 }
 
-.timeline p {
+.reminder__chat p strong {
+  margin-inline-end: 0.25rem;
+}
+
+.reminder__chat .reminder__you {
+  justify-self: end;
+  border-inline-start-color: var(--accent);
+}
+
+.reminder__wait {
+  padding-block: 0.2rem;
+  text-align: center;
+  font-size: 0.875rem;
   color: var(--muted);
+}
+
+.reminder__chat [data-pending] {
+  opacity: 0;
+}
+
+.reminder__controls:not([hidden]) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.reminder__controls button {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.reminder__controls button:hover {
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reminder__chat li {
+    transition: opacity 180ms ease;
+  }
 }
 
 .content {
