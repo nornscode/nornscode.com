@@ -103,6 +103,7 @@
         <nav class="nav__links" aria-label="Resources">
           <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture</a>
           <a href="/mimir/">mimir</a>
+          <a href="/fulla/">fulla</a>
           <a class="nav__github" href="https://github.com/nornscode/norns">github</a>
           <button
             type="button"
@@ -396,21 +397,33 @@
           <div>
             <h2 id="record-heading" class="section__title">Since April</h2>
             <p class="section__lede">
-              Mimir, a Slack bot that answers questions about a project from
-              its repositories and docs, has run on the hosted instance since
-              2026-04-15. Each thread is a Norns run.
+              Two applications run on the hosted instance. Mimir is a Slack
+              bot that answers questions about a project from its
+              repositories and docs; each thread is a Norns run. Fulla is a
+              personal manager on Telegram; each reminder is a run that
+              sleeps until it is due.
             </p>
             <div class="table-wrap">
               <table class="spec">
+                <thead>
+                  <tr><th></th><th class="num">Mimir</th><th class="num">Fulla</th></tr>
+                </thead>
                 <tbody>
-                  <tr><td>runs</td><td class="num">130</td></tr>
-                  <tr><td>redeploys of the runtime underneath them</td><td class="num">104</td></tr>
-                  <tr><td>runs lost to a worker or orchestrator going away</td><td class="num">0</td></tr>
+                  <tr><td>running since</td><td class="num">2026-04-15</td><td class="num">2026-10-16</td></tr>
+                  <tr><td>runs</td><td class="num">130</td><td class="num">939</td></tr>
+                  <tr><td>redeploys of the runtime underneath them</td><td class="num">104</td><td class="num">24</td></tr>
+                  <tr><td>runs lost to a worker or orchestrator going away</td><td class="num">0</td><td class="num">31</td></tr>
                 </tbody>
               </table>
             </div>
+            <p class="block__note">
+              Mimir counted to 2026-10-04, Fulla to 2026-11-20. Fulla's
+              worker sleeps between requests; the 31 are task timeouts with
+              no worker answering, each recorded in the run's log.
+            </p>
             <div class="links">
               <a href="/mimir/">how mimir is built</a>
+              <a href="/fulla/">how fulla is built</a>
             </div>
           </div>
         </div>
@@ -466,6 +479,7 @@
             <ul role="list">
               <li><a href="https://github.com/nornscode/norns-hello-agent">Hello agent</a></li>
               <li><a href="/mimir/">Mimir</a></li>
+              <li><a href="/fulla/">Fulla</a></li>
               <li><a href="https://github.com/nornscode/sleipnir">Sleipnir</a></li>
             </ul>
           </div>

@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fulla — personal manager on Norns</title>
+    <meta
+      name="description"
+      content="Fulla is a private personal manager that keeps commitments and facts and talks to one person on Telegram, Signal or SMS. Each reminder is a Norns run that sleeps until it is due; the worker is asleep between requests."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5f4f0" media="(prefers-color-scheme: light)" />
+
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("norns-theme");
+          var prefersLight =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: light)").matches;
+          document.documentElement.dataset.theme =
+            saved || (prefersLight ? "light" : "dark");
+        } catch (_) {
+          document.documentElement.dataset.theme = "dark";
+        }
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    />
+
+    <link rel="canonical" href="https://nornscode.com/fulla/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Norns" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://nornscode.com/fulla/" />
+    <meta property="og:title" content="Fulla — personal manager on Norns" />
+    <meta
+      property="og:description"
+      content="A private personal manager on Telegram, Signal or SMS. Each reminder is a Norns run that sleeps until it is due."
+    />
+    <meta property="og:image" content="https://nornscode.com/assets/og.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Fulla — personal manager on Norns" />
+    <meta
+      name="twitter:description"
+      content="A private personal manager on Telegram, Signal or SMS. Each reminder is a Norns run that sleeps until it is due."
+    />
+    <meta name="twitter:image" content="https://nornscode.com/assets/og.png" />
+
+    <link rel="icon" href="/assets/norns-logo.png" type="image/png" />
+    <link rel="stylesheet" href="/styles.css" />
+
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav" aria-label="Primary">
+      <div class="wrap nav__inner">
+        <a class="nav__brand" href="/" aria-label="Norns home">
+          <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
+          <span class="nav__wordmark">norns</span>
+          <span class="nav__version">/ fulla</span>
+        </a>
+        <nav class="nav__links" aria-label="Resources">
+          <a href="/">norns</a>
+          <a href="/mimir/">mimir</a>
+          <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">architecture</a>
+          <a class="nav__github" href="https://github.com/nornscode/fulla">github</a>
+          <button
+            type="button"
+            class="theme-toggle"
+            data-theme-toggle
+            aria-label="Toggle color theme"
+            title="Toggle theme"
+          >
+            <svg class="theme-toggle__sun" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <circle cx="8" cy="8" r="3" />
+              <path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4" />
+            </svg>
+            <svg class="theme-toggle__moon" aria-hidden="true" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M6.8 1.8a6.4 6.4 0 108.6 8.6 5.3 5.3 0 01-8.6-8.6z" />
+            </svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="wrap hero__inner">
+          <div>
+            <h1 class="hero__title">Fulla: a personal manager on Norns.</h1>
+            <p class="hero__lede">
+              Fulla keeps one person's commitments and facts. Ask to be
+              reminded and she asks when it is due, and keeps asking until
+              it is done. She talks to her owner on Telegram, Signal or SMS
+              and to nobody else unless told to. Each reminder is a Norns
+              run that sleeps until it is due. She has run on the hosted
+              instance since 2026-10-16.
+            </p>
+
+            <dl class="facts">
+              <dt>worker</dt>
+              <dd>one Python process on Fly, stopped between requests; tools-only workers on a Mac or a Linux box</dd>
+              <dt>agents</dt>
+              <dd>a manager with one standing conversation, plus one run per reminder, follow-up, queued Mac task and web lookup</dd>
+              <dt>channels</dt>
+              <dd>Telegram, Signal, SMS; the agent does not know which</dd>
+              <dt>memory</dt>
+              <dd>facts, standing instructions and feedback as files on a volume; the event log is the full record</dd>
+              <dt>runs</dt>
+              <dd>939 from 2026-10-16 to 2026-11-20</dd>
+              <dt>source</dt>
+              <dd><a href="https://github.com/nornscode/fulla">nornscode/fulla</a>, MIT</dd>
+            </dl>
+          </div>
+
+          <figure class="code" style="align-self: start">
+            <figcaption class="code__cap"><span>processes</span></figcaption>
+            <pre class="code__body"><code>Telegram ◄──► fulla (one process)
+               ├── channel: posts questions with buttons
+               └── Norns worker
+                        │
+                        ▼
+                     Norns runtime
+                        ├── fulla           the manager,
+                        │                   one conversation
+                        └── fulla-reminder  one run per
+                                            commitment</code></pre>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="how-heading">
+        <div class="wrap section__inner">
+          <div class="section__label">Structure</div>
+          <div>
+            <h2 id="how-heading" class="section__title">What runs where</h2>
+            <p class="section__lede">
+              The orchestrator holds the conversation, every sleeping
+              reminder and every parked question. The worker holds the
+              model key, the messenger tokens and the tool code, and is
+              stopped most of the day. Norns is the only process that is
+              always on.
+            </p>
+
+            <div class="rows">
+              <div class="row">
+                <div class="row__key">manager<small>one conversation</small></div>
+                <div class="row__body">
+                  <p>
+                    Chat, the morning brief, check-ins and the nightly
+                    review all run in one standing conversation keyed to
+                    the owner, so she sees what she said earlier in the
+                    day. The scheduled ones are cron triggers in Norns that
+                    she creates and changes when asked.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">reminder<small>one run each</small></div>
+                <div class="row__body">
+                  <p>
+                    Each commitment is its own run of a second agent. It
+                    calls <code>wait</code> until due, asks once with
+                    <code>ask_human</code>, and closes when the owner says
+                    done. A parked run treats the next message as its
+                    answer, so the agent that chats cannot be the agent
+                    that sleeps.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">channel</div>
+                <div class="row__body">
+                  <p>
+                    A run webhook tells the channel when a run parks,
+                    completes or fails. It posts the question with buttons;
+                    a tap, a reply or a reaction answers the run. Anything
+                    else typed goes to the manager. Swapping the messenger
+                    is a change to one module.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">sleep<small>serverless worker</small></div>
+                <div class="row__body">
+                  <p>
+                    Fulla is registered as a serverless worker: her tools
+                    are declared up front, and when a run calls one Norns
+                    queues the task and sends a signed POST to a wake URL.
+                    The machine starts, serves until idle, drains, and
+                    stops. <code>wait</code> and <code>ask_human</code> are
+                    handled in the orchestrator and wake nothing, so a
+                    reminder a week out costs nothing until it is due.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">machines<small>tools-only workers</small></div>
+                <div class="row__body">
+                  <p>
+                    A worker on the owner's Mac serves Things, Reminders,
+                    iMessage drafts, Shortcuts and tmux; one on a Linux box
+                    serves tmux and, if allowed, a shell. Norns dispatches a
+                    tool call to whichever connected worker holds the tool.
+                    With the lid shut, a task for the Mac becomes a run
+                    parked on <code>ask_human</code> that the Mac worker
+                    answers when it next connects.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">reader<small>sub-agent</small></div>
+                <div class="row__body">
+                  <p>
+                    The manager holds the hands, and a web page can say
+                    anything, so she does not read pages herself. She hands
+                    the question to a reader agent with
+                    <code>launch_agent</code>. The reader has search, fetch
+                    and a clock, nothing that acts, and returns a short
+                    answer with sources.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="row__key">friends<small>and groups</small></div>
+                <div class="row__body">
+                  <p>
+                    People and groups the owner allows talk to a different
+                    agent with its own conversation and a tool list that
+                    has none of the owner's facts, calendar, reminders or
+                    machines. The tool list is the wall, not a line in the
+                    prompt.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="record-heading">
+        <div class="wrap section__inner">
+          <div class="section__label">Record</div>
+          <div>
+            <h2 id="record-heading" class="section__title">Hosted instance, 2026-10-16 to 2026-11-20</h2>
+            <div class="table-wrap">
+              <table class="spec">
+                <tbody>
+                  <tr><td>runs</td><td class="num">939</td></tr>
+                  <tr><td>of which the manager answering a message</td><td class="num">470</td></tr>
+                  <tr><td>of which the manager started by a timer</td><td class="num">276</td></tr>
+                  <tr><td>of which reminders, follow-ups, lookups, Mac tasks and group agents</td><td class="num">193</td></tr>
+                  <tr><td>redeploys of the runtime</td><td class="num">24</td></tr>
+                  <tr><td>releases of Fulla</td><td class="num">129</td></tr>
+                  <tr><td>runs failed on a provider error (credit balance, API key), each recorded in its log</td><td class="num">24</td></tr>
+                  <tr><td>runs failed on a task timeout with no worker answering</td><td class="num">31</td></tr>
+                  <tr><td>runs cancelled by the owner or stopped at the step limit</td><td class="num">3</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="block__note">
+              A task timeout means no worker answered in time, and the
+              failed run says so in its log. 21 of the 31 fell between
+              2026-11-09 and 2026-11-13, when neither the runtime nor Fulla
+              was released.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="run-heading">
+        <div class="wrap section__inner">
+          <div class="section__label">Run it</div>
+          <div>
+            <h2 id="run-heading" class="section__title">Against a local orchestrator</h2>
+            <p class="section__lede">
+              Locally Fulla is a normal Norns worker that stays up and
+              long-polls Telegram. It needs a local orchestrator, an
+              Anthropic key, a bot token from @BotFather and your numeric
+              Telegram id. Only that id is heard.
+            </p>
+            <figure class="code">
+              <figcaption class="code__cap"><span>shell</span></figcaption>
+              <pre class="code__body"><code><span class="cb-prompt">$</span>nornsctl dev && nornsctl dev status
+<span class="cb-prompt">$</span>git clone https://github.com/nornscode/fulla.git && cd fulla
+<span class="cb-prompt">$</span>cp .env.example .env     <span class="cb-c"># FULLA_TELEGRAM_BOT_TOKEN, FULLA_TELEGRAM_USER_ID, NORNS_URL, NORNS_API_KEY, ANTHROPIC_API_KEY</span>
+<span class="cb-prompt">$</span>uv sync && uv run fulla</code></pre>
+            </figure>
+            <p class="block__note">
+              Say <code>/start</code> to the bot, then "remind me to feed
+              the starter at 8pm". Entry points: <code>fulla</code> (worker
+              and channel together), <code>fulla-serve</code> (the sleeping
+              HTTP receiver used on Fly), <code>fulla-mac</code> and
+              <code>fulla-host</code> (tools-only workers for a Mac or a
+              Linux box). The README covers Signal, SMS, calendars and
+              deployment.
+            </p>
+            <div class="links">
+              <a href="https://github.com/nornscode/fulla">nornscode/fulla</a>
+              <a href="https://github.com/nornscode/norns">nornscode/norns</a>
+              <a href="/">runtime overview</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+
+    <footer class="footer">
+      <div class="wrap footer__inner">
+        <div class="footer__brand">
+          <img class="nav__logo" src="/assets/norns-logo.png" alt="" aria-hidden="true" />
+          <span>norns</span>
+        </div>
+
+        <div class="footer__cols">
+          <div class="footer__col">
+            <div class="footer__heading">norns</div>
+            <ul role="list">
+              <li><a href="/">Overview</a></li>
+              <li><a href="https://github.com/nornscode/norns#get-started">Quickstart</a></li>
+              <li><a href="https://github.com/nornscode/norns">Repository</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <div class="footer__heading">mimir</div>
+            <ul role="list">
+              <li><a href="/mimir/">Overview</a></li>
+              <li><a href="https://github.com/nornscode/norns-mimir-agent">Repository</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <div class="footer__heading">fulla</div>
+            <ul role="list">
+              <li><a href="/fulla/">Overview</a></li>
+              <li><a href="https://github.com/nornscode/fulla">Repository</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <div class="footer__heading">sdks</div>
+            <ul role="list">
+              <li><a href="https://github.com/nornscode/norns-sdk-python">Python</a></li>
+              <li><a href="https://github.com/nornscode/norns-sdk-elixir">Elixir</a></li>
+            </ul>
+          </div>
+          <div class="footer__col">
+            <div class="footer__heading">project</div>
+            <ul role="list">
+              <li><a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a></li>
+              <li><a href="https://github.com/nornscode/norns/blob/main/LICENSE">MIT license</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer__bottom">
+          <span>MIT license</span>
+          <span>Elixir / OTP · PostgreSQL · v0.7</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>
