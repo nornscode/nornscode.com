@@ -36,6 +36,37 @@
     });
   });
 
+  document.querySelectorAll("[data-demo-deck]").forEach((deck) => {
+    const cards = [...deck.querySelectorAll("[data-reminder-demo]")];
+    const controls = deck.querySelector(".demo-deck__controls");
+    const previous = deck.querySelector("[data-deck-previous]");
+    const next = deck.querySelector("[data-deck-next]");
+    const position = deck.querySelector("[data-deck-position]");
+    let current = 0;
+
+    function showCard(index) {
+      cards[current].dispatchEvent(new Event("demo-deactivate"));
+      current = (index + cards.length) % cards.length;
+      cards.forEach((card, i) => {
+        card.hidden = i !== current;
+      });
+      const title = cards[current].querySelector("figcaption strong").textContent;
+      position.textContent = current + 1 + " of " + cards.length;
+      position.setAttribute("aria-label", position.textContent + ": " + title);
+    }
+
+    previous.addEventListener("click", () => showCard(current - 1));
+    next.addEventListener("click", () => showCard(current + 1));
+    controls.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      showCard(current + (event.key === "ArrowRight" ? 1 : -1));
+    });
+
+    showCard(0);
+    controls.hidden = false;
+  });
+
   // Play each conversation once as it comes into view.
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (reducedMotion.matches || !("IntersectionObserver" in window)) return;
@@ -93,8 +124,14 @@
       advance();
     });
 
+    demo.addEventListener("demo-deactivate", () => {
+      if (timer === undefined) return;
+      pause();
+      setButton("Resume");
+    });
+
     const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
+      if (!entry.isIntersecting || demo.hidden) return;
       observer.disconnect();
       controls.hidden = false;
       show(0);

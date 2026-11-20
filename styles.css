@@ -286,6 +286,38 @@ code {
   width: 100%;
 }
 
+.demo-deck__controls:not([hidden]) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.demo-deck__controls button {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--fg);
+}
+
+.demo-deck__controls button:hover {
+  border-color: var(--accent);
+}
+
+.demo-deck__controls span {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-deck__controls:not([hidden]) ~ .reminder:not([hidden]) {
+  position: relative;
+  width: calc(100% - 0.75rem);
+  margin-bottom: 0.75rem;
+  box-shadow:
+    4px 4px 0 var(--panel), 5px 5px 0 var(--line),
+    8px 8px 0 var(--panel), 9px 9px 0 var(--line);
+}
+
 .reminder__chat {
   display: grid;
   gap: 0.55rem;
