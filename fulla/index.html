@@ -120,27 +120,27 @@
             <button type="button" data-reminder-play>Replay</button>
           </div>
           <ol class="reminder__chat" aria-label="Reminder conversation">
-            <li data-reminder-step>
+            <li data-reminder-step="Reminder saved" data-hold="1800">
               <time>Monday, 9:14 a.m.</time>
               <p class="reminder__you"><strong>You</strong> Remind me to renew my passport Thursday at 9.</p>
               <p><strong>Fulla</strong> I’ll remind you Thursday at 9.</p>
             </li>
-            <li class="reminder__wait" data-reminder-step>
+            <li class="reminder__wait" data-reminder-step="Worker off until Thursday" data-hold="1800">
               <span>Norns holds the reminder while the worker is off.</span>
             </li>
-            <li data-reminder-step>
+            <li data-reminder-step="Worker wakes and sends the reminder" data-hold="1600">
               <time>Thursday, 9 a.m.</time>
               <p><strong>Fulla</strong> Did you renew your passport?</p>
             </li>
-            <li data-reminder-step>
+            <li data-reminder-step="Run waits another hour" data-hold="1300">
               <time>Thursday, 9:40 a.m.</time>
               <p class="reminder__you"><strong>You</strong> Snooze 1 hour.</p>
             </li>
-            <li data-reminder-step>
+            <li data-reminder-step="Worker sends the follow-up" data-hold="1600">
               <time>Thursday, 10:40 a.m.</time>
               <p><strong>Fulla</strong> Did you renew your passport?</p>
             </li>
-            <li data-reminder-step>
+            <li data-reminder-step="Run complete">
               <time>Thursday, 11:05 a.m.</time>
               <p class="reminder__you"><strong>You</strong> Done.</p>
               <p><strong>Fulla</strong> Marked done.</p>
@@ -152,23 +152,119 @@
       <section class="section" aria-labelledby="uses-heading">
         <div class="wrap content">
           <h2 id="uses-heading">What you can ask Fulla to do</h2>
-          <div class="examples">
-            <article>
-              <h3>Keep your goals in mind</h3>
-              <p>Tell Fulla what you like, what you’re working toward, and what keeps getting in the way. It can remember those details and check in later. If you want, ask it to get to know you by asking a question a couple of times a week.</p>
-            </article>
-            <article>
-              <h3>Help you keep up with messages</h3>
-              <p>With access to Messages on your Mac, Fulla can read recent conversations, remind you who’s waiting for a reply, and draft one for you to review. It sends the reply only after you approve it.</p>
-            </article>
-            <article>
-              <h3>Update reminders and run home automations</h3>
-              <p>Ask Fulla to move a reminder or update Apple Reminders on your Mac. You can also say “turn the lights off at eleven” and have it run a HomeKit automation you’ve made available through Shortcuts.</p>
-            </article>
-            <article>
-              <h3>Check your terminal or hand off a coding task</h3>
-              <p>Ask Fulla to run a command or check a tmux session on a machine you’ve connected and authorized. With a cloud coding worker connected, it can hand a task to Claude Code or Codex and let you know when it’s done.</p>
-            </article>
+          <p>Example conversations, edited for clarity.</p>
+          <div class="demo-stack">
+            <figure class="panel reminder" data-reminder-demo>
+              <figcaption>
+                <strong>Help with dinner</strong>
+              </figcaption>
+              <div class="panel-foot reminder__controls" hidden>
+                <button type="button" data-reminder-play>Replay</button>
+              </div>
+              <ol class="reminder__chat" aria-label="Example conversation">
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> What goes well with cod and mashed potatoes? Lemon?</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Lemon, definitely. I’d do peas on the side and finish the cod with lemon and caper butter.</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> What would you do with the peas?</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Frozen peas are fine. Warm them through, then toss with butter, salt, and a squeeze of lemon.</p></li>
+              </ol>
+            </figure>
+
+            <figure class="panel reminder" data-reminder-demo>
+              <figcaption>
+                <strong>Remember what matters to you</strong>
+              </figcaption>
+              <div class="panel-foot reminder__controls" hidden>
+                <button type="button" data-reminder-play>Replay</button>
+              </div>
+              <ol class="reminder__chat" aria-label="Example conversation">
+                <li data-reminder-step>
+                  <time>Monday</time>
+                  <p class="reminder__you"><strong>You</strong> I’m trying to get back to the gym, but I’ve been short on sleep with the baby.</p>
+                </li>
+                <li data-reminder-step><p><strong>Fulla</strong> I’ll keep that in mind.</p></li>
+                <li data-reminder-step>
+                  <time>Sunday morning</time>
+                  <p><strong>Fulla</strong> Your calendar’s clear this morning if you want to get to the gym.</p>
+                </li>
+                <li data-reminder-step>
+                  <time>Sunday night</time>
+                  <p class="reminder__you"><strong>You</strong> What should I be doing right now?</p>
+                </li>
+                <li data-reminder-step><p><strong>Fulla</strong> It’s nearly 11. If the baby’s settled, I’d call it a night and get some sleep.</p></li>
+              </ol>
+            </figure>
+
+            <figure class="panel reminder" data-reminder-demo>
+              <figcaption>
+                <strong>Catch a message you meant to answer</strong>
+                <span>Fulla can read recent iMessages with permission. You approve drafts before it sends them.</span>
+              </figcaption>
+              <div class="panel-foot reminder__controls" hidden>
+                <button type="button" data-reminder-play>Replay</button>
+              </div>
+              <ol class="reminder__chat" aria-label="Example conversation">
+                <li data-reminder-step><p><strong>Fulla</strong> Sam asked on Wednesday if you’re free for coffee. Still need to get back to them?</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Yes. Can you draft a reply for Saturday morning?</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Draft to Sam: “Sorry for the slow reply. Coffee Saturday morning?”</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Send.</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Sent.</p></li>
+              </ol>
+            </figure>
+
+            <figure class="panel reminder" data-reminder-demo>
+              <figcaption>
+                <strong>Close out a reminder</strong>
+              </figcaption>
+              <div class="panel-foot reminder__controls" hidden>
+                <button type="button" data-reminder-play>Replay</button>
+              </div>
+              <ol class="reminder__chat" aria-label="Example conversation">
+                <li data-reminder-step>
+                  <time>10:48 a.m.</time>
+                  <p><strong>Fulla</strong> Did you follow up with Alex?</p>
+                </li>
+                <li data-reminder-step>
+                  <time>11:48 a.m.</time>
+                  <p class="reminder__you"><strong>You</strong> Done.</p>
+                </li>
+                <li data-reminder-step><p><strong>Fulla</strong> Marked “Follow up with Alex” done.</p></li>
+              </ol>
+            </figure>
+
+            <figure class="panel reminder" data-reminder-demo>
+              <figcaption>
+                <strong>Turn on the desk light</strong>
+                <span>Fulla runs the HomeKit shortcuts you make available on your Mac.</span>
+              </figcaption>
+              <div class="panel-foot reminder__controls" hidden>
+                <button type="button" data-reminder-play>Replay</button>
+              </div>
+              <ol class="reminder__chat" aria-label="Example conversation">
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Turn on the desk light.</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Desk light’s on.</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Actually, turn it back off.</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> It’s off.</p></li>
+              </ol>
+            </figure>
+
+            <figure class="panel reminder" data-reminder-demo>
+              <figcaption>
+                <strong>Pick up a coding task from chat</strong>
+                <span>Terminal and tmux access use a connected machine. Cloud tasks can go to Claude Code or Codex.</span>
+              </figcaption>
+              <div class="panel-foot reminder__controls" hidden>
+                <button type="button" data-reminder-play>Replay</button>
+              </div>
+              <ol class="reminder__chat" aria-label="Example conversation">
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Can you check the test run in tmux?</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> It finished. One test failed when the settings file was empty.</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Ask Codex to fix that in the cloud and tell me when the PR is ready.</p></li>
+                <li data-reminder-step>
+                  <time>Later</time>
+                  <p><strong>Fulla</strong> The fix is up for review. The tests pass, including a new one for the empty file.</p>
+                </li>
+              </ol>
+            </figure>
           </div>
         </div>
       </section>
@@ -177,7 +273,7 @@
         <div class="wrap content">
           <h2 id="behavior-heading">What stays running</h2>
           <p>
-            In the example above, Norns keeps the reminder while Fulla’s worker
+            In the passport example, Norns keeps the reminder while Fulla’s worker
             is stopped. It wakes the worker when the reminder is due or you
             reply in chat.
           </p>

@@ -280,6 +280,12 @@ code {
   height: auto;
 }
 
+.demo-stack {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+}
+
 .reminder__chat {
   display: grid;
   gap: 0.55rem;
@@ -335,6 +341,7 @@ code {
 }
 
 .reminder__controls button {
+  margin-inline-start: auto;
   padding: 0.2rem 0.5rem;
   border: 1px solid var(--line);
   background: var(--bg);
