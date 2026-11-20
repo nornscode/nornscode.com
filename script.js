@@ -36,76 +36,77 @@
     });
   });
 
-  // Play the example once when it comes into view, then leave the chat visible.
-  const demo = document.querySelector("[data-reminder-demo]");
+  // Play each conversation once as it comes into view.
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  if (!demo || reducedMotion.matches || !("IntersectionObserver" in window)) return;
+  if (reducedMotion.matches || !("IntersectionObserver" in window)) return;
 
-  const steps = [...demo.querySelectorAll("[data-reminder-step]")];
-  const controls = demo.querySelector(".reminder__controls");
-  const status = demo.querySelector("[data-reminder-status]");
-  const play = demo.querySelector("[data-reminder-play]");
-  const frames = [
-    { status: "Reminder saved", hold: 1800 },
-    { status: "Worker off until Thursday", hold: 1800 },
-    { status: "Worker wakes and sends the reminder", hold: 1600 },
-    { status: "Run waits another hour", hold: 1300 },
-    { status: "Worker sends the follow-up", hold: 1600 },
-    { status: "Run complete" },
-  ];
-  let step = steps.length - 1;
-  let timer;
+  document.querySelectorAll("[data-reminder-demo]").forEach((demo) => {
+    const steps = [...demo.querySelectorAll("[data-reminder-step]")];
+    const controls = demo.querySelector(".reminder__controls");
+    const status = demo.querySelector("[data-reminder-status]");
+    const play = demo.querySelector("[data-reminder-play]");
+    const title = demo.querySelector("figcaption strong").textContent;
+    let step = steps.length - 1;
+    let timer;
 
-  function pause() {
-    clearTimeout(timer);
-    timer = undefined;
-  }
-
-  function show(index) {
-    step = index;
-    steps.forEach((item, i) => {
-      item.toggleAttribute("data-pending", i > index);
-    });
-    status.textContent = frames[index].status;
-  }
-
-  function advance() {
-    if (step === steps.length - 1) {
-      pause();
-      play.textContent = "Replay";
-      return;
+    function setButton(label) {
+      play.textContent = label;
+      play.setAttribute("aria-label", label + " — " + title);
     }
 
-    play.textContent = "Pause";
-    timer = setTimeout(() => {
-      show(step + 1);
+    function pause() {
+      clearTimeout(timer);
+      timer = undefined;
+    }
+
+    function show(index) {
+      step = index;
+      steps.forEach((item, i) => {
+        item.toggleAttribute("data-pending", i > index);
+      });
+      if (status) status.textContent = steps[index].dataset.reminderStep;
+    }
+
+    function advance() {
+      if (step === steps.length - 1) {
+        pause();
+        setButton("Replay");
+        return;
+      }
+
+      setButton("Pause");
+      const current = steps[step];
+      const hold = Number(current.dataset.hold) || Math.min(2500, 750 + current.textContent.trim().length * 12);
+      timer = setTimeout(() => {
+        show(step + 1);
+        advance();
+      }, hold);
+    }
+
+    play.addEventListener("click", () => {
+      if (timer !== undefined) {
+        pause();
+        setButton("Resume");
+        return;
+      }
+      if (step === steps.length - 1) show(0);
       advance();
-    }, frames[step].hold);
-  }
+    });
 
-  play.addEventListener("click", () => {
-    if (timer !== undefined) {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      controls.hidden = false;
+      show(0);
+      advance();
+    }, { threshold: 0.25 });
+    observer.observe(demo);
+    reducedMotion.addEventListener("change", (event) => {
+      if (!event.matches) return;
+      observer.disconnect();
       pause();
-      play.textContent = "Resume";
-      return;
-    }
-    if (step === steps.length - 1) show(0);
-    advance();
-  });
-
-  const observer = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return;
-    observer.disconnect();
-    controls.hidden = false;
-    show(0);
-    advance();
-  }, { threshold: 0.25 });
-  observer.observe(demo);
-  reducedMotion.addEventListener("change", (event) => {
-    if (!event.matches) return;
-    observer.disconnect();
-    pause();
-    show(steps.length - 1);
-    controls.hidden = true;
+      show(steps.length - 1);
+      controls.hidden = true;
+    });
   });
 })();
