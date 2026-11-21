@@ -104,7 +104,7 @@ code {
   margin-inline: auto;
 }
 
-.content {
+.hero--home > .wrap, .content {
   max-width: 50rem;
 }
 
@@ -201,13 +201,13 @@ code {
 }
 
 .hero--home {
-  display: block;
-  text-align: center;
+  padding-block: clamp(3rem, 7vw, 6rem);
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
 }
 
 .hero--home h1 {
   max-width: none;
-  font-size: clamp(2.75rem, 7.3vw, 6.5rem);
+  font-size: clamp(2.4rem, 6.4vw, 4.4rem);
   font-weight: 700;
   line-height: 0.98;
   letter-spacing: -0.055em;
@@ -219,8 +219,7 @@ code {
 }
 
 .hero--home .lede, .hero__workers {
-  max-width: 60ch;
-  margin-inline: auto;
+  max-width: 58ch;
   text-wrap: pretty;
 }
 
@@ -235,7 +234,31 @@ code {
 }
 
 .hero--home .links {
-  justify-content: center;
+  gap: 0.75rem;
+}
+
+.hero--home .links a {
+  padding: 0.55rem 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: var(--panel);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.hero--home .links .primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.hero--home .links a:hover {
+  border-color: var(--fg);
+}
+
+.hero--home + .section .setup {
+  border-radius: 0.6rem;
+  border-inline-start: 3px solid var(--accent);
 }
 
 .lede {

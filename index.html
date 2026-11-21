@@ -69,7 +69,7 @@
     />
 
     <link rel="icon" href="/assets/norns-logo.png" type="image/png" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/styles.css?v=runtime-hero-2" />
 
     <!-- Privacy-friendly analytics by Plausible -->
     <script
@@ -124,17 +124,19 @@
     </header>
 
     <main id="main">
-      <section class="wrap hero hero--home">
-        <h1>NORNS IS THE RUNTIME <span>FOR LONG-LIVED AGENTS.</span></h1>
-        <p class="lede">
-          Each agent run in Norns is backed by a durable event log. Runs can last
-          for months and survive restarts and crashes, making them ideal for
-          critical agentic workloads.
-        </p>
-        <p class="hero__workers">Your workers make the model calls, run the tools, and store the keys. Norns orchestrates.</p>
-        <div class="links">
-          <a class="primary" href="#setup-heading">Quickstart</a>
-          <a href="https://github.com/nornscode/norns">View on GitHub</a>
+      <section class="hero--home">
+        <div class="wrap">
+          <h1>Norns is the runtime <span>for long-lived agents.</span></h1>
+          <p class="lede">
+            Each agent run in Norns is backed by a durable event log. Runs can last
+            for months and survive restarts and crashes, making them ideal for
+            critical agentic workloads.
+          </p>
+          <p class="hero__workers">Your workers make the model calls, run the tools, and store the keys. Norns orchestrates.</p>
+          <div class="links">
+            <a class="primary" href="#setup-heading">Quickstart</a>
+            <a href="https://github.com/nornscode/norns">View on GitHub</a>
+          </div>
         </div>
       </section>
 
@@ -166,24 +168,12 @@ uv run my-agent-worker</code></pre>
 
       <section class="section" id="system-heading" aria-labelledby="architecture-heading">
         <div class="wrap content">
-          <h2 id="architecture-heading">HOW RUNS SURVIVE</h2>
+          <h2 id="architecture-heading">How runs survive</h2>
           <ol class="run-steps" id="log-heading">
-            <li>Create a run in Norns.</li>
-            <li>Norns saves the message to the run’s durable event log.</li>
-            <li>The LLM receives the agent’s prompt and the list of available tools.</li>
-            <li>The agent requests a tool call.</li>
-            <li>Norns forwards the tool request to a worker.</li>
-            <li>The worker executes the tool in Python, Elixir, or TypeScript.</li>
-            <li>Norns saves the result to the durable event log.</li>
-            <li>The LLM receives the tool result.</li>
-            <li>The LLM reasons about what to do next.</li>
-            <li>…</li>
+            <li>Norns saves each message to the run’s durable event log.</li>
+            <li>Your worker runs the tool. Norns logs the result and reuses the same idempotency key on retries.</li>
+            <li>After a restart or a long wait for a timer or reply, the run resumes from its last checkpoint.</li>
           </ol>
-          <p>
-            After a crash, restart, or deployment, Norns resumes the run from its last checkpoint in the durable event log.
-            A run can also wait for a timer or a human response and continue even after days or weeks have passed.
-          </p>
-          <p>For tools with side effects, Norns sends the same idempotency key on each retry so the tool can recognize the request and avoid repeating the action.</p>
           <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Read the architecture</a>
         </div>
       </section>
