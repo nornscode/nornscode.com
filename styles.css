@@ -104,6 +104,10 @@ code {
   margin-inline: auto;
 }
 
+.content {
+  max-width: 50rem;
+}
+
 .nav, .section, .footer {
   border-block-start: 1px solid var(--line);
 }
@@ -196,6 +200,44 @@ code {
   padding-block: clamp(2.5rem, 7vw, 6rem);
 }
 
+.hero--home {
+  display: block;
+  text-align: center;
+}
+
+.hero--home h1 {
+  max-width: none;
+  font-size: clamp(2.75rem, 7.3vw, 6.5rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.hero--home h1 span {
+  display: block;
+  color: var(--accent);
+}
+
+.hero--home .lede, .hero__workers {
+  max-width: 60ch;
+  margin-inline: auto;
+  text-wrap: pretty;
+}
+
+.hero--home .lede {
+  margin-block: clamp(1.5rem, 3vw, 2.5rem) 0.75rem;
+  color: var(--fg);
+}
+
+.hero__workers {
+  margin-bottom: 1.75rem;
+  color: var(--muted);
+}
+
+.hero--home .links {
+  justify-content: center;
+}
+
 .lede {
   max-width: 48ch;
   margin-block: 1rem 1.5rem;
@@ -230,7 +272,7 @@ code {
   margin-top: 0.2rem;
 }
 
-.panel figcaption span, .panel-foot, .muted, .footer {
+.panel figcaption span, .panel-foot, .footer {
   color: var(--muted);
 }
 
@@ -242,36 +284,16 @@ code {
   border-top: 1px solid var(--line);
 }
 
-.run-log, .stats {
+.stats {
   width: 100%;
   border-collapse: collapse;
+  border-bottom: 1px solid var(--line);
   text-align: left;
 }
 
-.run-log th, .run-log td, .stats th, .stats td {
+.stats th, .stats td {
   border-top: 1px solid var(--line);
   padding: 0.5rem 1rem;
-}
-
-.run-log th, .run-log td {
-  font-size: 0.875rem;
-}
-
-.run-log tbody td:first-child {
-  width: 1%;
-  white-space: nowrap;
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-}
-
-.run-log tbody td.log-gap {
-  color: var(--muted);
-  font-family: var(--sans);
-  white-space: normal;
-}
-
-.run-log td span {
-  color: var(--muted);
 }
 
 .screenshot img {
@@ -400,11 +422,28 @@ code {
 }
 
 .content > * {
-  max-width: min(100%, 68ch);
+  max-width: 100%;
+}
+
+.run-steps {
+  margin: 0;
+  padding-inline-start: 2.25rem;
+}
+
+.run-steps li {
+  padding-inline-start: 0.35rem;
+}
+
+.run-steps li + li {
+  margin-block-start: 0.55rem;
+}
+
+.run-steps li::marker {
+  color: var(--accent);
+  font-family: var(--mono);
 }
 
 .content > h2 {
-  max-width: 100%;
   scroll-margin-top: 1rem;
 }
 
@@ -438,15 +477,6 @@ pre.panel {
   display: inline;
 }
 
-.flow {
-  margin: 0;
-  padding-inline-start: 1.4rem;
-}
-
-.flow li + li {
-  margin-top: 0.3rem;
-}
-
 .stats th {
   padding-inline-start: 0;
   font-weight: 400;
@@ -458,14 +488,11 @@ pre.panel {
   font-variant-numeric: tabular-nums;
 }
 
-.stats {
-  border-bottom: 1px solid var(--line);
-}
-
 .examples {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem 1.75rem;
+  width: 100%;
 }
 
 .examples article {
