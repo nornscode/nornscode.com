@@ -280,19 +280,9 @@ code {
   height: auto;
 }
 
-.hero-demos,
-.hero-demos__examples {
-  display: grid;
-  gap: 1rem;
-  min-width: 0;
-}
-
-.hero-demos {
-  gap: 2rem;
-}
-
 .demo-stack {
   display: grid;
+  min-width: 0;
   gap: 1.25rem;
   width: 100%;
 }
@@ -498,7 +488,7 @@ pre.panel {
   }
 
   .hero > figure,
-  .hero > .hero-demos {
+  .hero > .demo-stack {
     width: min(100%, 34rem);
   }
 }
