@@ -161,22 +161,24 @@
             </div>
             <figure class="panel reminder" data-reminder-demo>
               <figcaption>
-                <strong>Help with dinner</strong>
+                <strong>Screen your messages</strong>
+                <span>Fulla can read recent iMessages with permission. You approve drafts before it sends them.</span>
               </figcaption>
               <div class="panel-foot reminder__controls" hidden>
                 <button type="button" data-reminder-play>Replay</button>
               </div>
               <ol class="reminder__chat" aria-label="Example conversation">
-                <li data-reminder-step><p class="reminder__you"><strong>You</strong> What goes well with cod and mashed potatoes? Lemon?</p></li>
-                <li data-reminder-step><p><strong>Fulla</strong> Lemon, definitely. I’d do peas on the side and finish the cod with lemon and caper butter.</p></li>
-                <li data-reminder-step><p class="reminder__you"><strong>You</strong> What would you do with the peas?</p></li>
-                <li data-reminder-step><p><strong>Fulla</strong> Frozen peas are fine. Warm them through, then toss with butter, salt, and a squeeze of lemon.</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Sam asked on Wednesday if you’re free for coffee. Still need to get back to them?</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Yes. Can you draft a reply for Saturday morning?</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Draft to Sam: “Sorry for the slow reply. Coffee Saturday morning?”</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Send.</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Sent.</p></li>
               </ol>
             </figure>
 
             <figure class="panel reminder" data-reminder-demo>
               <figcaption>
-                <strong>Remember what matters to you</strong>
+                <strong>Track important goals</strong>
               </figcaption>
               <div class="panel-foot reminder__controls" hidden>
                 <button type="button" data-reminder-play>Replay</button>
@@ -201,24 +203,42 @@
 
             <figure class="panel reminder" data-reminder-demo>
               <figcaption>
-                <strong>Catch a message you meant to answer</strong>
-                <span>Fulla can read recent iMessages with permission. You approve drafts before it sends them.</span>
+                <strong>Use your local tools</strong>
+                <span>Terminal and tmux access use a connected machine. Cloud tasks can go to Claude Code or Codex.</span>
               </figcaption>
               <div class="panel-foot reminder__controls" hidden>
                 <button type="button" data-reminder-play>Replay</button>
               </div>
               <ol class="reminder__chat" aria-label="Example conversation">
-                <li data-reminder-step><p><strong>Fulla</strong> Sam asked on Wednesday if you’re free for coffee. Still need to get back to them?</p></li>
-                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Yes. Can you draft a reply for Saturday morning?</p></li>
-                <li data-reminder-step><p><strong>Fulla</strong> Draft to Sam: “Sorry for the slow reply. Coffee Saturday morning?”</p></li>
-                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Send.</p></li>
-                <li data-reminder-step><p><strong>Fulla</strong> Sent.</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Can you check the test run in tmux?</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> It finished. One test failed when the settings file was empty.</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Ask Codex to fix that in the cloud and tell me when the PR is ready.</p></li>
+                <li data-reminder-step>
+                  <time>Later</time>
+                  <p><strong>Fulla</strong> The fix is up for review. The tests pass, including a new one for the empty file.</p>
+                </li>
               </ol>
             </figure>
 
             <figure class="panel reminder" data-reminder-demo>
               <figcaption>
-                <strong>Close out a reminder</strong>
+                <strong>Home automation via HomeKit</strong>
+                <span>Fulla runs the HomeKit shortcuts you make available on your Mac.</span>
+              </figcaption>
+              <div class="panel-foot reminder__controls" hidden>
+                <button type="button" data-reminder-play>Replay</button>
+              </div>
+              <ol class="reminder__chat" aria-label="Example conversation">
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Turn on the desk light.</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Desk light’s on.</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Actually, turn it back off.</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> It’s off.</p></li>
+              </ol>
+            </figure>
+
+            <figure class="panel reminder" data-reminder-demo>
+              <figcaption>
+                <strong>Manage followups</strong>
               </figcaption>
               <div class="panel-foot reminder__controls" hidden>
                 <button type="button" data-reminder-play>Replay</button>
@@ -238,36 +258,16 @@
 
             <figure class="panel reminder" data-reminder-demo>
               <figcaption>
-                <strong>Turn on the desk light</strong>
-                <span>Fulla runs the HomeKit shortcuts you make available on your Mac.</span>
+                <strong>Help with personal tasks</strong>
               </figcaption>
               <div class="panel-foot reminder__controls" hidden>
                 <button type="button" data-reminder-play>Replay</button>
               </div>
               <ol class="reminder__chat" aria-label="Example conversation">
-                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Turn on the desk light.</p></li>
-                <li data-reminder-step><p><strong>Fulla</strong> Desk light’s on.</p></li>
-                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Actually, turn it back off.</p></li>
-                <li data-reminder-step><p><strong>Fulla</strong> It’s off.</p></li>
-              </ol>
-            </figure>
-
-            <figure class="panel reminder" data-reminder-demo>
-              <figcaption>
-                <strong>Pick up a coding task from chat</strong>
-                <span>Terminal and tmux access use a connected machine. Cloud tasks can go to Claude Code or Codex.</span>
-              </figcaption>
-              <div class="panel-foot reminder__controls" hidden>
-                <button type="button" data-reminder-play>Replay</button>
-              </div>
-              <ol class="reminder__chat" aria-label="Example conversation">
-                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Can you check the test run in tmux?</p></li>
-                <li data-reminder-step><p><strong>Fulla</strong> It finished. One test failed when the settings file was empty.</p></li>
-                <li data-reminder-step><p class="reminder__you"><strong>You</strong> Ask Codex to fix that in the cloud and tell me when the PR is ready.</p></li>
-                <li data-reminder-step>
-                  <time>Later</time>
-                  <p><strong>Fulla</strong> The fix is up for review. The tests pass, including a new one for the empty file.</p>
-                </li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> What goes well with cod and mashed potatoes? Lemon?</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Lemon, definitely. I’d do peas on the side and finish the cod with lemon and caper butter.</p></li>
+                <li data-reminder-step><p class="reminder__you"><strong>You</strong> What would you do with the peas?</p></li>
+                <li data-reminder-step><p><strong>Fulla</strong> Frozen peas are fine. Warm them through, then toss with butter, salt, and a squeeze of lemon.</p></li>
               </ol>
             </figure>
           </div>
