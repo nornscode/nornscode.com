@@ -69,7 +69,7 @@
     />
 
     <link rel="icon" href="/assets/norns-logo.png" type="image/png" />
-    <link rel="stylesheet" href="/styles.css?v=runtime-hero-2" />
+    <link rel="stylesheet" href="/styles.css?v=runtime-hero-3" />
 
     <!-- Privacy-friendly analytics by Plausible -->
     <script
@@ -124,9 +124,9 @@
     </header>
 
     <main id="main">
-      <section class="hero--home">
+      <section class="hero hero--home">
         <div class="wrap">
-          <h1>Norns is the runtime <span>for long-lived agents.</span></h1>
+          <h1>Norns is the runtime for long-lived agents.</h1>
           <p class="lede">
             Each agent run in Norns is backed by a durable event log. Runs can last
             for months and survive restarts and crashes, making them ideal for
@@ -137,6 +137,22 @@
             <a class="primary" href="#setup-heading">Quickstart</a>
             <a href="https://github.com/nornscode/norns">View on GitHub</a>
           </div>
+          <figure class="panel run-trace" data-reminder-demo>
+            <figcaption>
+              <strong>Run 198 · Schedule a payment</strong>
+              <span>Example run, shown at accelerated speed</span>
+            </figcaption>
+            <ol aria-label="Run events">
+              <li data-reminder-step><code>Day 1</code><span>Run 198 starts. Norns saves a timer for three weeks from now.</span></li>
+              <li data-reminder-step><code>+3 weeks</code><span>The timer fires. The agent wakes and requests a payment.</span></li>
+              <li data-reminder-step><code>Worker A</code><span>The payment service accepts the charge. The worker crashes before reporting the result.</span></li>
+              <li data-reminder-step><code>Worker B</code><span>A new worker connects. Norns resends the pending tool call with the same idempotency key.</span></li>
+              <li data-reminder-step><code>Complete</code><span>The payment service returns the original receipt. Norns records it. One charge, one completed run.</span></li>
+            </ol>
+            <div class="panel-foot reminder__controls" hidden>
+              <button type="button" data-reminder-play>Replay</button>
+            </div>
+          </figure>
         </div>
       </section>
 

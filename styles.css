@@ -201,64 +201,38 @@ code {
 }
 
 .hero--home {
-  padding-block: clamp(3rem, 7vw, 6rem);
-  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
-}
-
-.hero--home h1 {
-  max-width: none;
-  font-size: clamp(2.4rem, 6.4vw, 4.4rem);
-  font-weight: 700;
-  line-height: 0.98;
-  letter-spacing: -0.055em;
-}
-
-.hero--home h1 span {
   display: block;
-  color: var(--accent);
 }
 
-.hero--home .lede, .hero__workers {
-  max-width: 58ch;
-  text-wrap: pretty;
+.run-trace {
+  margin-top: 2rem;
 }
 
-.hero--home .lede {
-  margin-block: clamp(1.5rem, 3vw, 2.5rem) 0.75rem;
-  color: var(--fg);
+.run-trace ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.hero__workers {
-  margin-bottom: 1.75rem;
+.run-trace li {
+  display: grid;
+  grid-template-columns: 8ch minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.run-trace code {
   color: var(--muted);
 }
 
-.hero--home .links {
-  gap: 0.75rem;
+.run-trace [data-pending] {
+  visibility: hidden;
 }
 
-.hero--home .links a {
-  padding: 0.55rem 1.15rem;
-  border: 1px solid var(--line);
-  border-radius: 0.4rem;
-  background: var(--panel);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.hero--home .links .primary {
-  background: var(--accent);
-  color: var(--bg);
-  border-color: var(--accent);
-}
-
-.hero--home .links a:hover {
-  border-color: var(--fg);
-}
-
-.hero--home + .section .setup {
-  border-radius: 0.6rem;
-  border-inline-start: 3px solid var(--accent);
+.hero__workers {
+  max-width: 58ch;
+  margin-bottom: 1.5rem;
 }
 
 .lede {
@@ -462,7 +436,7 @@ code {
 }
 
 .run-steps li::marker {
-  color: var(--accent);
+  color: var(--muted);
   font-family: var(--mono);
 }
 
