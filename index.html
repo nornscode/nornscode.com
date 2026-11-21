@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Norns — Run agents that can pick up after a restart</title>
+    <title>Norns — The runtime for long-lived agents</title>
     <meta
       name="description"
-      content="Norns saves agent progress so a run can pick up after a worker disconnects or Norns restarts."
+      content="Norns is the open-source runtime for long-lived agents. Runs can wait for timers or replies and resume after workers disconnect or the runtime restarts."
     />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
@@ -32,7 +32,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
     />
 
     <link rel="canonical" href="https://nornscode.com/" />
@@ -41,10 +41,10 @@
     <meta property="og:site_name" content="Norns" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://nornscode.com/" />
-    <meta property="og:title" content="Norns — Run agents that can pick up after a restart" />
+    <meta property="og:title" content="Norns — The runtime for long-lived agents" />
     <meta
       property="og:description"
-      content="Norns saves agent progress so a run can pick up after a worker disconnects or Norns restarts."
+      content="Norns is the open-source runtime for long-lived agents. Runs can wait for timers or replies and resume after workers disconnect or the runtime restarts."
     />
     <meta property="og:image" content="https://nornscode.com/assets/og.png" />
     <meta property="og:image:secure_url" content="https://nornscode.com/assets/og.png" />
@@ -57,10 +57,10 @@
     />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Norns — Run agents that can pick up after a restart" />
+    <meta name="twitter:title" content="Norns — The runtime for long-lived agents" />
     <meta
       name="twitter:description"
-      content="Norns saves agent progress so a run can pick up after a worker disconnects or Norns restarts."
+      content="Norns is the open-source runtime for long-lived agents. Runs can wait for timers or replies and resume after workers disconnect or the runtime restarts."
     />
     <meta name="twitter:image" content="https://nornscode.com/assets/og.png" />
     <meta
@@ -124,39 +124,18 @@
     </header>
 
     <main id="main">
-      <section class="wrap hero">
-        <div>
-          <h1>Run agents that can pick up after a restart</h1>
-          <p class="lede">
-            Norns saves each run’s progress. If a worker disconnects,
-            another can pick up the pending step. Your workers make the model
-            calls, run the tools, and keep the API keys.
-          </p>
-          <div class="links">
-            <a class="primary" href="#setup-heading">Quickstart</a>
-            <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Architecture</a>
-          </div>
+      <section class="wrap hero hero--home">
+        <h1>NORNS IS THE RUNTIME <span>FOR LONG-LIVED AGENTS.</span></h1>
+        <p class="lede">
+          Each agent run in Norns is backed by a durable event log. Runs can last
+          for months and survive restarts and crashes, making them ideal for
+          critical agentic workloads.
+        </p>
+        <p class="hero__workers">Your workers make the model calls, run the tools, and store the keys. Norns orchestrates.</p>
+        <div class="links">
+          <a class="primary" href="#setup-heading">Quickstart</a>
+          <a href="https://github.com/nornscode/norns">View on GitHub</a>
         </div>
-
-        <figure class="panel">
-          <figcaption>
-            <strong>Run 189 finished after 1 hour and 47 minutes without a worker</strong>
-            <span>Event log excerpt from a Mimir test on October 4, 2026</span>
-          </figcaption>
-          <table class="run-log" aria-label="Run 189 events">
-            <thead>
-              <tr><th scope="col">Time</th><th scope="col">Event</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><time>04:08:20</time></td><td><code>run_started</code></td></tr>
-              <tr><td><time>04:13:20</time></td><td><code>retry</code> <span>after a timeout</span></td></tr>
-              <tr><td colspan="2" class="log-gap">No worker connected</td></tr>
-              <tr><td><time>06:00:07</time></td><td><code>llm_request</code> <span>resent to a worker</span></td></tr>
-              <tr><td><time>06:00:11</time></td><td><code>run_completed</code></td></tr>
-            </tbody>
-          </table>
-          <div class="panel-foot"><code>nornsctl runs events 189</code></div>
-        </figure>
       </section>
 
       <section class="section" aria-labelledby="setup-heading">
@@ -187,22 +166,24 @@ uv run my-agent-worker</code></pre>
 
       <section class="section" id="system-heading" aria-labelledby="architecture-heading">
         <div class="wrap content">
-          <h2 id="architecture-heading">How runs resume</h2>
-          <ol class="flow">
-            <li>Norns sends a task.</li>
-            <li>A worker calls the model or runs a tool.</li>
-            <li>Norns records the result.</li>
+          <h2 id="architecture-heading">HOW RUNS SURVIVE</h2>
+          <ol class="run-steps" id="log-heading">
+            <li>Create a run in Norns.</li>
+            <li>Norns saves the message to the run’s durable event log.</li>
+            <li>The LLM receives the agent’s prompt and the list of available tools.</li>
+            <li>The agent requests a tool call.</li>
+            <li>Norns forwards the tool request to a worker.</li>
+            <li>The worker executes the tool in Python, Elixir, or TypeScript.</li>
+            <li>Norns saves the result to the durable event log.</li>
+            <li>The LLM receives the tool result.</li>
+            <li>The LLM reasons about what to do next.</li>
+            <li>…</li>
           </ol>
-          <p id="log-heading">
-            Norns rebuilds run state from the log after a restart. A run can
-            also wait there for a timer or a human reply, then continue when
-            it’s ready. Norns supports a single-node deployment backed by Postgres.
-          </p>
           <p>
-            Norns can resend a pending task with the same idempotency key.
-            If a tool does something like charge a card, the payment service
-            needs to honor that key to prevent a duplicate charge.
+            After a crash, restart, or deployment, Norns resumes the run from its last checkpoint in the durable event log.
+            A run can also wait for a timer or a human response and continue even after days or weeks have passed.
           </p>
+          <p>For tools with side effects, Norns sends the same idempotency key on each retry so the tool can recognize the request and avoid repeating the action.</p>
           <a href="https://github.com/nornscode/norns/blob/main/docs/architecture.md">Read the architecture</a>
         </div>
       </section>
@@ -213,13 +194,11 @@ uv run my-agent-worker</code></pre>
           <div class="examples">
             <article>
               <h3><a href="/mimir/">Mimir</a></h3>
-              <p>Answers project questions in Slack. A thread keeps its history when a worker restarts.</p>
-              <p class="muted">130 runs from April 15 to October 4, 2026.</p>
+              <p>Answers project questions in Slack.</p>
             </article>
             <article>
               <h3><a href="/fulla/">Fulla</a></h3>
-              <p>A personal assistant that remembers what matters to you and follows up in chat. Its reminders can wait for days with the worker stopped.</p>
-              <p class="muted">939 runs from October 16 to November 20, 2026.</p>
+              <p>A personal assistant that remembers what matters and follows up in chat.</p>
             </article>
           </div>
         </div>
